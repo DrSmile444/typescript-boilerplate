@@ -1,8 +1,10 @@
-import globals from 'globals';
 import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import playwright from 'eslint-plugin-playwright';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+
+import { orderedImportsEslint } from './.eslint/ordered-imports.eslint.mjs';
+import { playwrightEslint } from './.eslint/playwright.eslint.mjs';
 
 export default [
   {
@@ -13,11 +15,6 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   eslintPluginPrettierRecommended,
-  {
-    ...playwright.configs['flat/recommended'],
-    files: ['tests/**'],
-    rules: {
-      ...playwright.configs['flat/recommended'].rules,
-    },
-  },
+  playwrightEslint,
+  orderedImportsEslint,
 ];
