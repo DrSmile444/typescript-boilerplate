@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "codegen": "playwright codegen --output tests/codegen.ts",
     "lint": "npx eslint",
     "lint:fix": "npx eslint --fix",
     "format": "npx prettier . --write"
