@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-string-raw */
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 export const orderedImportsEslint = {

@@ -22,6 +22,7 @@ export default [
     './.eslint/node.eslintrc.json',
     './.eslint/playwright.eslintrc.json',
     './.eslint/custom-style.eslintrc.json5',
+    './.eslint/unicorn.eslintrc.json',
     './.eslint/typescript.eslintrc.json',
     './.eslint/typescript-naming-convention.eslintrc.js',
   ),
