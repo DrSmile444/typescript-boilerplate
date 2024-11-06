@@ -19,7 +19,9 @@ export default [
   ...tseslint.configs.stylistic,
   ...tseslint.configs.strict,
   ...compat.extends(
-    './.eslint/stylistic-custom-style.eslintrc.json5',
+    './.eslint/node.eslintrc.json',
+    './.eslint/playwright.eslintrc.json',
+    './.eslint/custom-style.eslintrc.json5',
     './.eslint/typescript.eslintrc.json',
     './.eslint/typescript-naming-convention.eslintrc.js',
   ),
