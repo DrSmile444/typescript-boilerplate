@@ -1,7 +1,6 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-
+import path from 'node:path';
 import { FlatCompat } from '@eslint/eslintrc';
+import { fileURLToPath } from 'url';
 
 // mimic CommonJS variables -- not needed if using CommonJS
 const __filename = fileURLToPath(import.meta.url);

@@ -5,3 +5,5 @@ node_modules/
 /playwright/.cache/
 
 /tests-examples
+projectStructure.cache.json
+.auth

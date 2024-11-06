@@ -1,0 +1,111 @@
+{
+  overrides: [
+    {
+      files: ["*.js", "*.jsx", "*.ts", "*.tsx", "*.vue", "*.mjs"],
+      plugins: [
+        '@stylistic'
+      ],
+      rules: {
+        "@stylistic/arrow-parens": [
+          "error",
+          "always"
+        ],
+        "@stylistic/brace-style": [
+          "error",
+          "1tbs"
+        ],
+        "@stylistic/class-methods-use-this": "off",
+        "@stylistic/comma-dangle": [
+          "error",
+          "always-multiline"
+        ],
+        "@stylistic/dot-notation": "off",
+        "@stylistic/eol-last": "error",
+        "@stylistic/eqeqeq": [
+          "off",
+          "smart"
+        ],
+        "@stylistic/id-blacklist": "off",
+        "@stylistic/id-match": "off",
+        "@stylistic/import/extensions": "off",
+        "@stylistic/import/prefer-default-export": "off",
+        "@stylistic/max-len": [
+          "error",
+          {
+            code: 140,
+            ignoreStrings: true,
+            ignoreComments: true
+          }
+        ],
+        "@stylistic/no-bitwise": "off",
+        "@stylistic/no-empty": "off",
+        "@stylistic/no-empty-function": "off",
+        "@stylistic/no-trailing-spaces": "error",
+        "@stylistic/no-underscore-dangle": "off",
+        "@stylistic/operator-linebreak": "error",
+        "@stylistic/quote-props": [
+          "error",
+          "as-needed"
+        ],
+        "@stylistic/semi": "error",
+        "@stylistic/space-before-function-paren": "off",
+        "@stylistic/spaced-comment": [
+          "error",
+          "always",
+          {
+            markers: [
+              "/"
+            ]
+          }
+        ],
+        "arrow-body-style": "error",
+        "constructor-super": "error",
+        "curly": "error",
+        "guard-for-in": "error",
+        "no-caller": "error",
+        "no-console": [
+          "error",
+          {
+            allow: [
+              "info",
+              "warn",
+              "dir",
+              "timeLog",
+              "assert",
+              "clear",
+              "count",
+              "countReset",
+              "group",
+              "groupEnd",
+              "table",
+              "dirxml",
+              "error",
+              "groupCollapsed",
+              "Console",
+              "profile",
+              "profileEnd",
+              "timeStamp",
+              "context"
+            ]
+          }
+        ],
+        "no-debugger": "error",
+        "no-eval": "error",
+        "no-fallthrough": "error",
+        "no-new-wrappers": "error",
+        "no-throw-literal": "error",
+        "no-undef-init": "error",
+        "no-unneeded-ternary": "error",
+        "no-unused-expressions": "error",
+        "no-unused-labels": "error",
+        "no-use-before-define": "error",
+        "no-var": "error",
+        "object-shorthand": "error",
+        "prefer-arrow-callback": "error",
+        "prefer-const": "error",
+        "radix": "error",
+        "valid-typeof": "error"
+      },
+    },
+  ],
+}
