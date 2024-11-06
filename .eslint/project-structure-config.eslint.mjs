@@ -20,7 +20,7 @@ export const folderStructureConfig = createFolderStructure({
     // .eslint folder for ESLint configurations
     {
       name: '.eslint',
-      children: [{ name: getFolderConfig({ type: 'eslint' }) }],
+      children: [{ name: getFolderConfig({ type: 'eslint' }) }, { name: '{kebab-case}.eslintrc.(json|js|json5)' }],
     },
 
     // Apply fixture rule for organized test data files
