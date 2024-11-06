@@ -7,3 +7,5 @@ node_modules/
 /tests-examples
 projectStructure.cache.json
 .auth
+
+.idea
