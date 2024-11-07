@@ -5,7 +5,7 @@ import { createFolderStructure } from 'eslint-plugin-project-structure';
 export const getFolderConfig = ({ type }) => `{kebab-case}.${type}.(ts|js|mjs)`;
 
 export const getGenericFolder = ({ type }) => ({
-  children: [{ name: getFolderConfig({ type }) }, { name: '{kebab-case}', children: [{ ruleId: `${type}Rule` }] }],
+  children: [{ name: getFolderConfig({ type }) }, { name: '{kebab-case}', children: [{ name: '*', ruleId: `${type}Rule` }] }],
 });
 
 // Main folder structure configuration
@@ -33,7 +33,7 @@ export const folderStructureConfig = createFolderStructure({
     { name: 'pages', ruleId: 'pageRule' },
 
     // Apply test rule for Playwright test cases and setups
-    { name: 'tests', ruleId: 'specRule' },
+    { name: 'tests', ruleId: 'specFolderRule' },
 
     // Apply utility rule for shared helper files
     { name: 'utils', ruleId: 'utilRule' },
@@ -44,8 +44,18 @@ export const folderStructureConfig = createFolderStructure({
       children: [{ name: 'index.ts' }, ...getGenericFolder({ type: 'interface' }).children],
     },
     pageRule: getGenericFolder({ type: 'page' }),
-    specRule: {
-      children: [{ name: getFolderConfig({ type: 'setup' }) }, ...getGenericFolder({ type: 'spec' }).children],
+    specFoldersRule: {
+      name: '{kebab-case}',
+      folderRecursionLimit: 3,
+      children: [{ ruleId: 'specFolderRule' }, { name: getFolderConfig({ type: 'spec' }) }],
+    },
+    specFolderRule: {
+      name: getFolderConfig({ type: 'spec' }),
+      children: [
+        { ruleId: 'specFoldersRule' },
+        { name: getFolderConfig({ type: 'setup' }) },
+        { name: `{folderName}${getFolderConfig('spec')}` },
+      ],
     },
     utilRule: getGenericFolder({ type: 'util' }),
   },
