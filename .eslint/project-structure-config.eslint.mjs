@@ -26,6 +26,9 @@ export const folderStructureConfig = createFolderStructure({
     // Apply fixture rule for organized test data files
     { name: 'fixtures', ruleId: 'fixtureRule' },
 
+    // Apply config rule for configuration files
+    { name: 'config', ruleId: 'configRule' },
+
     // Apply interface rule for TypeScript interfaces
     { name: 'interfaces', ruleId: 'interfaceRule' },
 
@@ -39,6 +42,7 @@ export const folderStructureConfig = createFolderStructure({
     { name: 'utils', ruleId: 'utilRule' },
   ],
   rules: {
+    configRule: getGenericFolder({ type: 'config' }),
     fixtureRule: getGenericFolder({ type: 'fixture' }),
     interfaceRule: {
       children: [{ name: 'index.ts' }, ...getGenericFolder({ type: 'interface' }).children],
@@ -59,7 +63,7 @@ export const folderStructureConfig = createFolderStructure({
         { ruleId: 'specFoldersRule' },
         { name: getFolderConfig({ type: 'setup' }) },
         { name: getFolderConfig({ type: 'teardown' }) },
-        { name: `{folderName}${getFolderConfig('spec')}` },
+        { name: getFolderConfig({ type: 'spec' }) },
       ],
     },
     utilRule: getGenericFolder({ type: 'util' }),
