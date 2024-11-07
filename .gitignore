@@ -9,3 +9,4 @@ projectStructure.cache.json
 .auth
 
 .idea
+.env
