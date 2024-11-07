@@ -47,13 +47,18 @@ export const folderStructureConfig = createFolderStructure({
     specFoldersRule: {
       name: '{kebab-case}',
       folderRecursionLimit: 3,
-      children: [{ ruleId: 'specFolderRule' }, { name: getFolderConfig({ type: 'spec' }) }],
+      children: [
+        { ruleId: 'specFolderRule' },
+        { name: getFolderConfig({ type: 'spec' }) },
+        { name: getFolderConfig({ type: 'teardown' }) },
+      ],
     },
     specFolderRule: {
       name: getFolderConfig({ type: 'spec' }),
       children: [
         { ruleId: 'specFoldersRule' },
         { name: getFolderConfig({ type: 'setup' }) },
+        { name: getFolderConfig({ type: 'teardown' }) },
         { name: `{folderName}${getFolderConfig('spec')}` },
       ],
     },
