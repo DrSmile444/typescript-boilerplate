@@ -20,7 +20,6 @@ export default [
   ...tseslint.configs.strict,
   ...compat.extends(
     './.eslint/node.eslintrc.json',
-    './.eslint/playwright.eslintrc.json',
     './.eslint/custom-style.eslintrc.json5',
     './.eslint/unicorn.eslintrc.json',
     './.eslint/typescript.eslintrc.json',
@@ -30,4 +29,5 @@ export default [
   playwrightEslint,
   orderedImportsEslint,
   ...projectStructureEslint,
+  ...compat.extends('./.eslint/playwright.eslintrc.json'),
 ];

@@ -3,7 +3,8 @@
     "import/no-extraneous-dependencies": "off",
     "import/no-unresolved": "off",
     "no-restricted-syntax": "off",
-    "no-await-in-loop": "off"
+    "no-await-in-loop": "off",
+    "no-empty-pattern": "off"
   },
   "globals": {
     "window": "readonly"
