@@ -4,5 +4,8 @@
     "import/no-unresolved": "off",
     "no-restricted-syntax": "off",
     "no-await-in-loop": "off"
+  },
+  "globals": {
+    "window": "readonly"
   }
 }
