@@ -8,5 +8,15 @@
   },
   "globals": {
     "window": "readonly"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["decorators/**/*.{ts,js}"],
+      "rules": {
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-unsafe-function-type": "off",
+        "@typescript-eslint/no-unsafe-return": "off"
+      }
+    }
+  ]
 }

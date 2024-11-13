@@ -29,6 +29,9 @@ export const folderStructureConfig = createFolderStructure({
     // Apply config rule for configuration files
     { name: 'config', ruleId: 'configRule' },
 
+    // Apply decorator rule for custom decorators
+    { name: 'decorators', ruleId: 'decoratorsRule' },
+
     // Apply interface rule for TypeScript interfaces
     { name: 'interfaces', ruleId: 'interfaceRule' },
 
@@ -43,6 +46,7 @@ export const folderStructureConfig = createFolderStructure({
   ],
   rules: {
     configRule: getGenericFolder({ type: 'config' }),
+    decoratorsRule: getGenericFolder({ type: 'decorator' }),
     fixtureRule: getGenericFolder({ type: 'fixture' }),
     interfaceRule: {
       children: [{ name: 'index.ts' }, ...getGenericFolder({ type: 'interface' }).children],
