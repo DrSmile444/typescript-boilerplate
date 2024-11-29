@@ -10,6 +10,7 @@
     "lint": "cross-env TIMING=1 npx eslint",
     "lint:fix": "npm run lint -- --fix",
     "lint:debug": "npm run lint -- --debug",
+    "typecheck": "npx tsc --noEmit",
     "format": "npx prettier . --write"
   },
   "keywords": [],
