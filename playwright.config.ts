@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import { environmentConfig } from './config/environment.config';
+import { environmentConfig } from './src/config/environment.config';
 
 /**
  * Read environment variables from file.
@@ -14,7 +14,7 @@ import { environmentConfig } from './config/environment.config';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: './src/tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

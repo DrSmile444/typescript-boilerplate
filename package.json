@@ -6,7 +6,7 @@
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "codegen": "playwright codegen --output tests/codegen.ts",
+    "codegen": "playwright codegen --output src/tests/codegen.ts",
     "lint": "cross-env TIMING=1 npx eslint",
     "lint:fix": "npm run lint -- --fix",
     "lint:debug": "npm run lint -- --debug",
