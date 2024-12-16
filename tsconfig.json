@@ -1,6 +1,19 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@config/*": ["config/*"],
+      "@decorators/*": ["decorators/*"],
+      "@fixtures/*": ["fixtures/*"],
+      "@interfaces/*": ["interfaces/*"],
+      "@interfaces": ["interfaces"],
+      "@models/*": ["models/*"],
+      "@pages/*": ["pages/*"],
+      "@test-data/*": ["test-data/*"],
+      "@tests/*": ["tests/*"],
+      "@utils/*": ["utils/*"]
+    },
     "resolveJsonModule": true,
     "esModuleInterop": true
   }

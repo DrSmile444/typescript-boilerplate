@@ -15,8 +15,16 @@ export const orderedImportsEslint = {
           ['^node', '^@?\\w'],
           // Playwright packages.
           ['^@playwright'],
-          // Internal packages.
-          ['^(@|components)(/.*|$)'],
+          // Internal packages (split by alias).
+          ['^@config(/.*|$)?'],
+          ['^@decorators(/.*|$)?'],
+          ['^@fixtures(/.*|$)?'],
+          ['^@interfaces(/.*|$)?'],
+          ['^@models(/.*|$)?'],
+          ['^@pages(/.*|$)?'],
+          ['^@test-data(/.*|$)?'],
+          ['^@tests(/.*|$)?'],
+          ['^@utils(/.*|$)?'],
           // Side effect imports.
           ['^\\u0000'],
           // Parent imports. Put `..` last.
