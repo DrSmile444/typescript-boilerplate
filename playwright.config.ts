@@ -1,19 +1,44 @@
+import type { PlaywrightTestConfig } from '@playwright/test';
 import { defineConfig, devices } from '@playwright/test';
 
-import { environmentConfig } from './src/config/environment.config';
+import { environmentConfig } from '@config/environment.config';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+import type { PlaywrightExtraConfig } from '@interfaces';
+
+/* Define the local configuration for the test runner */
+const localConfig: PlaywrightTestConfig<PlaywrightExtraConfig> = {
+  use: {
+    /* Base URL to use in actions like `await page.goto('/')`. */
+    baseURL: environmentConfig.LOCAL_BASE_URL,
+    /* API URL to use in `apiRequest`. */
+    apiUrl: environmentConfig.LOCAL_API_BASE_URL,
+  },
+};
+
+/* Define the development configuration for the test runner */
+const developmentConfig: PlaywrightTestConfig<PlaywrightExtraConfig> = {
+  use: {
+    /* Base URL to use in actions like `await page.goto('/')`. */
+    baseURL: environmentConfig.DEV_BASE_URL,
+    /* API URL to use in `apiRequest`. */
+    apiUrl: environmentConfig.DEV_API_BASE_URL,
+  },
+};
+
+/* Define the production configuration for the test runner */
+const productionConfig: PlaywrightTestConfig<PlaywrightExtraConfig> = {
+  use: {
+    /* Base URL to use in actions like `await page.goto('/')`. */
+    baseURL: environmentConfig.PROD_BASE_URL,
+    /* API URL to use in `apiRequest`. */
+    apiUrl: environmentConfig.PROD_API_BASE_URL,
+  },
+};
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+export default defineConfig<PlaywrightExtraConfig>({
   testDir: './src/tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -27,9 +52,7 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: environmentConfig.LOCAL_BASE_URL,
-
+    ...localConfig.use,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
@@ -38,6 +61,11 @@ export default defineConfig({
   projects: [
     { name: 'setup', testMatch: /.*\.setup\.ts/ },
     { name: 'teardown', testMatch: /.*\.teardown\.ts/ },
+    {
+      name: 'teardown-prod',
+      testMatch: /.*\.teardown\.ts/,
+      use: { ...productionConfig.use },
+    },
 
     {
       name: 'chromium',
@@ -46,12 +74,12 @@ export default defineConfig({
 
     {
       name: 'chromium-dev',
-      use: { ...devices['Desktop Chrome'], baseURL: environmentConfig.DEV_BASE_URL },
+      use: { ...devices['Desktop Chrome'], ...developmentConfig.use },
     },
 
     {
       name: 'chromium-prod',
-      use: { ...devices['Desktop Chrome'], baseURL: environmentConfig.PROD_BASE_URL },
+      use: { ...devices['Desktop Chrome'], ...productionConfig.use },
     },
 
     {
