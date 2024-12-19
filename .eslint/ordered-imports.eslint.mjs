@@ -12,9 +12,11 @@ export const orderedImportsEslint = {
       {
         groups: [
           // Packages `node` related packages come first.
-          ['^node', '^@?\\w'],
+          ['^node'],
           // Playwright packages.
           ['^@playwright'],
+          // All other npm packages.
+          ['^@?\\w'],
           // Internal packages (split by alias).
           ['^@config(/.*|$)?'],
           ['^@decorators(/.*|$)?'],
