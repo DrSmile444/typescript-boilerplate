@@ -24,6 +24,7 @@
     "@playwright/test": "^1.48.2",
     "@types/node": "^22.8.1",
     "cross-env": "^7.0.3",
+    "deepmerge": "^4.3.1",
     "eslint": "^9.13.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
