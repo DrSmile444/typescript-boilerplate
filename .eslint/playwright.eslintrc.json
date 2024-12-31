@@ -4,7 +4,8 @@
     "import/no-unresolved": "off",
     "no-restricted-syntax": "off",
     "no-await-in-loop": "off",
-    "no-empty-pattern": "off"
+    "no-empty-pattern": "off",
+    "playwright/no-nested-step": "off"
   },
   "globals": {
     "window": "readonly"
@@ -16,6 +17,12 @@
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-unsafe-function-type": "off",
         "@typescript-eslint/no-unsafe-return": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.{setup,teardown}.{ts,js}"],
+      "rules": {
+        "playwright/expect-expect": "off"
       }
     }
   ]
