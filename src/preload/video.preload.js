@@ -14,6 +14,28 @@ window.addEventListener('DOMContentLoaded', () => {
       z-index: 99999999;
       transition: transform 0.005s ease-in-out;
     }
+    .click-effect {
+      width: 60px;
+      height: 60px;
+      border: 2px solid rgba(0, 0, 0, 0.8);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 99999999;
+      top: 0;
+      left: 0;
+      animation: click-animation 0.4s ease-out;
+    }
+    @keyframes click-animation {
+      0% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
   `;
   document.head.append(style);
 
@@ -33,7 +55,20 @@ window.addEventListener('DOMContentLoaded', () => {
   cursor.className = 'playwright-cursor';
   document.body.append(cursor);
 
-  document.addEventListener('mousemove', (e) => {
-    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+  document.addEventListener('mousemove', (event) => {
+    cursor.style.transform = `translate(${event.clientX}px, ${event.clientY}px)`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const clickEffect = document.createElement('div');
+    clickEffect.className = 'click-effect';
+    clickEffect.style.left = `${event.clientX - 30}px`; // Center the effect
+    clickEffect.style.top = `${event.clientY - 30}px`; // Center the effect
+    document.body.append(clickEffect);
+
+    // Remove the effect after the animation ends
+    clickEffect.addEventListener('animationend', () => {
+      clickEffect.remove();
+    });
   });
 });
