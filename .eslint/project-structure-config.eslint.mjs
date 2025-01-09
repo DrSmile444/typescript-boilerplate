@@ -42,6 +42,9 @@ export const folderStructureConfig = createFolderStructure({
         // Apply page rule for Page Object Model (POM) files
         { name: 'pages', ruleId: 'pageRule' },
 
+        // Apply page rule for Page Object Model (POM) files
+        { name: 'preload', ruleId: 'preloadRule' },
+
         // Apply test rule for Playwright test cases and setups
         { name: 'tests', ruleId: 'specFolderRule' },
 
@@ -61,6 +64,7 @@ export const folderStructureConfig = createFolderStructure({
       children: [{ name: 'index.ts' }, ...getGenericFolder({ type: 'interface' }).children],
     },
     pageRule: getGenericFolder({ type: 'page' }),
+    preloadRule: getGenericFolder({ type: 'preloadRule' }),
     specFoldersRule: {
       name: '{kebab-case}',
       folderRecursionLimit: 3,

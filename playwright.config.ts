@@ -2,6 +2,7 @@ import type { PlaywrightTestConfig } from '@playwright/test';
 import { defineConfig, devices } from '@playwright/test';
 
 import { environmentConfig } from '@config/environment.config';
+import { videoConfig } from '@config/video.config';
 
 import type { PlaywrightExtraConfig } from '@interfaces';
 
@@ -55,6 +56,8 @@ export default defineConfig<PlaywrightExtraConfig>({
     ...localConfig.use,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    ...(environmentConfig.PLAYWRIGHT_RECORD ? videoConfig : {}),
   },
 
   /* Configure projects for major browsers */

@@ -12,4 +12,5 @@ export interface EnvironmentBaseUrlConfig {
 
 export interface EnvironmentConfig extends EnvironmentBaseUrlConfig {
   CI: boolean;
+  PLAYWRIGHT_RECORD: boolean;
 }
