@@ -1,4 +1,32 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef,no-param-reassign */
+
+const displayTypingEffect = (target, text) => {
+  const typingEffect = document.createElement('div');
+  typingEffect.className = 'typing-effect';
+  typingEffect.textContent = text;
+  target.parentElement.style.position = 'relative';
+  typingEffect.style.top = `${target.offsetTop}px`;
+  typingEffect.style.left = `${target.offsetLeft}px`;
+  target.parentElement.append(typingEffect);
+
+  typingEffect.addEventListener('animationend', () => {
+    typingEffect.remove();
+  });
+};
+
+const displayClickEffect = (event) => {
+  const clickEffect = document.createElement('div');
+  clickEffect.className = 'click-effect';
+  clickEffect.style.left = `${event.clientX - 30}px`; // Center the effect
+  clickEffect.style.top = `${event.clientY - 30}px`; // Center the effect
+  document.body.append(clickEffect);
+
+  // Remove the effect after the animation ends
+  clickEffect.addEventListener('animationend', () => {
+    clickEffect.remove();
+  });
+};
+
 // eslint-disable-next-line unicorn/prefer-global-this
 window.addEventListener('DOMContentLoaded', () => {
   const style = document.createElement('style');
@@ -12,12 +40,13 @@ window.addEventListener('DOMContentLoaded', () => {
       left: 0;
       pointer-events: none;
       z-index: 99999999;
-      transition: transform 0.005s ease-in-out;
+      transition: transform 0.05s ease-in-out;
     }
     .click-effect {
       width: 60px;
       height: 60px;
       border: 2px solid rgba(0, 0, 0, 0.8);
+      outline: 2px solid rgba(255, 255, 255, 0.8);
       border-radius: 50%;
       position: fixed;
       pointer-events: none;
@@ -27,6 +56,28 @@ window.addEventListener('DOMContentLoaded', () => {
       animation: click-animation 0.4s ease-out;
     }
     @keyframes click-animation {
+      0% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+    .typing-effect {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 99999999;
+      transform: translateY(-150%);
+      animation: text-animation 1s ease-out;
+    }
+    @keyframes text-animation {
       0% {
         transform: scale(1);
         opacity: 0.8;
@@ -60,15 +111,15 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('click', (event) => {
-    const clickEffect = document.createElement('div');
-    clickEffect.className = 'click-effect';
-    clickEffect.style.left = `${event.clientX - 30}px`; // Center the effect
-    clickEffect.style.top = `${event.clientY - 30}px`; // Center the effect
-    document.body.append(clickEffect);
+    displayClickEffect(event);
+  });
 
-    // Remove the effect after the animation ends
-    clickEffect.addEventListener('animationend', () => {
-      clickEffect.remove();
-    });
+  document.addEventListener('input', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      const typedText = e.target.value;
+      if (typedText.length > 0) {
+        displayTypingEffect(e.target, 'Typing...');
+      }
+    }
   });
 });
