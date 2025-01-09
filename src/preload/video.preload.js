@@ -40,7 +40,7 @@ window.addEventListener('DOMContentLoaded', () => {
       left: 0;
       pointer-events: none;
       z-index: 99999999;
-      transition: transform 0.05s ease-in-out;
+      transition: transform 0.05s cubic-bezier(0.87, 0, 0.13, 1);
     }
     .click-effect {
       width: 60px;
