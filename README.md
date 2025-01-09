@@ -30,6 +30,7 @@ This is a Playwright boilerplate project designed to streamline end-to-end testi
 - **Configurable Environment**: Centralized configuration management for different environments.
 - **Interface-Driven Design**: Clear and scalable interfaces for configuration and settings.
 - **Example Tests**: Ready-to-use examples to help you get started quickly.
+- **Demo Video Recording**: Easily record videos of test runs and attach them as demos to Jira tasks.
 
 ---
 
@@ -69,7 +70,42 @@ This is a Playwright boilerplate project designed to streamline end-to-end testi
    npm run test:headed
    ```
 
-3. Use the configuration and custom decorators to create modular tests in the `src/tests` folder.
+3. Record demo videos:
+
+- Use the `video.fixture` to enable recording.
+
+  - Merge `video.fixture` with your `application.fixture` (example):
+
+    ```typescript
+    import { mergeTests, test as base } from '@playwright/test';
+
+    import { AdminPage } from '@pages/admin.page';
+
+    import { test as videoTest } from './video.fixture';
+
+    interface ApplicationFixture {
+      adminPage: AdminPage;
+    }
+
+    const applicationTest = base.extend<ApplicationFixture>({
+      adminPage: async ({ page }, use) => {
+        const adminPage = new AdminPage(page);
+        await use(adminPage);
+      },
+    });
+
+    export const test = mergeTests(applicationTest, videoTest);
+    ```
+
+- Run the command to record:
+
+  ```bash
+  npm run test:ui:record
+  ```
+
+- After running, find the recorded videos in the `test-results` folder.
+
+4. Use the configuration and custom decorators to create modular tests in the `src/tests` folder.
 
 ---
 
@@ -98,7 +134,7 @@ The `src` folder is organized into a modular structure with the following subfol
 3. **`fixtures/`**
 
 - Contains reusable setup and teardown logic for tests.
-- Example: `api.fixture.ts`.
+- Examples: `api.fixture.ts`, `video.fixture.ts`.
 
 4. **`interfaces/`**
 
@@ -171,6 +207,17 @@ test('basic test', async ({ page }) => {
 });
 ```
 
+### Sample Video Test
+
+```typescript
+import { test } from '@/fixtures/application.fixture';
+
+test('recorded test', async ({ page }) => {
+  await page.goto('https://example.com');
+  await page.click('text=Example');
+});
+```
+
 ---
 
 ## Dependencies
@@ -192,10 +239,16 @@ Full list of dependencies is available in `package.json`.
   - Check the `.env` file for missing variables.
 
 - **Browser not launching?**
+
   - Verify Playwright browsers are installed with:
     ```bash
     npx playwright install
     ```
+
+- **Videos not recording?**
+
+  - Verify that `video.fixture` is merged correctly.
+  - Run the recording command: `npm run test:ui:record`.
 
 ---
 
