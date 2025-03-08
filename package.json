@@ -9,13 +9,15 @@
     "test:ui:slow": "playwright test --ui --workers 3",
     "test:ui:headed": "playwright test --ui --headed",
     "test:ui:record": "cross-env PLAYWRIGHT_RECORD=true playwright test --ui",
-    "codegen": "playwright codegen --output src/tests/codegen.ts",
+    "test:ui:record:headed": "cross-env PLAYWRIGHT_RECORD=true playwright test --ui --headed",
+    "codegen": "playwright codegen --output src/tests/codegen.ts http://localhost:5173",
     "lint": "cross-env TIMING=1 npx eslint",
     "lint:fix": "npm run lint -- --fix",
     "lint:debug": "npm run lint -- --debug",
     "format:md": "npx prettier --write ./README.md",
     "typecheck": "npx tsc --noEmit",
-    "format": "npx prettier . --write"
+    "format": "npx prettier . --write",
+    "postinstall": "npx playwright install"
   },
   "keywords": [],
   "author": "",
