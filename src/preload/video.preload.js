@@ -1,4 +1,5 @@
 /* eslint-disable no-undef,no-param-reassign */
+console.info('video.preload.js loaded');
 
 const displayTypingEffect = (target, text) => {
   const typingEffect = document.createElement('div');
@@ -55,6 +56,16 @@ window.addEventListener('DOMContentLoaded', () => {
       left: 0;
       animation: click-animation 0.4s ease-out;
     }
+    .frame-updater {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      width: 2px;
+      height: 2px;
+      pointer-events: none;
+      z-index: 99999999;
+      background: red;
+    }
     @keyframes click-animation {
       0% {
         transform: scale(1);
@@ -106,6 +117,15 @@ window.addEventListener('DOMContentLoaded', () => {
   cursor.className = 'playwright-cursor';
   document.body.append(cursor);
 
+  const frameUpdater = document.createElement('div');
+  frameUpdater.className = 'frame-updater';
+  document.body.append(frameUpdater);
+
+  // We need to constantly move the frameUpdater to the current scroll position
+  setInterval(() => {
+    frameUpdater.style.transform = `translate(${Math.random() * 5}px, ${Math.random() * 5}px)`;
+  }, 30);
+
   document.addEventListener('mousemove', (event) => {
     cursor.style.transform = `translate(${event.clientX}px, ${event.clientY}px)`;
   });
@@ -114,11 +134,11 @@ window.addEventListener('DOMContentLoaded', () => {
     displayClickEffect(event);
   });
 
-  document.addEventListener('input', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-      const typedText = e.target.value;
+  document.addEventListener('input', (event) => {
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+      const typedText = event.target.value;
       if (typedText.length > 0) {
-        displayTypingEffect(e.target, 'Typing...');
+        displayTypingEffect(event.target, 'Typing...');
       }
     }
   });
