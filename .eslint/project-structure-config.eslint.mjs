@@ -64,7 +64,7 @@ export const folderStructureConfig = createFolderStructure({
       children: [{ name: 'index.ts' }, ...getGenericFolder({ type: 'interface' }).children],
     },
     pageRule: getGenericFolder({ type: 'page' }),
-    preloadRule: getGenericFolder({ type: 'preloadRule' }),
+    preloadRule: getGenericFolder({ type: 'preload' }),
     specFoldersRule: {
       name: '{kebab-case}',
       folderRecursionLimit: 3,
