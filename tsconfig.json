@@ -1,6 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "esnext",
     "baseUrl": "./src",
     "paths": {
       "@config/*": ["config/*"],
