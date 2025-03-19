@@ -9,7 +9,7 @@ import { compat } from './eslint-compat.config.mjs';
 
 export default [
   {
-    ignores: ['node_modules', 'playwright-report', 'test-results', '.auth'],
+    ignores: ['node_modules'],
   },
   { files: ['**/*.{js,mjs,cjs,ts}'] },
   { languageOptions: { globals: globals.node } },
@@ -27,4 +27,5 @@ export default [
   eslintPluginPrettierRecommended,
   orderedImportsEslint,
   ...projectStructureEslint,
+  ...compat.extends('./.eslint/overrides.eslintrc.json'),
 ];
