@@ -4,6 +4,7 @@
     "moduleResolution": "node",
     "target": "esnext",
     "baseUrl": "./src",
+    "strict": true,
     "paths": {
       "@config/*": ["config/*"],
       "@decorators/*": ["decorators/*"],
