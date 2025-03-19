@@ -4,7 +4,6 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 import { orderedImportsEslint } from './.eslint/ordered-imports.eslint.mjs';
-import { playwrightEslint } from './.eslint/playwright.eslint.mjs';
 import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
 import { compat } from './eslint-compat.config.mjs';
 
@@ -26,8 +25,6 @@ export default [
     './.eslint/typescript-naming-convention.eslintrc.js',
   ),
   eslintPluginPrettierRecommended,
-  playwrightEslint,
   orderedImportsEslint,
   ...projectStructureEslint,
-  ...compat.extends('./.eslint/playwright.eslintrc.json'),
 ];
