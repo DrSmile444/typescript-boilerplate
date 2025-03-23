@@ -6,6 +6,7 @@ import tseslint from 'typescript-eslint';
 import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
 import { orderedImportsEslint } from './.eslint/ordered-imports.eslint.mjs';
 import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
+import securityEslint from './.eslint/security.eslint.mjs';
 import sonarEslint from './.eslint/sonar.eslint.mjs';
 import { compat } from './eslint-compat.config.mjs';
 
@@ -31,6 +32,7 @@ export default [
   eslintPluginPrettierRecommended,
   orderedImportsEslint,
   ...noSecretsEslint,
+  ...securityEslint,
   ...projectStructureEslint,
   ...compat.extends('./.eslint/overrides.eslintrc.json'),
 ];
