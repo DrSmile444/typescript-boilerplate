@@ -3,6 +3,7 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
 import { orderedImportsEslint } from './.eslint/ordered-imports.eslint.mjs';
 import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
 import sonarEslint from './.eslint/sonar.eslint.mjs';
@@ -29,6 +30,7 @@ export default [
   ...sonarEslint,
   eslintPluginPrettierRecommended,
   orderedImportsEslint,
+  ...noSecretsEslint,
   ...projectStructureEslint,
   ...compat.extends('./.eslint/overrides.eslintrc.json'),
 ];
