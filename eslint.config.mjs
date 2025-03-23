@@ -5,6 +5,7 @@ import tseslint from 'typescript-eslint';
 
 import { orderedImportsEslint } from './.eslint/ordered-imports.eslint.mjs';
 import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
+import sonarEslint from './.eslint/sonar.eslint.mjs';
 import { compat } from './eslint-compat.config.mjs';
 
 export default [
@@ -24,6 +25,7 @@ export default [
     './.eslint/typescript.eslintrc.json',
     './.eslint/typescript-naming-convention.eslintrc.js',
   ),
+  ...sonarEslint,
   eslintPluginPrettierRecommended,
   orderedImportsEslint,
   ...projectStructureEslint,
