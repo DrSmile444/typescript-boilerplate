@@ -24,6 +24,7 @@ export default [
     './.eslint/unicorn.eslintrc.json',
     './.eslint/typescript.eslintrc.json',
     './.eslint/typescript-naming-convention.eslintrc.js',
+    './.eslint/eslint-rules.eslintrc.json',
   ),
   ...sonarEslint,
   eslintPluginPrettierRecommended,

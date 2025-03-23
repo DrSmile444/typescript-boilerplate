@@ -9,4 +9,17 @@ import sonarjs from 'eslint-plugin-sonarjs';
 // including testing, accessibility, and more.
 // Additionally, it enhances code security by providing rules to report
 // potential security vulnerabilities.
-export default [sonarjs.configs.recommended];
+export default [
+  sonarjs.configs.recommended,
+  {
+    rules: {
+      // Warning rules
+      'sonarjs/todo-tag': 'warn',
+      'sonarjs/no-commented-code': 'warn',
+      'sonarjs/function-return-type': 'warn',
+      // Disable rules that are not useful in the context of a TypeScript project
+      'sonarjs/redundant-type-aliases': 'off',
+      'sonarjs/no-selector-parameter': 'off',
+    },
+  },
+];
