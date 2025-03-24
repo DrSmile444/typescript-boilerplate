@@ -5,6 +5,7 @@ import tseslint from 'typescript-eslint';
 
 import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
 import { orderedImportsEslint } from './.eslint/ordered-imports.eslint.mjs';
+import perfectionistEslint from './.eslint/perfectionist.eslint.mjs';
 import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
 import securityEslint from './.eslint/security.eslint.mjs';
 import sonarEslint from './.eslint/sonar.eslint.mjs';
@@ -33,6 +34,7 @@ export default [
   orderedImportsEslint,
   ...noSecretsEslint,
   ...securityEslint,
+  ...perfectionistEslint,
   ...projectStructureEslint,
   ...compat.extends('./.eslint/overrides.eslintrc.json'),
 ];

@@ -13,13 +13,11 @@ export default [
   sonarjs.configs.recommended,
   {
     rules: {
-      // Warning rules
-      'sonarjs/todo-tag': 'warn',
-      'sonarjs/no-commented-code': 'warn',
       'sonarjs/function-return-type': 'warn',
-      // Disable rules that are not useful in the context of a TypeScript project
-      'sonarjs/redundant-type-aliases': 'off',
+      'sonarjs/no-commented-code': 'warn',
       'sonarjs/no-selector-parameter': 'off',
+      'sonarjs/redundant-type-aliases': 'off',
+      'sonarjs/todo-tag': 'warn',
     },
   },
 ];
