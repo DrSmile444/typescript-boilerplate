@@ -1,1 +1,3 @@
-console.info('Hello world');
+import { a } from './util';
+
+console.info('Hello world', a);

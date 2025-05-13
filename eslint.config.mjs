@@ -13,7 +13,7 @@ import { compat } from './eslint-compat.config.mjs';
 
 export default [
   {
-    ignores: ['node_modules'],
+    ignores: ['node_modules', 'function-out.js'],
   },
   { files: ['**/*.{js,mjs,cjs,ts}'] },
   { languageOptions: { globals: globals.node } },

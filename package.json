@@ -7,6 +7,7 @@
     "lint": "cross-env TIMING=1 npx eslint",
     "lint:fix": "npm run lint -- --fix",
     "lint:debug": "npm run lint -- --debug",
+    "build": "tsup && mv ./dist/main.js ./function-out.js",
     "format:md": "npx prettier --write ./README.md",
     "typecheck": "npx tsc --noEmit",
     "format": "npx prettier . --write"
@@ -15,6 +16,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "dependencies": {
+    "uuid": "^11.1.0"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.13.0",
@@ -34,6 +38,7 @@
     "eslint-plugin-unicorn": "^56.0.0",
     "globals": "^15.11.0",
     "prettier": "^3.3.3",
+    "tsup": "^8.4.0",
     "type-fest": "^4.30.2",
     "typed-dotenv": "^10.0.2",
     "typescript-eslint": "^8.12.0"
