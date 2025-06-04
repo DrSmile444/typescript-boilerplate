@@ -10,6 +10,7 @@ import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
 import securityEslint from './.eslint/security.eslint.mjs';
 import sonarEslint from './.eslint/sonar.eslint.mjs';
 import { compat } from './eslint-compat.config.mjs';
+import jestEslint from './.eslint/jest.eslint.mjs';
 
 export default [
   {
@@ -37,4 +38,5 @@ export default [
   ...perfectionistEslint,
   ...projectStructureEslint,
   ...compat.extends('./.eslint/overrides.eslintrc.json'),
+  ...jestEslint,
 ];
