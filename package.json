@@ -10,6 +10,7 @@
     "build": "tsup && mv ./dist/main.js ./function-out.js",
     "format:md": "npx prettier --write ./README.md",
     "typecheck": "npx tsc --noEmit",
+    "test": "npx jest",
     "format": "npx prettier . --write"
   },
   "keywords": [],
@@ -22,6 +23,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.13.0",
+    "@stylistic/eslint-plugin": "^4.2.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.8.1",
     "cross-env": "^7.0.3",
     "deepmerge": "^4.3.1",
@@ -30,6 +33,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-no-secrets": "^2.2.1",
     "eslint-plugin-perfectionist": "^4.10.1",
+    "eslint-plugin-jest": "^28.12.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-project-structure": "^3.10.1",
     "eslint-plugin-security": "^3.0.1",
@@ -37,9 +41,11 @@
     "eslint-plugin-sonarjs": "^3.0.2",
     "eslint-plugin-unicorn": "^56.0.0",
     "globals": "^15.11.0",
+    "jest": "^29.7.0",
     "prettier": "^3.3.3",
+    "ts-jest": "^29.3.4",
     "tsup": "^8.4.0",
-    "type-fest": "^4.30.2",
+    "type-fest": "^4.41.0",
     "typed-dotenv": "^10.0.2",
     "typescript-eslint": "^8.12.0"
   },
