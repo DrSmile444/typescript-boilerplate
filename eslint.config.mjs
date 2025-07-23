@@ -11,6 +11,7 @@ import securityEslint from './.eslint/security.eslint.mjs';
 import sonarEslint from './.eslint/sonar.eslint.mjs';
 import { unicornEslint } from './.eslint/unicorn.eslint.mjs';
 import { compat } from './eslint-compat.config.mjs';
+import jestEslint from './.eslint/jest.eslint.mjs';
 
 export default [
   {
@@ -38,4 +39,5 @@ export default [
   unicornEslint,
   ...projectStructureEslint,
   ...compat.extends('./.eslint/overrides.eslintrc.json'),
+  ...jestEslint,
 ];
