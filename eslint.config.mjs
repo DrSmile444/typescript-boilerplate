@@ -3,6 +3,7 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+import jestEslint from './.eslint/jest.eslint.mjs';
 import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
 import { orderedImportsEslint } from './.eslint/ordered-imports.eslint.mjs';
 import perfectionistEslint from './.eslint/perfectionist.eslint.mjs';
@@ -11,7 +12,6 @@ import securityEslint from './.eslint/security.eslint.mjs';
 import sonarEslint from './.eslint/sonar.eslint.mjs';
 import { unicornEslint } from './.eslint/unicorn.eslint.mjs';
 import { compat } from './eslint-compat.config.mjs';
-import jestEslint from './.eslint/jest.eslint.mjs';
 
 export default [
   {
