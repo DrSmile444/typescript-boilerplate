@@ -9,6 +9,7 @@ import perfectionistEslint from './.eslint/perfectionist.eslint.mjs';
 import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
 import securityEslint from './.eslint/security.eslint.mjs';
 import sonarEslint from './.eslint/sonar.eslint.mjs';
+import { unicornEslint } from './.eslint/unicorn.eslint.mjs';
 import { compat } from './eslint-compat.config.mjs';
 
 export default [
@@ -24,7 +25,6 @@ export default [
   ...compat.extends(
     './.eslint/node.eslintrc.json',
     './.eslint/custom-style.eslintrc.json5',
-    './.eslint/unicorn.eslintrc.json',
     './.eslint/typescript.eslintrc.json',
     './.eslint/typescript-naming-convention.eslintrc.js',
     './.eslint/eslint-rules.eslintrc.json',
@@ -35,6 +35,7 @@ export default [
   ...noSecretsEslint,
   ...securityEslint,
   ...perfectionistEslint,
+  unicornEslint,
   ...projectStructureEslint,
   ...compat.extends('./.eslint/overrides.eslintrc.json'),
 ];
