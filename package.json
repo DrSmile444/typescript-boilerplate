@@ -44,7 +44,7 @@
     "jest": "^30.0.5",
     "prettier": "^3.6.2",
     "ts-jest": "^29.4.0",
-    "tsup": "^8.4.0",
+    "tsup": "^8.5.0",
     "type-fest": "^4.41.0",
     "typed-dotenv": "^10.0.2",
     "typescript-eslint": "^8.38.0"
