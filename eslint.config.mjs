@@ -4,16 +4,17 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 import customStyleEslint from './.eslint/custom-style.eslint.mjs';
+import { compat } from './.eslint/eslint-compat.config.mjs';
 import eslintRulesEslint from './.eslint/eslint-rules.eslint.mjs';
 import jestEslint from './.eslint/jest.eslint.mjs';
 import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
+import nodeEslint from './.eslint/node.eslint.mjs';
 import orderedImportsEslint from './.eslint/ordered-imports.eslint.mjs';
 import perfectionistEslint from './.eslint/perfectionist.eslint.mjs';
 import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
 import securityEslint from './.eslint/security.eslint.mjs';
 import sonarEslint from './.eslint/sonar.eslint.mjs';
 import unicornEslint from './.eslint/unicorn.eslint.mjs';
-import { compat } from './eslint-compat.config.mjs';
 
 export default [
   {
@@ -26,10 +27,11 @@ export default [
   ...tseslint.configs.stylistic,
   ...tseslint.configs.strict,
   ...compat.extends(
-    './.eslint/node.eslintrc.json',
+    // './.eslint/node.eslintrc.json',
     './.eslint/typescript.eslintrc.json',
     // './.eslint/typescript-naming-convention.eslint.mjs',
   ),
+  ...nodeEslint,
   ...eslintRulesEslint,
   ...sonarEslint,
   eslintPluginPrettierRecommended,

@@ -20,7 +20,5 @@
     "resolveJsonModule": true,
     "esModuleInterop": true
   },
-  "include": [
-    ".eslint",
-  ]
+  "include": [".eslint", "src"]
 }
