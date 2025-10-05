@@ -10,6 +10,7 @@ import jestEslint from './.eslint/jest.eslint.mjs';
 import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
 import nodeEslint from './.eslint/node.eslint.mjs';
 import orderedImportsEslint from './.eslint/ordered-imports.eslint.mjs';
+import overridesEslint from './.eslint/overrides.eslint.mjs';
 import perfectionistEslint from './.eslint/perfectionist.eslint.mjs';
 import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
 import securityEslint from './.eslint/security.eslint.mjs';
@@ -41,7 +42,7 @@ export default [
   ...perfectionistEslint,
   ...unicornEslint,
   ...projectStructureEslint,
-  ...compat.extends('./.eslint/overrides.eslintrc.json'),
+  ...overridesEslint,
   ...jestEslint,
   ...customStyleEslint,
 ];

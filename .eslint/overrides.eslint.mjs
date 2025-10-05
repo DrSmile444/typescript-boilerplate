@@ -1,0 +1,27 @@
+export default [
+  {
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/consistent-type-definitions': 'error',
+      'import/prefer-default-export': 'off',
+
+      // prefer the TS-specific version of these:
+      'no-useless-constructor': 'off',
+      '@typescript-eslint/no-useless-constructor': 'error',
+
+      'no-shadow': 'off',
+      '@typescript-eslint/no-shadow': 'error',
+
+      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/switch-exhaustiveness-check': 'error',
+    },
+  },
+  // Test-file override
+  {
+    files: ['**/*.test.ts', '**/*.spec.ts'],
+    rules: {
+      '@typescript-eslint/unbound-method': 'off',
+    },
+  },
+];
