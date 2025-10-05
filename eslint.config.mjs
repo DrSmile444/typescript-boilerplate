@@ -3,6 +3,7 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+import customStyleEslint from './.eslint/custom-style.eslint.mjs';
 import jestEslint from './.eslint/jest.eslint.mjs';
 import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
 import orderedImportsEslint from './.eslint/ordered-imports.eslint.mjs';
@@ -25,7 +26,6 @@ export default [
   ...tseslint.configs.strict,
   ...compat.extends(
     './.eslint/node.eslintrc.json',
-    './.eslint/custom-style.eslintrc.json5',
     './.eslint/typescript.eslintrc.json',
     // './.eslint/typescript-naming-convention.eslint.mjs',
     './.eslint/eslint-rules.eslintrc.json',
@@ -40,4 +40,5 @@ export default [
   ...projectStructureEslint,
   ...compat.extends('./.eslint/overrides.eslintrc.json'),
   ...jestEslint,
+  ...customStyleEslint,
 ];
