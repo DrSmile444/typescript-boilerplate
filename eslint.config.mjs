@@ -4,6 +4,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 import customStyleEslint from './.eslint/custom-style.eslint.mjs';
+import eslintRulesEslint from './.eslint/eslint-rules.eslint.mjs';
 import jestEslint from './.eslint/jest.eslint.mjs';
 import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
 import orderedImportsEslint from './.eslint/ordered-imports.eslint.mjs';
@@ -28,8 +29,8 @@ export default [
     './.eslint/node.eslintrc.json',
     './.eslint/typescript.eslintrc.json',
     // './.eslint/typescript-naming-convention.eslint.mjs',
-    './.eslint/eslint-rules.eslintrc.json',
   ),
+  ...eslintRulesEslint,
   ...sonarEslint,
   eslintPluginPrettierRecommended,
   ...orderedImportsEslint,
