@@ -3,7 +3,7 @@
  * @description Best practices for naming in JS / TS
  * @version 1.1
  * */
-module.exports = {
+export default {
   overrides: [
     {
       files: ['*.ts', '*.tsx'],
