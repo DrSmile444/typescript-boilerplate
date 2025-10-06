@@ -16,7 +16,11 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "dependencies": {
+    "typed-dotenv": "^10.0.2"
+  },
   "devDependencies": {
+    "@eslint/compat": "^1.4.0",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.31.0",
     "@stylistic/eslint-plugin": "^5.2.2",
@@ -24,14 +28,14 @@
     "@types/node": "^22.8.1",
     "cross-env": "^7.0.3",
     "deepmerge": "^4.3.1",
-    "eslint": "^9.31.0",
+    "eslint": "^9.37.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jest": "^29.0.1",
     "eslint-plugin-no-secrets": "^2.2.1",
     "eslint-plugin-perfectionist": "^4.15.0",
-    "eslint-plugin-prettier": "^5.5.3",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-project-structure": "^3.13.3",
     "eslint-plugin-security": "^3.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
@@ -42,8 +46,7 @@
     "prettier": "^3.6.2",
     "ts-jest": "^29.4.0",
     "type-fest": "^4.41.0",
-    "typed-dotenv": "^10.0.2",
-    "typescript-eslint": "^8.38.0"
+    "typescript-eslint": "^8.45.0"
   },
   "overrides": {
     "eslint-config-airbnb-base": {

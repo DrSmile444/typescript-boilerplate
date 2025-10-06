@@ -5,6 +5,7 @@
     "target": "esnext",
     "baseUrl": "./src",
     "strict": true,
+    "allowJs": true,
     "paths": {
       "@config/*": ["config/*"],
       "@decorators/*": ["decorators/*"],
