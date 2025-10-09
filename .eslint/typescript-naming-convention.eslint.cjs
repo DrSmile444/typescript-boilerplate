@@ -2,8 +2,9 @@
  * @author Dmytro Vakulenko
  * @description Best practices for naming in JS / TS
  * @version 1.1
+ * @legacy This is a legacy config and must be used through Eslint compat.
  * */
-export default {
+module.exports = {
   overrides: [
     {
       files: ['*.ts', '*.tsx'],

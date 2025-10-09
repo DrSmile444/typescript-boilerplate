@@ -44,7 +44,7 @@ export default [
   ...compat.extends(
     // './.eslint/node.eslintrc.json',
     './.eslint/typescript.eslintrc.json',
-    // './.eslint/typescript-naming-convention.eslint.mjs',
+    './.eslint/typescript-naming-convention.eslint.cjs',
   ),
   ...nodeEslint,
   ...eslintRulesEslint,
