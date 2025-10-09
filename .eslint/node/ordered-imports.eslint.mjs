@@ -2,12 +2,20 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 import tsconfigPaths from '../../tsconfig.json' with { type: 'json' };
 
-const tsconfigPathsGroups = Object.keys(tsconfigPaths.compilerOptions.paths).map((key) => {
-  const clearKey = key.replace('/*', '');
-  return [`^${clearKey}(/.*|$)?`];
-});
-
-console.info('Resolved tsconfig paths groups for ordered-imports:', tsconfigPathsGroups);
+let tsconfigPathsGroups = [];
+if (
+  tsconfigPaths?.compilerOptions?.paths &&
+  typeof tsconfigPaths.compilerOptions.paths === 'object' &&
+  Object.keys(tsconfigPaths.compilerOptions.paths).length > 0
+) {
+  tsconfigPathsGroups = Object.keys(tsconfigPaths.compilerOptions.paths).map((key) => {
+    const clearKey = key.replace('/*', '');
+    return [`^${clearKey}(/.*|$)?`];
+  });
+  console.info('Resolved tsconfig paths groups for ordered-imports:', tsconfigPathsGroups);
+} else {
+  console.info('No tsconfig paths found for ordered-imports. Internal package import groups will not be generated.');
+}
 
 /**
  * @description ESLint config for enforcing dynamically resolved ordered imports in Node projects using eslint-plugin-simple-import-sort. Automatically generates import groups from tsconfig.json path aliases for internal packages, ensuring import order matches project structure and alias configuration. This helps maintain consistent and logical import organization, especially in monorepos or projects with custom path aliases.
