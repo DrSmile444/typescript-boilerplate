@@ -20,7 +20,11 @@ export const folderStructureConfig = createFolderStructure({
     // .eslint folder for ESLint configurations
     {
       name: '.eslint',
-      children: [{ name: getFolderConfig({ type: 'eslint' }) }, { name: '{kebab-case}.eslintrc.(json|js|json5)' }],
+      children: [
+        { name: getFolderConfig({ type: 'eslint' }) },
+        { name: '{kebab-case}.eslintrc.(json|js|json5)' },
+        { name: '*', children: [] }, // Allow any folders inside .eslint
+      ],
     },
 
     // Source code folder
