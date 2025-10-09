@@ -30,6 +30,11 @@ const sortGroup = {
   groups: ['index', 'path', 'element', 'key', 'className', 'classNames', 'title', 'message', 'description'],
 };
 
+/**
+ * @description ESLint config for enforcing code sorting and organization using eslint-plugin-perfectionist. Applies recommended sorting rules for classes, imports, objects, etc.
+ * @author Dmytro Vakulenko
+ * @see https://github.com/azat-io/eslint-plugin-perfectionist
+ */
 export default [
   {
     name: 'perfectionist',

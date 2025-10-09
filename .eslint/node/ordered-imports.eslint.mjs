@@ -1,7 +1,11 @@
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
-// @description React Ordered imports
-// @install npm i eslint-plugin-simple-import-sort --save-dev
+/**
+ * @description ESLint config for enforcing ordered imports in Node projects using eslint-plugin-simple-import-sort.
+ * @author Dmytro Vakulenko
+ * @install npm i eslint-plugin-simple-import-sort --save-dev
+ * @see https://github.com/lydell/eslint-plugin-simple-import-sort
+ */
 export default [
   {
     name: 'ordered-imports',

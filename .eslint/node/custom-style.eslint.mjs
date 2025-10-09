@@ -1,7 +1,8 @@
 /**
+ * @description ESLint config for enforcing best practices for code style in JS/TS projects. Applies rules for quotes, spacing, semicolons, and more for consistent code formatting.
  * @author Dmytro Vakulenko
- * @description Best practices for code style in JS / TS
  * @version 1.1
+ * @see https://eslint.org/docs/latest/rules/
  * */
 export default [
   {

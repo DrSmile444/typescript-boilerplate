@@ -5,6 +5,11 @@ import tseslint from 'typescript-eslint';
 
 import { folderStructureConfig } from './project-structure-config.eslint.mjs';
 
+/**
+ * @description ESLint config for enforcing folder structure and recommended rules for project files using eslint-plugin-project-structure and typescript-eslint.
+ * @author Dmytro Vakulenko
+ * @see https://github.com/azat-io/eslint-plugin-project-structure
+ */
 export default tseslint.config(
   {
     name: 'project-structure-main',

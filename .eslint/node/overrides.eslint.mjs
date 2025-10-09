@@ -1,3 +1,7 @@
+/**
+ * @description ESLint config for TypeScript and test file overrides. Enforces TS-specific rules and disables conflicting JS rules.
+ * @author Dmytro Vakulenko
+ */
 export default [
   {
     name: 'overrides-ts',

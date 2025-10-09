@@ -1,7 +1,10 @@
 import noSecrets from 'eslint-plugin-no-secrets';
 
-// eslint-plugin-no-secrets
-// An eslint rule that searches for potential secrets/keys in code and JSON files.
+/**
+ * @description ESLint config for detecting secrets and sensitive keys in code and JSON files using eslint-plugin-no-secrets.
+ * @author Dmytro Vakulenko
+ * @see https://github.com/nickdeis/eslint-plugin-no-secrets
+ */
 export default [
   {
     name: 'no-secrets',
