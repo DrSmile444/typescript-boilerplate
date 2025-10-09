@@ -1,5 +1,6 @@
 import path from 'node:path';
 
+import { includeIgnoreFile } from '@eslint/compat';
 import pluginJs from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
@@ -19,7 +20,18 @@ import sonarEslint from './node/sonar.eslint.mjs';
 import unicornEslint from './node/unicorn.eslint.mjs';
 import { __dirname, compat } from './eslint-compat.config.mjs';
 
+const gitignorePath = path.resolve('.', '.gitignore');
+
+console.info('Using .gitignore file at:', gitignorePath);
+
 export default [
+  // Ignore node_modules folder in eslint
+  {
+    name: 'ignore node_modules',
+    ignores: ['node_modules'],
+  },
+  // Ignore .gitignore files/folder in eslint
+  includeIgnoreFile(gitignorePath),
   // Core Javascript rules
   pluginJs.configs.recommended,
   // TypeScript recommended rules
