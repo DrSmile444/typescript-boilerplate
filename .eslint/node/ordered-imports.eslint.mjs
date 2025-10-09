@@ -4,6 +4,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 // @install npm i eslint-plugin-simple-import-sort --save-dev
 export default [
   {
+    name: 'ordered-imports',
     plugins: {
       'simple-import-sort': simpleImportSort,
     },

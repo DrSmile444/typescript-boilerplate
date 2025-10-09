@@ -5,6 +5,7 @@
  * */
 export default [
   {
+    name: 'custom-style',
     rules: {
       'import/extensions': 'off',
       'class-methods-use-this': 'off',

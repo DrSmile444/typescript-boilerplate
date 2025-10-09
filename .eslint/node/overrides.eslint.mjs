@@ -1,5 +1,6 @@
 export default [
   {
+    name: 'overrides-ts',
     files: ['**/*.{ts,tsx}'],
     rules: {
       '@typescript-eslint/consistent-type-definitions': 'error',
@@ -20,6 +21,7 @@ export default [
   },
   // Test-file override
   {
+    name: 'overrides-test',
     files: ['**/*.test.ts', '**/*.spec.ts'],
     rules: {
       '@typescript-eslint/unbound-method': 'off',

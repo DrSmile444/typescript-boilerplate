@@ -31,8 +31,9 @@ const sortGroup = {
 };
 
 export default [
-  perfectionist.configs['recommended-natural'],
   {
+    name: 'perfectionist',
+    ...perfectionist.configs['recommended-natural'],
     rules: {
       'perfectionist/sort-classes': 'off',
       'perfectionist/sort-named-imports': 'off',

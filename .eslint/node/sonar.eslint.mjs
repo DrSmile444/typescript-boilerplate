@@ -10,8 +10,12 @@ import sonarjs from 'eslint-plugin-sonarjs';
 // Additionally, it enhances code security by providing rules to report
 // potential security vulnerabilities.
 export default [
-  sonarjs.configs.recommended,
   {
+    name: 'sonar-recommended',
+    ...sonarjs.configs.recommended,
+  },
+  {
+    name: 'sonar-custom',
     rules: {
       'sonarjs/function-return-type': 'warn',
       'sonarjs/no-commented-code': 'warn',

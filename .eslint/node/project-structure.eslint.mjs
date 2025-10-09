@@ -7,6 +7,7 @@ import { folderStructureConfig } from './project-structure-config.eslint.mjs';
 
 export default tseslint.config(
   {
+    name: 'project-structure-main',
     ignores: ['projectStructure.cache.json'],
   },
   /**
@@ -15,6 +16,7 @@ export default tseslint.config(
    *  If you don't care about validating other file extensions, you can remove this section.
    */
   {
+    name: 'project-structure-parser',
     files: [
       // You can expand the list with the file extensions you use.
       '**/*.css',

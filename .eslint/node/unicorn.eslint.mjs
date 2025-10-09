@@ -3,6 +3,7 @@ import globals from 'globals';
 
 export default [
   {
+    name: 'unicorn',
     languageOptions: {
       globals: globals.builtin,
     },
