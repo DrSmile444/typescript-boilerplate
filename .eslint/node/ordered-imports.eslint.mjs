@@ -1,5 +1,14 @@
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
+import tsconfigPaths from '../../tsconfig.json' with { type: 'json' };
+
+const tsconfigPathsGroups = Object.keys(tsconfigPaths.compilerOptions.paths).map((key) => {
+  const clearKey = key.replace('/*', '');
+  return [`^${clearKey}(/.*|$)?`];
+});
+
+console.info('Resolved tsconfig paths groups for ordered-imports:', tsconfigPathsGroups);
+
 /**
  * @description ESLint config for enforcing ordered imports in Node projects using eslint-plugin-simple-import-sort.
  * @author Dmytro Vakulenko
@@ -25,15 +34,7 @@ export default [
             // All other npm packages.
             ['^@?\\w'],
             // Internal packages (split by alias).
-            ['^@config(/.*|$)?'],
-            ['^@decorators(/.*|$)?'],
-            ['^@fixtures(/.*|$)?'],
-            ['^@interfaces(/.*|$)?'],
-            ['^@models(/.*|$)?'],
-            ['^@pages(/.*|$)?'],
-            ['^@test-data(/.*|$)?'],
-            ['^@tests(/.*|$)?'],
-            ['^@utils(/.*|$)?'],
+            ...tsconfigPathsGroups,
             // Side effect imports.
             ['^\\u0000'],
             // Parent imports. Put `..` last.
