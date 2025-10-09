@@ -7,6 +7,7 @@ import tseslint from 'typescript-eslint';
 import customStyleEslint from './node/custom-style.eslint.mjs';
 import eslintRulesEslint from './node/eslint-rules.eslint.mjs';
 import jestEslint from './node/jest.eslint.mjs';
+import nConfig from './node/n.eslint.mjs';
 import noSecretsEslint from './node/no-secrets.eslint.mjs';
 import nodeEslint from './node/node.eslint.mjs';
 import orderedImportsEslint from './node/ordered-imports.eslint.mjs';
@@ -30,6 +31,7 @@ export default [
     path.join(__dirname, './node/typescript.eslintrc.json'),
     path.join(__dirname, './node/typescript-naming-convention.eslint.cjs'),
   ),
+  ...nConfig,
   ...eslintRulesEslint,
   ...sonarEslint,
   eslintPluginPrettierRecommended,
