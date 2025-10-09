@@ -20,28 +20,45 @@ import unicornEslint from './node/unicorn.eslint.mjs';
 import { __dirname, compat } from './eslint-compat.config.mjs';
 
 export default [
-  // Javascript Config
+  // Core Javascript rules
   pluginJs.configs.recommended,
-  // TypeScript Config
+  // TypeScript recommended rules
   ...tseslint.configs.recommended,
+  // TypeScript stylistic rules
   ...tseslint.configs.stylistic,
+  // TypeScript strict rules
   ...tseslint.configs.strict,
+  // Airbnb base style for Node.js
   ...nodeEslint,
+  // Compatibility helpers for extending configs
   ...compat.extends(
     path.join(__dirname, './node/typescript.eslintrc.json'),
     path.join(__dirname, './node/typescript-naming-convention.eslint.cjs'),
   ),
+  // Node.js best practices (eslint-plugin-n)
   ...nConfig,
+  // Rules for ESLint config files
   ...eslintRulesEslint,
+  // SonarJS code quality and security
   ...sonarEslint,
+  // Prettier integration for formatting
   eslintPluginPrettierRecommended,
+  // Dynamic ordered imports
   ...orderedImportsEslint,
+  // Secret detection rules
   ...noSecretsEslint,
+  // Node.js security rules
   ...securityEslint,
+  // Code sorting and organization
   ...perfectionistEslint,
+  // Unicorn plugin for best practices
   ...unicornEslint,
+  // Project folder/file structure rules
   ...projectStructureEslint,
+  // TypeScript and test file overrides
   ...overridesEslint,
+  // Jest testing rules
   ...jestEslint,
+  // Custom style rules for JS/TS
   ...customStyleEslint,
 ];
