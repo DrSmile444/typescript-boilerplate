@@ -22,6 +22,7 @@ export default [
       'unicorn/prevent-abbreviations': [
         'error',
         {
+          checkFilenames: false,
           allowList: {
             e2e: true,
             'e2e-spec': true,
