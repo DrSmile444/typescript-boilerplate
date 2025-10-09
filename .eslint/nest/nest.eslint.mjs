@@ -1,5 +1,10 @@
 import eslintNestJs from '@darraghor/eslint-plugin-nestjs-typed';
 
+/**
+ * @description ESLint config for enforcing best practices and recommended rules for NestJS projects using @darraghor/eslint-plugin-nestjs-typed. Applies recommended NestJS rules and disables specific rules for flexibility in project structure and dependency management.
+ * @author Dmytro Vakulenko
+ * @see https://github.com/darraghoriordan/eslint-plugin-nestjs-typed
+ */
 export default [
   ...eslintNestJs.configs.flatRecommended,
   {
