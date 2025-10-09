@@ -4,6 +4,7 @@ export default [
     rules: {
       '@typescript-eslint/consistent-type-definitions': 'error',
       'import/prefer-default-export': 'off',
+      'import/no-unresolved': 'off', // for path aliases
 
       // prefer the TS-specific version of these:
       'no-useless-constructor': 'off',

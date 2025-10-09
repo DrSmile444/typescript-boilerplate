@@ -1,24 +1,8 @@
 import path from 'node:path';
 
 import { includeIgnoreFile } from '@eslint/compat';
-import pluginJs from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
 
-import customStyleEslint from './.eslint/custom-style.eslint.mjs';
-import { compat } from './.eslint/eslint-compat.config.mjs';
-import eslintRulesEslint from './.eslint/eslint-rules.eslint.mjs';
-import jestEslint from './.eslint/jest.eslint.mjs';
-import noSecretsEslint from './.eslint/no-secrets.eslint.mjs';
-import nodeEslint from './.eslint/node.eslint.mjs';
-import orderedImportsEslint from './.eslint/ordered-imports.eslint.mjs';
-import overridesEslint from './.eslint/overrides.eslint.mjs';
-import perfectionistEslint from './.eslint/perfectionist.eslint.mjs';
-import projectStructureEslint from './.eslint/project-structure.eslint.mjs';
-import securityEslint from './.eslint/security.eslint.mjs';
-import sonarEslint from './.eslint/sonar.eslint.mjs';
-import unicornEslint from './.eslint/unicorn.eslint.mjs';
+import nodeConfigs from './.eslint/node.eslint.mjs';
 
 const gitignorePath = path.resolve('.', '.gitignore');
 
@@ -33,30 +17,6 @@ export default [
   includeIgnoreFile(gitignorePath),
   // Apply this config to js and ts files only
   { files: ['**/*.{js,mjs,cjs,ts}'] },
-  // Define environment globals
-  { languageOptions: { globals: globals.node } },
-  // Javascript Config
-  pluginJs.configs.recommended,
-  // TypeScript Config
-  ...tseslint.configs.recommended,
-  ...tseslint.configs.stylistic,
-  ...tseslint.configs.strict,
-  ...compat.extends(
-    // './.eslint/node.eslintrc.json',
-    './.eslint/typescript.eslintrc.json',
-    './.eslint/typescript-naming-convention.eslint.cjs',
-  ),
-  ...nodeEslint,
-  ...eslintRulesEslint,
-  ...sonarEslint,
-  eslintPluginPrettierRecommended,
-  ...orderedImportsEslint,
-  ...noSecretsEslint,
-  ...securityEslint,
-  ...perfectionistEslint,
-  ...unicornEslint,
-  ...projectStructureEslint,
-  ...overridesEslint,
-  ...jestEslint,
-  ...customStyleEslint,
+  // Node config
+  ...nodeConfigs,
 ];
