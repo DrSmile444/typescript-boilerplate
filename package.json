@@ -20,6 +20,7 @@
     "typed-dotenv": "^10.0.2"
   },
   "devDependencies": {
+    "@darraghor/eslint-plugin-nestjs-typed": "^6.9.1",
     "@eslint/compat": "^1.4.0",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.37.0",
