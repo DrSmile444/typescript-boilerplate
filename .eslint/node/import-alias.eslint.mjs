@@ -5,23 +5,21 @@ import tsconfigPaths from '../../tsconfig.json' with { type: 'json' };
 const baseUrl = tsconfigPaths.compilerOptions?.baseUrl || '';
 
 const aliases = Object.fromEntries(
-  Object.entries(tsconfigPaths.compilerOptions?.paths || {}).map(
-    ([key, valueArray]) => {
-      // Remove trailing /* from alias key
-      const aliasKey = key.replace('/*', '');
-      // Remove trailing /* from path value
-      let aliasValue = valueArray[0].replace('/*', '');
-      // Prepend baseUrl unless value is already absolute or relative
-      if (!aliasValue.startsWith('.') && !aliasValue.startsWith('/')) {
-        aliasValue = `${baseUrl.replace(/\/$/, '')}/${aliasValue}`;
-        // Ensure ./ prefix for ESLint
-        if (!aliasValue.startsWith('./') && !aliasValue.startsWith('/')) {
-          aliasValue = `./${aliasValue}`;
-        }
+  Object.entries(tsconfigPaths.compilerOptions?.paths || {}).map(([key, valueArray]) => {
+    // Remove trailing /* from alias key
+    const aliasKey = key.replace('/*', '');
+    // Remove trailing /* from path value
+    let aliasValue = valueArray[0].replace('/*', '');
+    // Prepend baseUrl unless value is already absolute or relative
+    if (!aliasValue.startsWith('.') && !aliasValue.startsWith('/')) {
+      aliasValue = `${baseUrl.replace(/\/$/, '')}/${aliasValue}`;
+      // Ensure ./ prefix for ESLint
+      if (!aliasValue.startsWith('./') && !aliasValue.startsWith('/')) {
+        aliasValue = `./${aliasValue}`;
       }
-      return [aliasKey, aliasValue];
-    },
-  ),
+    }
+    return [aliasKey, aliasValue];
+  }),
 );
 
 console.info('Resolved import aliases from tsconfig paths:', aliases);

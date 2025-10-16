@@ -5,10 +5,7 @@ import { createFolderStructure } from 'eslint-plugin-project-structure';
 export const getFolderConfig = ({ type }) => `{kebab-case}.${type}.(ts|js|mjs)`;
 
 export const getGenericFolder = ({ type }) => ({
-  children: [
-    { name: getFolderConfig({ type }) },
-    { name: '{kebab-case}', children: [{ name: '*', ruleId: `${type}Rule` }] },
-  ],
+  children: [{ name: getFolderConfig({ type }) }, { name: '{kebab-case}', children: [{ name: '*', ruleId: `${type}Rule` }] }],
 });
 
 // Main folder structure configuration
@@ -94,10 +91,7 @@ export const folderStructureConfig = createFolderStructure({
     configRule: getGenericFolder({ type: 'config' }),
     decoratorsRule: getGenericFolder({ type: 'decorator' }),
     interfaceRule: {
-      children: [
-        { name: 'index.ts' },
-        ...getGenericFolder({ type: 'interface' }).children,
-      ],
+      children: [{ name: 'index.ts' }, ...getGenericFolder({ type: 'interface' }).children],
     },
     specFoldersRule: {
       name: '{kebab-case}',
