@@ -1,11 +1,31 @@
 // @ts-check
 import { createFolderStructure } from 'eslint-plugin-project-structure';
 
-// Helper function for defining file naming conventions by type
+/**
+ * Helper function for defining file naming conventions by type
+ * @param {{ type: string }} param - Object containing the type of file
+ * @returns {string} - Folder config pattern string
+ */
 export const getFolderConfig = ({ type }) => `{kebab-case}.${type}.(ts|js|mjs)`;
 
+/**
+ * Returns a generic folder config for a given type
+ * @param {{ type: string }} param - Object containing the type of file
+ * @returns {object} - Generic folder config
+ */
 export const getGenericFolder = ({ type }) => ({
-  children: [{ name: getFolderConfig({ type }) }, { name: '{kebab-case}', children: [{ name: '*', ruleId: `${type}Rule` }] }],
+  children: [
+    { name: getFolderConfig({ type }) },
+    {
+      name: '{kebab-case}',
+      children: [
+        {
+          name: '*',
+          ruleId: `${type}Rule`,
+        },
+      ],
+    },
+  ],
 });
 
 // Main folder structure configuration
