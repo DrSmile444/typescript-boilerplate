@@ -9,7 +9,7 @@
     "lint:debug": "npm run lint -- --debug",
     "format:md": "npx prettier --write ./README.md",
     "typecheck": "npx tsc --noEmit",
-    "test": "npx jest",
+    "test": "npx vitest",
     "format": "npx prettier . --write"
   },
   "keywords": [],
@@ -50,7 +50,8 @@
     "prettier": "^3.6.2",
     "ts-jest": "^29.4.5",
     "type-fest": "^5.1.0",
-    "typescript-eslint": "^8.46.1"
+    "typescript-eslint": "^8.46.1",
+    "vitest": "^3.2.4"
   },
   "overrides": {
     "eslint-config-airbnb-base": {

@@ -14,6 +14,8 @@ export default [
     },
     rules: {
       ...vitest.configs.all.rules,
+      'import/no-extraneous-dependencies': 'off',
+      'vitest/consistent-test-filename': ['error', { pattern: '\\.spec\\.(js|ts|jsx|tsx)$' }],
       'vitest/max-nested-describe': ['error', { max: 3 }],
     },
   },
