@@ -1,1 +1,5 @@
-console.info('Hello world');
+export function showHello() {
+  return 'Hello world';
+}
+
+console.info(showHello());
