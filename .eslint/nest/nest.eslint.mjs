@@ -15,4 +15,10 @@ export default [
       'import/no-extraneous-dependencies': 'off',
     },
   },
+  {
+    files: ['**/*.module.*'],
+    rules: {
+      '@typescript-eslint/no-extraneous-class': 'off',
+    },
+  },
 ];
