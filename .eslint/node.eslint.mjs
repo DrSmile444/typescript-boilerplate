@@ -17,6 +17,7 @@ import perfectionistEslint from './node/perfectionist.eslint.mjs';
 import projectStructureEslint from './node/project-structure.eslint.mjs';
 import securityEslint from './node/security.eslint.mjs';
 import sonarEslint from './node/sonar.eslint.mjs';
+import typescriptProjectEslint from './node/typescript-project.eslint.mjs';
 import unicornEslint from './node/unicorn.eslint.mjs';
 import vitestEslint from './node/vitest.eslint.mjs';
 import { __dirname, compat } from './eslint-compat.config.mjs';
@@ -36,11 +37,23 @@ export default [
   // Core Javascript rules
   pluginJs.configs.recommended,
   // TypeScript recommended rules
-  ...tseslint.configs.recommended,
+  {
+    name: '@typescript-eslint/recommended (type-checked)',
+    files: ['**/*.ts', '**/*.tsx'],
+    ...tseslint.configs.recommendedTypeChecked[0],
+  },
   // TypeScript stylistic rules
-  ...tseslint.configs.stylistic,
+  {
+    name: '@typescript-eslint/stylistic (type-checked)',
+    files: ['**/*.ts', '**/*.tsx'],
+    ...tseslint.configs.stylisticTypeChecked[0],
+  },
   // TypeScript strict rules
-  ...tseslint.configs.strict,
+  {
+    name: '@typescript-eslint/strict (type-checked)',
+    files: ['**/*.ts', '**/*.tsx'],
+    ...tseslint.configs.strictTypeChecked[0],
+  },
   // Airbnb base style for Node.js
   ...nodeEslint,
   // Compatibility helpers for extending configs
@@ -76,4 +89,6 @@ export default [
   ...overridesEslint,
   // Custom style rules for JS/TS
   ...customStyleEslint,
+  // TypeScript ESLint rules for project (with parserOptions.project)
+  ...typescriptProjectEslint,
 ];
