@@ -18,7 +18,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "uuid": "^11.1.0",
+    "uuid": "^13.0.0",
     "typed-dotenv": "^10.0.2"
   },
   "devDependencies": {
