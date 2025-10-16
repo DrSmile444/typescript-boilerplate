@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access */
+/* eslint-disable import/no-extraneous-dependencies */
 import swc from 'unplugin-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
