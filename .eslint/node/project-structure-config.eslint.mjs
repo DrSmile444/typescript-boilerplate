@@ -111,6 +111,7 @@ export const folderStructureConfig = createFolderStructure({
     configRule: getGenericFolder({ type: 'config' }),
     decoratorsRule: getGenericFolder({ type: 'decorator' }),
     interfaceRule: {
+      // @ts-ignore
       children: [{ name: 'index.ts' }, ...getGenericFolder({ type: 'interface' }).children],
     },
     specFoldersRule: {
