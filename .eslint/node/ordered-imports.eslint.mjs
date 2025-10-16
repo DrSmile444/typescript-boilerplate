@@ -12,7 +12,7 @@ if (
     const clearKey = key.replace('/*', '');
     return [`^${clearKey}(/.*|$)?`];
   });
-  console.info('Resolved tsconfig paths groups for ordered-imports:', tsconfigPathsGroups);
+  console.info('Resolved tsconfig paths groups for ordered-imports:', Object.keys(tsconfigPathsGroups).length);
 } else {
   console.info('No tsconfig paths found for ordered-imports. Internal package import groups will not be generated.');
 }

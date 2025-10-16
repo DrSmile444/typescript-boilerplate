@@ -22,7 +22,7 @@ const aliases = Object.fromEntries(
   }),
 );
 
-console.info('Resolved import aliases from tsconfig paths:', aliases);
+console.info('Resolved import aliases from tsconfig paths:', Object.keys(aliases).length);
 
 /**
  * @description ESLint config for import alias linting using @dword-design/eslint-plugin-import-alias. Aliases are built dynamically from tsconfig.json using baseUrl.
