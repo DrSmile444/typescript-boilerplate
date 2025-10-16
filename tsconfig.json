@@ -5,6 +5,7 @@
     "target": "esnext",
     "baseUrl": "./src",
     "strict": true,
+    "allowJs": true,
     "paths": {
       "@config/*": ["config/*"],
       "@decorators/*": ["decorators/*"],
@@ -19,5 +20,6 @@
     },
     "resolveJsonModule": true,
     "esModuleInterop": true
-  }
+  },
+  "include": [".eslint", "src", "tests", "vitest.config.ts"]
 }

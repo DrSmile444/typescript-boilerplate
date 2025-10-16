@@ -30,10 +30,18 @@ const sortGroup = {
   groups: ['index', 'path', 'element', 'key', 'className', 'classNames', 'title', 'message', 'description'],
 };
 
+/**
+ * @description ESLint config for enforcing code sorting and organization using eslint-plugin-perfectionist. Applies recommended sorting rules for classes, imports, objects, etc.
+ * @author Dmytro Vakulenko
+ * @see https://github.com/azat-io/eslint-plugin-perfectionist
+ */
 export default [
-  perfectionist.configs['recommended-natural'],
   {
+    name: 'perfectionist',
+    ...perfectionist.configs['recommended-natural'],
     rules: {
+      'perfectionist/sort-classes': 'off',
+      'perfectionist/sort-named-imports': 'off',
       'perfectionist/sort-imports': 'off',
       'perfectionist/sort-interfaces': 'off',
       'perfectionist/sort-jsx-props': [
@@ -44,15 +52,7 @@ export default [
         },
       ],
       'perfectionist/sort-modules': 'off',
-      'perfectionist/sort-objects': [
-        'error',
-        sortGroup,
-        {
-          newlinesBetween: 'always',
-          partitionByComment: true,
-          type: 'natural',
-        },
-      ],
+      'perfectionist/sort-objects': 'off',
       'perfectionist/sort-union-types': [
         'error',
         {

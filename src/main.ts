@@ -1,3 +1,7 @@
 import { a } from './util';
 
-console.info('Hello world', a);
+export function showHello() {
+  return `Hello world ${a}`;
+}
+
+console.info(showHello());

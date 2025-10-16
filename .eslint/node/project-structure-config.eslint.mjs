@@ -1,12 +1,31 @@
-/* eslint-disable perfectionist/sort-objects */
 // @ts-check
 import { createFolderStructure } from 'eslint-plugin-project-structure';
 
-// Helper function for defining file naming conventions by type
+/**
+ * Helper function for defining file naming conventions by type
+ * @param {{ type: string }} param - Object containing the type of file
+ * @returns {string} - Folder config pattern string
+ */
 export const getFolderConfig = ({ type }) => `{kebab-case}.${type}.(ts|js|mjs)`;
 
+/**
+ * Returns a generic folder config for a given type
+ * @param {{ type: string }} param - Object containing the type of file
+ * @returns {object} - Generic folder config
+ */
 export const getGenericFolder = ({ type }) => ({
-  children: [{ name: getFolderConfig({ type }) }, { name: '{kebab-case}', children: [{ name: '*', ruleId: `${type}Rule` }] }],
+  children: [
+    { name: getFolderConfig({ type }) },
+    {
+      name: '{kebab-case}',
+      children: [
+        {
+          name: '*',
+          ruleId: `${type}Rule`,
+        },
+      ],
+    },
+  ],
 });
 
 // Main folder structure configuration
@@ -21,7 +40,11 @@ export const folderStructureConfig = createFolderStructure({
     // .eslint folder for ESLint configurations
     {
       name: '.eslint',
-      children: [{ name: getFolderConfig({ type: 'eslint' }) }, { name: '{kebab-case}.eslintrc.(json|js|json5)' }],
+      children: [
+        { name: getFolderConfig({ type: 'eslint' }) },
+        { name: '{kebab-case}.eslintrc.(json|js|json5)' },
+        { name: '*', children: [] }, // Allow any folders inside .eslint
+      ],
     },
 
     // Source code folder
@@ -45,6 +68,12 @@ export const folderStructureConfig = createFolderStructure({
 
         // Any ts fileds in the root of src
         { name: '{kebab-case}.(ts|js)' },
+
+        // Any ts fileds in the root of src with two kebab-case parts, e.g., my-component.service.ts
+        { name: '{kebab-case}.{kebab-case}.(ts|js)' },
+
+        // Any ts fileds in the root of src with two kebab-case for tests parts, e.g., my-component.service.spec.ts
+        { name: '{kebab-case}.{kebab-case}.spec.(ts|js)' },
 
         // Modules
         {
@@ -82,6 +111,7 @@ export const folderStructureConfig = createFolderStructure({
     configRule: getGenericFolder({ type: 'config' }),
     decoratorsRule: getGenericFolder({ type: 'decorator' }),
     interfaceRule: {
+      // @ts-ignore
       children: [{ name: 'index.ts' }, ...getGenericFolder({ type: 'interface' }).children],
     },
     specFoldersRule: {
