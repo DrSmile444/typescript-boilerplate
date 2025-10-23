@@ -6,6 +6,7 @@ import js from '@eslint/js';
 
 // mimic CommonJS variables -- not needed if using CommonJS
 const __filename = fileURLToPath(import.meta.url);
+
 // We need to go up one level since we are in the .eslint folder
 export const __dirname = path.dirname(path.join(__filename));
 console.info('ESLint Compat Base Directory:', __dirname);

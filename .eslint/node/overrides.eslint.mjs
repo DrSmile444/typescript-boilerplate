@@ -18,10 +18,7 @@ export default [
       'no-shadow': 'off',
       '@typescript-eslint/no-shadow': 'error',
 
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { ignoreRestSiblings: true },
-      ],
+      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
       '@typescript-eslint/consistent-type-imports': [
         'error',
         {

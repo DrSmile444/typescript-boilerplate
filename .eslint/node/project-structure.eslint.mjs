@@ -1,9 +1,6 @@
 // @ts-check
 import eslint from '@eslint/js';
-import {
-  projectStructureParser,
-  projectStructurePlugin,
-} from 'eslint-plugin-project-structure';
+import { projectStructureParser, projectStructurePlugin } from 'eslint-plugin-project-structure';
 import tseslint from 'typescript-eslint';
 
 import { folderStructureConfig } from './project-structure-config.eslint.mjs';

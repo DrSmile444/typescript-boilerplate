@@ -9,14 +9,7 @@ export default [
   // Disallow literal user-facing strings in Nest code
   {
     files: ['**/*.ts'],
-    ignores: [
-      'test/**',
-      'src/**/*.spec.*',
-      'src/**/exceptions/**',
-      '**/migrations/**',
-      'src/config/**',
-      'src/**/__mocks__/**',
-    ],
+    ignores: ['test/**', 'src/**/*.spec.*', 'src/**/exceptions/**', '**/migrations/**', 'src/config/**', 'src/**/__mocks__/**'],
     plugins: { i18next },
     ...i18next.configs['flat/recommended'],
     rules: {

@@ -127,7 +127,7 @@ module.exports = {
           {
             filter: {
               match: true,
-              regex: '^\\w*Component$',
+              regex: String.raw`^\w*Component$`,
             },
             format: ['PascalCase'],
             selector: 'variable',

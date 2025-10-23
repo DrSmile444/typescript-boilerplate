@@ -3,25 +3,21 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import tsconfigPaths from '../../tsconfig.json' with { type: 'json' };
 
 let tsconfigPathsGroups = [];
+
 if (
   tsconfigPaths?.compilerOptions?.paths &&
   typeof tsconfigPaths.compilerOptions.paths === 'object' &&
   Object.keys(tsconfigPaths.compilerOptions.paths).length > 0
 ) {
-  tsconfigPathsGroups = Object.keys(tsconfigPaths.compilerOptions.paths).map(
-    (key) => {
-      const clearKey = key.replace('/*', '');
-      return [`^${clearKey}(/.*|$)?`];
-    },
-  );
-  console.info(
-    'Resolved tsconfig paths groups for ordered-imports:',
-    tsconfigPathsGroups,
-  );
+  tsconfigPathsGroups = Object.keys(tsconfigPaths.compilerOptions.paths).map((key) => {
+    const clearKey = key.replace('/*', '');
+
+    return [`^${clearKey}(/.*|$)?`];
+  });
+
+  console.info('Resolved tsconfig paths groups for ordered-imports:', tsconfigPathsGroups);
 } else {
-  console.info(
-    'No tsconfig paths found for ordered-imports. Internal package import groups will not be generated.',
-  );
+  console.info('No tsconfig paths found for ordered-imports. Internal package import groups will not be generated.');
 }
 
 /**
@@ -47,17 +43,17 @@ export default [
             // Nest
             ['^@?nestjs'],
             // All other npm packages.
-            ['^@?\\w'],
+            [String.raw`^@?\w`],
             // Internal packages (split by alias).
             ...tsconfigPathsGroups,
             // Side effect imports.
-            ['^\\u0000'],
+            [String.raw`^\u0000`],
             // Parent imports. Put `..` last.
-            ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+            [String.raw`^\.\.(?!/?$)`, String.raw`^\.\./?$`],
             // Other relative imports. Put same-folder imports and `.` last.
-            ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+            [String.raw`^\./(?=.*/)(?!/?$)`, String.raw`^\.(?!/?$)`, String.raw`^\./?$`],
             // Style imports.
-            ['^.+\\.?(css)$'],
+            [String.raw`^.+\.?(css)$`],
           ],
         },
       ],
