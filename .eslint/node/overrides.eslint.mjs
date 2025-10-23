@@ -7,7 +7,7 @@ export default [
     name: 'overrides-ts',
     files: ['**/*.{ts,tsx}'],
     rules: {
-      '@typescript-eslint/consistent-type-definitions': 'error',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       'import/prefer-default-export': 'off',
       'import/no-unresolved': 'off', // for path aliases
 
@@ -18,8 +18,18 @@ export default [
       'no-shadow': 'off',
       '@typescript-eslint/no-shadow': 'error',
 
-      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
-      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { ignoreRestSiblings: true },
+      ],
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {
+          prefer: 'type-imports',
+          disallowTypeAnnotations: true,
+          fixStyle: 'separate-type-imports',
+        },
+      ],
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
     },
   },
@@ -27,8 +37,27 @@ export default [
   {
     name: 'overrides-test',
     files: ['**/*.test.ts', '**/*.spec.ts'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        vi: 'readonly',
+      },
+    },
     rules: {
       '@typescript-eslint/unbound-method': 'off',
+    },
+  },
+  // Disable no-extraneous-class for module files (e.g. NestJS *.module.ts)
+  {
+    name: 'overrides-modules',
+    files: ['**/*.module.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-extraneous-class': 'off',
     },
   },
 ];
