@@ -14,18 +14,7 @@ export const getFolderConfig = ({ type }) => `{kebab-case}.${type}.(ts|js|mjs)`;
  * @returns {object} - Generic folder config
  */
 export const getGenericFolder = ({ type }) => ({
-  children: [
-    { name: getFolderConfig({ type }) },
-    {
-      name: '{kebab-case}',
-      children: [
-        {
-          name: '*',
-          ruleId: `${type}Rule`,
-        },
-      ],
-    },
-  ],
+  children: [{ name: getFolderConfig({ type }) }, { name: '{kebab-case}', children: [{ name: '*', ruleId: `${type}Rule` }] }],
 });
 
 // Main folder structure configuration

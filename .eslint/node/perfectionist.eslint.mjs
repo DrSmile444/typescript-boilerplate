@@ -27,7 +27,17 @@ const sortGroup = {
     message: '^message$',
     description: '^description$',
   },
-  groups: ['index', 'path', 'element', 'key', 'className', 'classNames', 'title', 'message', 'description'],
+  groups: [
+    'index',
+    'path',
+    'element',
+    'key',
+    'className',
+    'classNames',
+    'title',
+    'message',
+    'description',
+  ],
 };
 
 /**
