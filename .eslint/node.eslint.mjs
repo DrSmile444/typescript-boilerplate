@@ -17,6 +17,7 @@ import perfectionistEslint from './node/perfectionist.eslint.mjs';
 import projectStructureEslint from './node/project-structure.eslint.mjs';
 import securityEslint from './node/security.eslint.mjs';
 import sonarEslint from './node/sonar.eslint.mjs';
+import stylisticEslint from './node/stylistic.eslint.mjs';
 import typescriptProjectEslint from './node/typescript-project.eslint.mjs';
 import unicornEslint from './node/unicorn.eslint.mjs';
 import vitestEslint from './node/vitest.eslint.mjs';
@@ -61,6 +62,7 @@ export default [
     path.join(__dirname, './node/typescript.eslintrc.json'),
     path.join(__dirname, './node/typescript-naming-convention.eslint.cjs'),
   ),
+  ...stylisticEslint,
   // Node.js best practices (eslint-plugin-n)
   ...nConfig,
   // Vitest rules for testing
