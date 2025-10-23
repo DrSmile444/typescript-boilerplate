@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-process-exit */
 /**
  * Multi-file Plain Code Splitter (TypeScript, Node ≥ 18)
  * ------------------------------------------------------
@@ -112,18 +113,37 @@ function parseArguments(argv: string[]) {
   let shouldStripMdFences = false;
 
   const argumentList = [...argv];
-  while (argumentList.length) {
+
+  while (argumentList.length > 0) {
     const argument = argumentList.shift()!;
-    if (argument === '--out') {
-      outputDirectory = argumentList.shift();
-    } else if (argument === '--dry-run') {
-      isDryRun = true;
-    } else if (argument === '--strip-md-fences') {
-      shouldStripMdFences = true;
-    } else if (!bundlePath) {
-      bundlePath = argument;
+
+    switch (argument) {
+      case '--out': {
+        outputDirectory = argumentList.shift();
+
+        break;
+      }
+
+      case '--dry-run': {
+        isDryRun = true;
+
+        break;
+      }
+
+      case '--strip-md-fences': {
+        shouldStripMdFences = true;
+
+        break;
+      }
+
+      default: {
+        if (!bundlePath) {
+          bundlePath = argument;
+        }
+      }
     }
   }
+
   return { bundlePath, outputDirectory, isDryRun, shouldStripMdFences };
 }
 
@@ -131,17 +151,21 @@ function normalizeRelativePath(relativePath: string): string {
   if (path.isAbsolute(relativePath) || /^[A-Za-z]:[\\/]/.test(relativePath)) {
     throw new Error(`Absolute paths are not allowed: ${relativePath}`);
   }
-  const normalized = relativePath.replace(/\\/g, '/');
+
+  const normalized = relativePath.replaceAll('\\', '/');
+
   return normalized.replace(/^.\//, '');
 }
 
 function safeResolveUnder(root: string, relativePath: string): string {
-  const cleanRelative = relativePath.replace(/\0/g, '');
+  const cleanRelative = relativePath.replaceAll('\0', '');
   const abs = path.resolve(root, cleanRelative);
   const rootNorm = path.resolve(root) + path.sep;
+
   if (!abs.startsWith(rootNorm)) {
     throw new Error(`Refusing to write outside output root: ${relativePath}`);
   }
+
   return abs;
 }
 
@@ -155,20 +179,25 @@ function parseSections(raw: string): Section[] {
     if (currentPath === null) {
       return;
     }
+
     const content = lines.slice(currentStart, endIndex).join('\n');
+
     sections.push({ relativePath: normalizeRelativePath(currentPath), content });
     currentPath = null;
   };
 
   lines.forEach((line, index) => {
     const match = HEADER_RE.exec(line);
+
     if (match) {
       flush(index);
       currentPath = match[1].replace('(CHANGED)', '').replace('(NEW)', '').trim();
       currentStart = index + 1;
     }
   });
+
   flush(lines.length);
+
   return sections;
 }
 
@@ -176,58 +205,77 @@ function maybeStripMdFence(text: string): string {
   const array = text.split(/\r?\n/);
   let start = 0;
   let end = array.length - 1;
+
   while (start < array.length && typeof array[start] === 'string' && array[start].trim() === '') {
     start += 1;
   }
+
   while (end >= 0 && typeof array[end] === 'string' && array[end].trim() === '') {
     end -= 1;
   }
+
   if (start > end) {
     return text;
   }
+
   const open = typeof array[start] === 'string' ? array[start].trim() : '';
   const close = typeof array[end] === 'string' ? array[end].trim() : '';
   const isOpenFence = open.startsWith('```');
   const isCloseFence = close === '```';
+
   if (isOpenFence && isCloseFence) {
     return [array.slice(0, start).join('\n'), array.slice(start + 1, end).join('\n'), array.slice(end + 1).join('\n')]
       .filter(Boolean)
       .join('\n');
   }
+
   return text;
 }
 
 async function main() {
   const { bundlePath, outputDirectory, isDryRun, shouldStripMdFences } = parseArguments(process.argv.slice(2));
+
   if (!bundlePath) {
     // Updated usage message to avoid deprecated tags
     console.info('Usage: split-plain-code.ts <bundlePath> [--out <dir>] [--dry-run] [--strip-md-fences]');
     process.exit(1);
   }
+
   const outRoot = path.resolve(outputDirectory ?? process.cwd());
+
   // Validate bundlePath before reading
   if (typeof bundlePath !== 'string' || bundlePath.includes('..') || path.isAbsolute(bundlePath)) {
     throw new Error('Invalid bundlePath argument');
   }
+
   const raw = await fs.readFile(bundlePath, 'utf8');
   const sections = parseSections(raw);
+
   if (sections.length === 0) {
     throw new Error('No sections found. Make sure your file contains lines like: // File: relative/path');
   }
+
   const byRelativePath = new Map<string, string>();
+
   sections.forEach((section) => {
     const content = shouldStripMdFences ? maybeStripMdFence(section.content) : section.content;
+
     byRelativePath.set(section.relativePath, content);
   });
+
   const writes: Array<Promise<unknown>> = [];
-  Array.from(byRelativePath.entries()).forEach(([relativePath, content]) => {
+
+  [...byRelativePath.entries()].forEach(([relativePath, content]) => {
     // Validate relativePath before using in fs functions
     if (typeof relativePath !== 'string' || relativePath.includes('..') || path.isAbsolute(relativePath)) {
       throw new Error('Invalid relativePath argument');
     }
+
     const abs = safeResolveUnder(outRoot, relativePath);
+
     if (isDryRun) {
       const size = new TextEncoder().encode(content).length;
+
       console.info(`[dry-run] write ${path.relative(process.cwd(), abs)} (${size} bytes)`);
     } else {
       writes.push(
@@ -236,11 +284,13 @@ async function main() {
           .then(() => fs.writeFile(abs, content, 'utf8'))
           .then(() => {
             const size = new TextEncoder().encode(content).length;
+
             console.info(`write ${path.relative(process.cwd(), abs)} (${size} bytes)`);
           }),
       );
     }
   });
+
   if (!isDryRun) {
     await Promise.all(writes);
   }
@@ -248,6 +298,7 @@ async function main() {
 
 main().catch((error: unknown) => {
   const errorMessage = error && typeof error === 'object' && 'message' in error ? String(error.message) : String(error);
+
   console.error(errorMessage);
   process.exit(1);
 });
