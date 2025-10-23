@@ -1,5 +1,4 @@
 import eslintPluginUnicorn from 'eslint-plugin-unicorn';
-import globals from 'globals';
 
 /**
  * @description ESLint config for enforcing best practices and code quality using eslint-plugin-unicorn. Applies recommended unicorn rules and customizations.
@@ -7,14 +6,9 @@ import globals from 'globals';
  * @see https://github.com/sindresorhus/eslint-plugin-unicorn
  */
 export default [
+  eslintPluginUnicorn.configs.recommended,
   {
-    name: 'unicorn',
-    languageOptions: {
-      globals: globals.builtin,
-    },
-    plugins: {
-      unicorn: eslintPluginUnicorn,
-    },
+    name: 'unicorn/custom',
     rules: {
       'unicorn/no-array-for-each': 'off',
       'unicorn/no-null': 'off',
