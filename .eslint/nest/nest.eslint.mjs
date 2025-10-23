@@ -21,4 +21,13 @@ export default [
       '@typescript-eslint/no-extraneous-class': 'off',
     },
   },
+  {
+    files: ['**/models/**/*.ts', '**/entities/**/*.ts'],
+    rules: {
+      '@darraghor/nestjs-typed/param-decorator-name-matches-route-param': 'off',
+      '@darraghor/nestjs-typed/controllers-should-supply-api-tags': 'off',
+      '@darraghor/nestjs-typed/should-specify-forbid-unknown-values': 'off',
+      '@darraghor/nestjs-typed/api-property-matches-property-optionality': 'off',
+    },
+  },
 ];
