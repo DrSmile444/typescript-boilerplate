@@ -1,6 +1,6 @@
 {
   "name": "typescript-boilerplate",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "main": "index.js",
   "scripts": {
     "start": "npx tsx ./src/main.ts",
@@ -10,6 +10,7 @@
     "format:md": "npx prettier --write ./README.md",
     "typecheck": "npx tsc --noEmit",
     "test": "npx vitest",
+    "bump-version": "npx tsx ./scripts/bump-version.script.ts && npm audit fix",
     "parse-llm-response": "npx tsx ./scripts/split-plain-code.ts",
     "format": "npx prettier . --write"
   },
