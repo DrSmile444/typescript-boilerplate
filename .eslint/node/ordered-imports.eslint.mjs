@@ -8,13 +8,20 @@ if (
   typeof tsconfigPaths.compilerOptions.paths === 'object' &&
   Object.keys(tsconfigPaths.compilerOptions.paths).length > 0
 ) {
-  tsconfigPathsGroups = Object.keys(tsconfigPaths.compilerOptions.paths).map((key) => {
-    const clearKey = key.replace('/*', '');
-    return [`^${clearKey}(/.*|$)?`];
-  });
-  console.info('Resolved tsconfig paths groups for ordered-imports:', Object.keys(tsconfigPathsGroups).length);
+  tsconfigPathsGroups = Object.keys(tsconfigPaths.compilerOptions.paths).map(
+    (key) => {
+      const clearKey = key.replace('/*', '');
+      return [`^${clearKey}(/.*|$)?`];
+    },
+  );
+  console.info(
+    'Resolved tsconfig paths groups for ordered-imports:',
+    tsconfigPathsGroups,
+  );
 } else {
-  console.info('No tsconfig paths found for ordered-imports. Internal package import groups will not be generated.');
+  console.info(
+    'No tsconfig paths found for ordered-imports. Internal package import groups will not be generated.',
+  );
 }
 
 /**
