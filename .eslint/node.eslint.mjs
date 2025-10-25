@@ -20,7 +20,6 @@ import sonarEslint from './node/sonar.eslint.mjs';
 import stylisticEslint from './node/stylistic.eslint.mjs';
 import typescriptProjectEslint from './node/typescript-project.eslint.mjs';
 import unicornEslint from './node/unicorn.eslint.mjs';
-import vitestEslint from './node/vitest.eslint.mjs';
 import { __dirname, compat } from './eslint-compat.config.mjs';
 
 const gitignorePath = path.resolve('.', '.gitignore');
@@ -65,8 +64,6 @@ export default [
   ...stylisticEslint,
   // Node.js best practices (eslint-plugin-n)
   ...nConfig,
-  // Vitest rules for testing
-  ...vitestEslint,
   // Rules for ESLint config files
   ...eslintRulesEslint,
   // SonarJS code quality and security

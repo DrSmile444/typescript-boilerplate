@@ -1,4 +1,5 @@
 import nodeConfigs from './.eslint/node.eslint.mjs';
+import vitestEslint from './.eslint/vitest.eslint.mjs';
 
 export default [
   // Apply this config to js and ts files only
@@ -8,4 +9,6 @@ export default [
   },
   // Node config
   ...nodeConfigs,
+  // Vitest rules for testing
+  ...vitestEslint,
 ];
