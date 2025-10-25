@@ -10,6 +10,7 @@ export default [
   {
     name: 'unicorn/custom',
     rules: {
+      'unicorn/no-useless-switch-case': 'off',
       'unicorn/no-array-for-each': 'off',
       'unicorn/no-null': 'off',
       'unicorn/prefer-top-level-await': 'off',
