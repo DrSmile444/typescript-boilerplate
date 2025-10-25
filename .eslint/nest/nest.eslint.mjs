@@ -6,8 +6,12 @@ import eslintNestJs from '@darraghor/eslint-plugin-nestjs-typed';
  * @see https://github.com/darraghoriordan/eslint-plugin-nestjs-typed
  */
 export default [
-  ...eslintNestJs.configs.flatRecommended,
   {
+    files: ['**/*.ts'],
+    ...eslintNestJs.configs.flatRecommended[0],
+  },
+  {
+    files: ['**/*.ts'],
     rules: {
       '@darraghor/nestjs-typed/injectable-should-be-provided': 'off',
       '@darraghor/nestjs-typed/api-enum-property-best-practices': 'off',
