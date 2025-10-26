@@ -2,7 +2,6 @@ import path from 'node:path';
 
 import { includeIgnoreFile } from '@eslint/compat';
 import pluginJs from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
 
 import customStyleEslint from './node/custom-style.eslint.mjs';
@@ -14,6 +13,7 @@ import nodeEslint from './node/node.eslint.mjs';
 import orderedImportsEslint from './node/ordered-imports.eslint.mjs';
 import overridesEslint from './node/overrides.eslint.mjs';
 import perfectionistEslint from './node/perfectionist.eslint.mjs';
+import prettierEslint from './node/prettier.eslint.mjs';
 import projectStructureEslint from './node/project-structure.eslint.mjs';
 import securityEslint from './node/security.eslint.mjs';
 import sonarEslint from './node/sonar.eslint.mjs';
@@ -69,7 +69,7 @@ export default [
   // SonarJS code quality and security
   ...sonarEslint,
   // Prettier integration for formatting
-  eslintPluginPrettierRecommended,
+  ...prettierEslint,
   // Dynamic ordered imports
   ...orderedImportsEslint,
   // Import alias support
