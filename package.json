@@ -7,7 +7,7 @@
     "lint": "cross-env TIMING=1 npx eslint",
     "lint:fix": "npm run lint -- --fix",
     "lint:debug": "npm run lint -- --debug",
-    "format:md": "npx prettier --write ./README.md",
+    "format:md": "npx prettier --write \"**/*.md\"",
     "typecheck": "npx tsc --noEmit",
     "test": "npx vitest",
     "bump-version": "npx tsx ./scripts/bump-version.script.ts && npm audit fix",
