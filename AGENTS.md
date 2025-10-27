@@ -1,6 +1,7 @@
 # AGENTS.md
 
 ## Setup
+
 - Node: 22.x
 - Package mgr: npm
 - Install: `npm install`
@@ -11,11 +12,13 @@
 - Typecheck: `npm run typecheck`
 
 ## Coding conventions
+
 - TypeScript strict mode; no default exports in libs
 - ESLint+Prettier rules are authoritative; fix before commit
 - Commits: Conventional Commits; PRs must pass CI
 
 ## Tests
+
 - Unit: Vitest; run `npm test`
 - Create a root test describe with the name of service, class, etc. from file.
   Make a separate describe for each method in this root main describe.
@@ -26,8 +29,10 @@
   After test success, run eslint to check if there are any eslint problems. If there are, fix them. Rerun tests after fixing all eslint errors.
 
 ## Safety rails for agents
+
 - When unsure, open a PR with TODOs rather than pushing to `main`
 
 ## Quick repo health checks
+
 - `npm run typecheck && npm run lint && npm run test`
 - `npm build` (ensures all packages compile)
