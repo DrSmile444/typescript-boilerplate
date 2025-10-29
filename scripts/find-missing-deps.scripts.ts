@@ -10,6 +10,7 @@ import { resolveTsconfigPaths } from '../.eslint/tsconfig.utils.mjs';
 interface CliOptions {
   dir: string;
   dryRun: boolean;
+  dev: boolean;
   packageManager?: 'bun' | 'npm' | 'pnpm' | 'yarn';
 }
 
@@ -233,20 +234,21 @@ async function findUninstalledDeps(root: string): Promise<{
   return { referencedTopLevel: referenced, uninstalled };
 }
 
-async function installAsDevelopment(
+async function installDependencies(
   projectDirectory: string,
   pkgs: string[],
   pm: ReturnType<typeof detectPackageManager>,
+  development: boolean,
 ): Promise<number> {
   if (pkgs.length === 0) {
     return 0;
   }
 
   const cmds: Record<string, [string, string[]]> = {
-    pnpm: ['pnpm', ['add', '-D', ...pkgs]],
-    yarn: ['yarn', ['add', '--dev', ...pkgs]],
-    npm: ['npm', ['i', '-D', ...pkgs]],
-    bun: ['bun', ['add', '-d', ...pkgs]],
+    pnpm: development ? ['pnpm', ['add', '-D', ...pkgs]] : ['pnpm', ['add', ...pkgs]],
+    yarn: development ? ['yarn', ['add', '--dev', ...pkgs]] : ['yarn', ['add', ...pkgs]],
+    npm: development ? ['npm', ['i', '-D', ...pkgs]] : ['npm', ['i', ...pkgs]],
+    bun: development ? ['bun', ['add', '-d', ...pkgs]] : ['bun', ['add', ...pkgs]],
   };
 
   const [cmd, parsedArguments] = cmds[pm] ?? cmds.npm;
@@ -260,13 +262,15 @@ async function installAsDevelopment(
 }
 
 function parseArguments(argv: string[]): CliOptions {
-  const out: CliOptions = { dir: '', dryRun: false };
+  const out: CliOptions = { dir: '', dryRun: false, dev: false };
 
   for (let index = 2; index < argv.length; index += 1) {
     const a = argv[index];
 
     if (a === '--dry-run') {
       out.dryRun = true;
+    } else if (a === '--dev' || a === '-D') {
+      out.dev = true;
     } else if (a.startsWith('--dir=')) {
       out.dir = a.slice('--dir='.length);
     } else if (a === '--dir' && index + 1 < argv.length) {
@@ -296,15 +300,16 @@ function printHelpAndExit(code = 0): never {
   console.info(
     `
 Usage:
-  tsx tools/find-uninstalled-deps.ts --dir <project> [--dry-run] [--package-manager <pnpm|yarn|npm|bun>]
+  tsx tools/find-uninstalled-deps.ts --dir <project> [--dry-run] [--dev|-D] [--package-manager <pnpm|yarn|npm|bun>]
 
 Description:
   Scans the project for imported/required packages that are NOT present in node_modules.
-  Prints the list. If not --dry-run, installs them as devDependencies.
+  Prints the list. If not --dry-run, installs them as dependencies (default) or devDependencies (with --dev/-D).
 
 Examples:
   tsx tools/find-uninstalled-deps.ts --dir . --dry-run
-  tsx tools/find-uninstalled-deps.ts --dir ./packages/app --package-manager pnpm
+  tsx tools/find-uninstalled-deps.ts --dir ./packages/app --dev
+  tsx tools/find-uninstalled-deps.ts --dir ./packages/app -D --package-manager pnpm
 `.trim(),
   );
 
@@ -355,11 +360,13 @@ async function main() {
     return;
   }
 
-  console.info('\n🧰 Installing as devDependencies...');
-  const code = await installAsDevelopment(options.dir, uninstalled, pm);
+  const installType = options.dev ? 'devDependencies' : 'dependencies';
+
+  console.info(`\n🧰 Installing as ${installType}...`);
+  const code = await installDependencies(options.dir, uninstalled, pm, options.dev);
 
   if (code === 0) {
-    console.info('✅ Installed missing packages as devDependencies.');
+    console.info(`✅ Installed missing packages as ${installType}.`);
   } else {
     console.error(`❌ Installer exited with code ${code}`);
     process.exit(code);
