@@ -1,53 +1,9 @@
-import * as fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import json5 from 'json5';
 
-/**
- * Resolves tsconfig paths from a tsconfig file and its references
- * @param {string} tsconfigPath - Path to the tsconfig file
- * @param {Set<string>} visited - Set of already visited files to prevent circular references
- * @returns {object} - Merged paths object
- */
-function resolveTsconfigPaths(tsconfigPath, visited = new Set()) {
-  if (visited.has(tsconfigPath)) {
-    return {};
-  }
-
-  visited.add(tsconfigPath);
-
-  let mergedPaths = {};
-
-  try {
-    const fileContent = fs.readFileSync(tsconfigPath, 'utf8');
-    const tsconfigContent = json5.parse(fileContent);
-
-    // Add paths from current config
-    if (tsconfigContent?.compilerOptions?.paths && typeof tsconfigContent.compilerOptions.paths === 'object') {
-      mergedPaths = { ...mergedPaths, ...tsconfigContent.compilerOptions.paths };
-    }
-
-    // Recursively process references
-    if (Array.isArray(tsconfigContent?.references)) {
-      const tsconfigDirectory = path.dirname(tsconfigPath);
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const reference of tsconfigContent.references) {
-        const referencePath = path.resolve(tsconfigDirectory, reference.path);
-        const referencesPaths = resolveTsconfigPaths(referencePath, visited);
-
-        mergedPaths = { ...mergedPaths, ...referencesPaths };
-      }
-    }
-  } catch (error) {
-    // Silently ignore errors for missing or invalid tsconfig files
-    console.warn(`Warning: Failed to parse ${tsconfigPath}:`, error.message);
-  }
-
-  return mergedPaths;
-}
+import { resolveTsconfigPaths } from '../resolve-tsconfig-aliases.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
