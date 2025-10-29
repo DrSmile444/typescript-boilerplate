@@ -73,16 +73,7 @@ function toTopLevelPackageName(spec: string): string {
 }
 
 function isPackageLike(spec: string): boolean {
-  if (!spec) {
-    return false;
-  }
-
-  if (spec.startsWith('.') || spec.startsWith('/') || spec.includes(':')) {
-    // relative, absolute, or URL-like (node:, data:, etc.) — ignore
-    return false;
-  }
-
-  return true;
+  return !!spec && !spec.startsWith('.') && !spec.startsWith('/') && !spec.includes(':');
 }
 
 async function* walkDirectory(directory: string, includeExtension: Set<string>, excludeDirectories: Set<string>): AsyncGenerator<string> {
@@ -189,6 +180,40 @@ function isInstalledInNodeModules(projectDirectory: string, topLevel: string): b
   return safeExists(nmPath);
 }
 
+// Helper to get tsconfig path aliases
+function getTsconfigAliases(tsconfigPath: string): string[] {
+  try {
+    const pathsObject = resolveTsconfigPaths(tsconfigPath);
+
+    return Object.keys(pathsObject).map((alias) => alias.replace(/\*$/, ''));
+  } catch {
+    return [];
+  }
+}
+
+// Helper to process a file and collect referenced packages
+async function collectReferencedFromFile(file: string, tsconfigAliases: string[], referenced: Set<string>) {
+  const code = await fs.readFile(file, 'utf8');
+
+  for (const spec of extractModuleSpecifiers(code)) {
+    if (!isPackageLike(spec)) {
+      continue;
+    }
+
+    if (tsconfigAliases.some((alias) => spec.startsWith(alias))) {
+      continue;
+    }
+
+    const bare = spec.startsWith('node:') ? spec.slice(5) : spec;
+
+    if (BUILTIN_SET.has(bare)) {
+      continue;
+    }
+
+    referenced.add(toTopLevelPackageName(bare));
+  }
+}
+
 async function findUninstalledDeps(root: string): Promise<{
   referencedTopLevel: Set<string>;
   uninstalled: string[];
@@ -197,37 +222,10 @@ async function findUninstalledDeps(root: string): Promise<{
 
   // Get tsconfig path aliases
   const tsconfigPath = path.join(root, '../tsconfig.json');
-  let tsconfigAliases: string[] = [];
-
-  try {
-    const pathsObject = resolveTsconfigPaths(tsconfigPath);
-
-    tsconfigAliases = Object.keys(pathsObject).map((alias) => alias.replace(/\*$/, ''));
-  } catch {
-    // ignore if cannot resolve
-  }
+  const tsconfigAliases = getTsconfigAliases(tsconfigPath);
 
   for await (const file of walkDirectory(root, DEFAULT_INCLUDE_EXT, DEFAULT_EXCLUDE_DIRS)) {
-    const code = await fs.readFile(file, 'utf8');
-
-    for (const spec of extractModuleSpecifiers(code)) {
-      if (!isPackageLike(spec)) {
-        continue;
-      }
-
-      // Exclude tsconfig path aliases
-      if (tsconfigAliases.some((alias) => spec.startsWith(alias))) {
-        continue;
-      }
-
-      const bare = spec.startsWith('node:') ? spec.slice(5) : spec;
-
-      if (BUILTIN_SET.has(bare)) {
-        continue;
-      } // ignore builtins
-
-      referenced.add(toTopLevelPackageName(bare));
-    }
+    await collectReferencedFromFile(file, tsconfigAliases, referenced);
   }
 
   const uninstalled = [...referenced].filter((packageFile) => !isInstalledInNodeModules(root, packageFile));
@@ -274,9 +272,7 @@ function parseArguments(argv: string[]): CliOptions {
     } else if (a === '--dir' && index + 1 < argv.length) {
       out.dir = argv[++index];
     } else if (a.startsWith('--package-manager=')) {
-      const pm = a.slice('--package-manager='.length) as CliOptions['packageManager'];
-
-      out.packageManager = pm;
+      out.packageManager = a.slice('--package-manager='.length) as CliOptions['packageManager'];
     } else if (a === '--package-manager' && index + 1 < argv.length) {
       out.packageManager = argv[++index] as CliOptions['packageManager'];
     } else if (a === '-h' || a === '--help') {
