@@ -5,6 +5,8 @@ import { promises as fs } from 'node:fs';
 import { builtinModules } from 'node:module';
 import path from 'node:path';
 
+import { resolveTsconfigPaths } from '../.eslint/tsconfig.utils.mjs';
+
 interface CliOptions {
   dir: string;
   dryRun: boolean;
@@ -193,11 +195,28 @@ async function findUninstalledDeps(root: string): Promise<{
 }> {
   const referenced = new Set<string>();
 
+  // Get tsconfig path aliases
+  const tsconfigPath = path.join(root, '../tsconfig.json');
+  let tsconfigAliases: string[] = [];
+
+  try {
+    const pathsObject = resolveTsconfigPaths(tsconfigPath);
+
+    tsconfigAliases = Object.keys(pathsObject).map((alias) => alias.replace(/\*$/, ''));
+  } catch {
+    // ignore if cannot resolve
+  }
+
   for await (const file of walkDirectory(root, DEFAULT_INCLUDE_EXT, DEFAULT_EXCLUDE_DIRS)) {
     const code = await fs.readFile(file, 'utf8');
 
     for (const spec of extractModuleSpecifiers(code)) {
       if (!isPackageLike(spec)) {
+        continue;
+      }
+
+      // Exclude tsconfig path aliases
+      if (tsconfigAliases.some((alias) => spec.startsWith(alias))) {
         continue;
       }
 
