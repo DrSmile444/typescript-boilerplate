@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
-import { resolveTsconfigPaths } from '../resolve-tsconfig-aliases.mjs';
+import { resolveTsconfigPaths } from '../tsconfig.utils.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

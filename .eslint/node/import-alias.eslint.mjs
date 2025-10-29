@@ -1,17 +1,15 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import importAlias from '@dword-design/eslint-plugin-import-alias';
-import json5 from 'json5';
 
-import { resolveTsconfigPaths } from '../resolve-tsconfig-aliases.mjs';
+import { parseTsconfig, resolveTsconfigPaths } from '../tsconfig.utils.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const tsconfigPath = path.resolve(__dirname, '../../tsconfig.json');
-const tsconfigContent = json5.parse(fs.readFileSync(tsconfigPath, 'utf8'));
+const tsconfigContent = parseTsconfig(tsconfigPath);
 const baseUrl = tsconfigContent.compilerOptions?.baseUrl || '';
 
 const paths = resolveTsconfigPaths(tsconfigPath);

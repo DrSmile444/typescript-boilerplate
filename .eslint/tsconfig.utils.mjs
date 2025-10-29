@@ -4,6 +4,44 @@ import path from 'node:path';
 import json5 from 'json5';
 
 /**
+ * Parses a tsconfig file and returns its contents as a typed object.
+ * @param {string} tsconfigPath - Path to the tsconfig file
+ * @returns {import('type-fest').TsConfigJson | undefined} - Parsed tsconfig object, or undefined if parsing fails
+ *
+ * @example
+ * // Given tsconfig.json:
+ * {
+ *   "compilerOptions": {
+ *     "baseUrl": "src",
+ *     "paths": {
+ *       "@app/*": ["app/*"]
+ *     }
+ *   }
+ * }
+ *
+ * // Calling parseTsconfigPaths('path/to/tsconfig.json') returns:
+ * {
+ *   compilerOptions: {
+ *     baseUrl: 'src',
+ *     paths: {
+ *       '@app/*': ['app/*']
+ *     }
+ *   }
+ * }
+ */
+export function parseTsconfig(tsconfigPath) {
+  try {
+    const fileContent = fs.readFileSync(tsconfigPath, 'utf8');
+
+    return json5.parse(fileContent);
+  } catch (error) {
+    // Silently ignore errors for missing or invalid tsconfig files
+    console.warn(`Warning: Failed to parse ${tsconfigPath}:`, error.message);
+    throw error;
+  }
+}
+
+/**
  * Resolves tsconfig paths from a tsconfig file and its references
  * @param {string} tsconfigPath - Path to the tsconfig file
  * @param {Set<string>} visited - Set of already visited files to prevent circular references
@@ -36,8 +74,11 @@ export function resolveTsconfigPaths(tsconfigPath, visited = new Set()) {
   let mergedPaths = {};
 
   try {
-    const fileContent = fs.readFileSync(tsconfigPath, 'utf8');
-    const tsconfigContent = json5.parse(fileContent);
+    const tsconfigContent = parseTsconfig(tsconfigPath);
+
+    if (!tsconfigContent) {
+      return mergedPaths;
+    }
 
     // Add paths from current config
     if (tsconfigContent?.compilerOptions?.paths && typeof tsconfigContent.compilerOptions.paths === 'object') {
