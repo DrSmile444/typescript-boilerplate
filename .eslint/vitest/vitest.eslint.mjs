@@ -7,13 +7,13 @@ import vitest from '@vitest/eslint-plugin';
  */
 export default [
   {
-    name: vitest.configs.all.name,
+    name: vitest.configs.recommended.name,
     files: ['tests/**'],
     plugins: {
       vitest,
     },
     rules: {
-      ...vitest.configs.all.rules,
+      ...vitest.configs.recommended.rules,
       'import/no-extraneous-dependencies': 'off',
       'vitest/consistent-test-filename': ['error', { pattern: String.raw`\.spec\.(js|ts|jsx|tsx)$` }],
       'vitest/max-nested-describe': ['error', { max: 3 }],
