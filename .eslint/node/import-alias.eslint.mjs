@@ -1,11 +1,23 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import importAlias from '@dword-design/eslint-plugin-import-alias';
+import json5 from 'json5';
 
-import tsconfigPaths from '../../tsconfig.json' with { type: 'json' };
+import { resolveTsconfigPaths } from '../resolve-tsconfig-aliases.mjs';
 
-const baseUrl = tsconfigPaths.compilerOptions?.baseUrl || '';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const tsconfigPath = path.resolve(__dirname, '../../tsconfig.json');
+const tsconfigContent = json5.parse(fs.readFileSync(tsconfigPath, 'utf8'));
+const baseUrl = tsconfigContent.compilerOptions?.baseUrl || '';
+
+const paths = resolveTsconfigPaths(tsconfigPath);
 
 const aliases = Object.fromEntries(
-  Object.entries(tsconfigPaths.compilerOptions?.paths || {}).map(([key, valueArray]) => {
+  Object.entries(paths).map(([key, valueArray]) => {
     // Remove trailing /* from alias key
     const aliasKey = key.replace('/*', '');
     // Remove trailing /* from path value
