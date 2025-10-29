@@ -3,6 +3,10 @@ import path from 'node:path';
 
 import json5 from 'json5';
 
+import { eslintLogger } from './logger.mjs';
+
+const logger = eslintLogger('tsconfig-utils');
+
 /**
  * Parses a tsconfig file and returns its contents as a typed object.
  * @param {string} tsconfigPath - Path to the tsconfig file
@@ -36,7 +40,7 @@ export function parseTsconfig(tsconfigPath) {
     return json5.parse(fileContent);
   } catch (error) {
     // Silently ignore errors for missing or invalid tsconfig files
-    console.warn(`Warning: Failed to parse ${tsconfigPath}:`, error.message);
+    logger.warn(`Warning: Failed to parse ${tsconfigPath}:`, error.message);
     throw error;
   }
 }
@@ -99,7 +103,7 @@ export function resolveTsconfigPaths(tsconfigPath, visited = new Set()) {
     }
   } catch (error) {
     // Silently ignore errors for missing or invalid tsconfig files
-    console.warn(`Warning: Failed to parse ${tsconfigPath}:`, error.message);
+    logger.warn(`Warning: Failed to parse ${tsconfigPath}:`, error.message);
   }
 
   return mergedPaths;

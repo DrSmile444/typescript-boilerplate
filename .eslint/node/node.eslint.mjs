@@ -13,6 +13,7 @@ export default [
     name: 'node',
     rules: {
       'class-methods-use-this': 'off',
+      'import/order': 'off',
     },
   },
 ];

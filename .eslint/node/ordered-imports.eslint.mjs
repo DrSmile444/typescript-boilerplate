@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
+import { eslintLogger } from '../logger.mjs';
 import { resolveTsconfigPaths } from '../tsconfig.utils.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -11,6 +12,7 @@ const rootTsconfigPath = path.resolve(__dirname, '../../tsconfig.json');
 const allPaths = resolveTsconfigPaths(rootTsconfigPath);
 
 let tsconfigPathsGroups = [];
+const logger = eslintLogger('ordered-imports');
 
 if (allPaths && typeof allPaths === 'object' && Object.keys(allPaths).length > 0) {
   tsconfigPathsGroups = Object.keys(allPaths).map((key) => {
@@ -19,9 +21,9 @@ if (allPaths && typeof allPaths === 'object' && Object.keys(allPaths).length > 0
     return [`^${clearKey}(/.*|$)?`];
   });
 
-  console.info('Resolved tsconfig paths groups for ordered-imports:', tsconfigPathsGroups);
+  logger.info('Resolved tsconfig paths groups for ordered-imports:', tsconfigPathsGroups);
 } else {
-  console.info('No tsconfig paths found for ordered-imports. Internal package import groups will not be generated.');
+  logger.info('No tsconfig paths found for ordered-imports. Internal package import groups will not be generated.');
 }
 
 /**

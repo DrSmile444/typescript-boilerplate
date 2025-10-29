@@ -21,10 +21,12 @@ import stylisticEslint from './node/stylistic.eslint.mjs';
 import typescriptProjectEslint from './node/typescript-project.eslint.mjs';
 import unicornEslint from './node/unicorn.eslint.mjs';
 import { __dirname, compat } from './eslint-compat.config.mjs';
+import { eslintLogger } from './logger.mjs';
 
 const gitignorePath = path.resolve('.', '.gitignore');
+const logger = eslintLogger('node');
 
-console.info('Using .gitignore file at:', gitignorePath);
+logger.info('Using .gitignore file at:', gitignorePath);
 
 export default [
   {

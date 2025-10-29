@@ -4,13 +4,17 @@ import path from 'node:path';
 
 import tseslint from 'typescript-eslint';
 
+import { eslintLogger } from '../logger.mjs';
+
+const logger = eslintLogger('typescript-project');
+
 // Get the directory name in ES module scope
 const tsconfigRootDirectory = path.join(path.dirname(new URL(import.meta.url).pathname), '../..');
 const tsconfigPath = path.join(tsconfigRootDirectory, 'tsconfig.json');
 const tsconfigScriptsPath = path.join(tsconfigRootDirectory, 'tsconfig.scripts.json');
 
 if (!fs.existsSync(tsconfigPath)) {
-  console.warn(`Warning: tsconfig.json not found at ${tsconfigPath}. Please ensure the path is correct.`);
+  logger.warn(`Warning: tsconfig.json not found at ${tsconfigPath}. Please ensure the path is correct.`);
 }
 
 const scriptsConfig = fs.existsSync(tsconfigScriptsPath)

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import importAlias from '@dword-design/eslint-plugin-import-alias';
 
+import { eslintLogger } from '../logger.mjs';
 import { parseTsconfig, resolveTsconfigPaths } from '../tsconfig.utils.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -35,7 +36,9 @@ const aliases = Object.fromEntries(
   }),
 );
 
-console.info('Resolved import aliases from tsconfig paths:', aliases);
+const logger = eslintLogger('import-alias');
+
+logger.info('Resolved import aliases from tsconfig paths:', aliases);
 
 /**
  * @description ESLint config for import alias linting using @dword-design/eslint-plugin-import-alias. Aliases are built dynamically from tsconfig.json using baseUrl.
