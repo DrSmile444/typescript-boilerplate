@@ -16,7 +16,7 @@ const readJSONFile = (filePath: string): PackageJSON => {
 const writeJSONFile = (filePath: string, data: unknown): void => {
   const jsonData = JSON.stringify(data, null, 2);
 
-  fs.writeFileSync(filePath, jsonData);
+  fs.writeFileSync(filePath, `${jsonData}\n`);
 };
 
 // Helper function to read text file
