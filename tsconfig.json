@@ -6,6 +6,7 @@
     "baseUrl": "./src",
     "strict": true,
     "allowJs": true,
+    "skipLibCheck": true,
     "paths": {
       "@config/*": ["config/*"],
       "@decorators/*": ["decorators/*"],
