@@ -86,7 +86,10 @@ export function resolveTsconfigPaths(tsconfigPath, visited = new Set()) {
 
     // Add paths from current config
     if (tsconfigContent?.compilerOptions?.paths && typeof tsconfigContent.compilerOptions.paths === 'object') {
-      mergedPaths = { ...mergedPaths, ...tsconfigContent.compilerOptions.paths };
+      mergedPaths = {
+        ...mergedPaths,
+        ...tsconfigContent.compilerOptions.paths,
+      };
     }
 
     // Recursively process references
