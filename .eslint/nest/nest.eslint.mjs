@@ -6,8 +6,12 @@ import eslintNestJs from '@darraghor/eslint-plugin-nestjs-typed';
  * @see https://github.com/darraghoriordan/eslint-plugin-nestjs-typed
  */
 export default [
-  ...eslintNestJs.configs.flatRecommended,
   {
+    files: ['**/*.ts'],
+    ...eslintNestJs.configs.flatRecommended[0],
+  },
+  {
+    files: ['**/*.ts'],
     rules: {
       '@darraghor/nestjs-typed/injectable-should-be-provided': 'off',
       '@darraghor/nestjs-typed/api-enum-property-best-practices': 'off',
@@ -19,6 +23,15 @@ export default [
     files: ['**/*.module.*'],
     rules: {
       '@typescript-eslint/no-extraneous-class': 'off',
+    },
+  },
+  {
+    files: ['**/models/**/*.ts', '**/entities/**/*.ts'],
+    rules: {
+      '@darraghor/nestjs-typed/param-decorator-name-matches-route-param': 'off',
+      '@darraghor/nestjs-typed/controllers-should-supply-api-tags': 'off',
+      '@darraghor/nestjs-typed/should-specify-forbid-unknown-values': 'off',
+      '@darraghor/nestjs-typed/api-property-matches-property-optionality': 'off',
     },
   },
 ];

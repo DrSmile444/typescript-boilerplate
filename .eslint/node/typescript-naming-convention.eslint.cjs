@@ -45,7 +45,7 @@ module.exports = {
             selector: 'memberLike',
           },
           {
-            format: ['UPPER_CASE'],
+            format: ['UPPER_CASE', 'camelCase'],
             leadingUnderscore: 'forbid',
             modifiers: ['private', 'readonly'],
             selector: 'memberLike',
@@ -127,7 +127,7 @@ module.exports = {
           {
             filter: {
               match: true,
-              regex: '^\\w*Component$',
+              regex: String.raw`^\w*Component$`,
             },
             format: ['PascalCase'],
             selector: 'variable',

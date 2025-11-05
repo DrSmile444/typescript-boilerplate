@@ -2,7 +2,6 @@ import path from 'node:path';
 
 import { includeIgnoreFile } from '@eslint/compat';
 import pluginJs from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
 
 import customStyleEslint from './node/custom-style.eslint.mjs';
@@ -14,17 +13,20 @@ import nodeEslint from './node/node.eslint.mjs';
 import orderedImportsEslint from './node/ordered-imports.eslint.mjs';
 import overridesEslint from './node/overrides.eslint.mjs';
 import perfectionistEslint from './node/perfectionist.eslint.mjs';
+import prettierEslint from './node/prettier.eslint.mjs';
 import projectStructureEslint from './node/project-structure.eslint.mjs';
 import securityEslint from './node/security.eslint.mjs';
 import sonarEslint from './node/sonar.eslint.mjs';
+import stylisticEslint from './node/stylistic.eslint.mjs';
 import typescriptProjectEslint from './node/typescript-project.eslint.mjs';
 import unicornEslint from './node/unicorn.eslint.mjs';
-import vitestEslint from './node/vitest.eslint.mjs';
 import { __dirname, compat } from './eslint-compat.config.mjs';
+import { eslintLogger } from './logger.mjs';
 
 const gitignorePath = path.resolve('.', '.gitignore');
+const logger = eslintLogger('node');
 
-console.info('Using .gitignore file at:', gitignorePath);
+logger.info('Using .gitignore file at:', gitignorePath);
 
 export default [
   {
@@ -61,16 +63,15 @@ export default [
     path.join(__dirname, './node/typescript.eslintrc.json'),
     path.join(__dirname, './node/typescript-naming-convention.eslint.cjs'),
   ),
+  ...stylisticEslint,
   // Node.js best practices (eslint-plugin-n)
   ...nConfig,
-  // Vitest rules for testing
-  ...vitestEslint,
   // Rules for ESLint config files
   ...eslintRulesEslint,
   // SonarJS code quality and security
   ...sonarEslint,
   // Prettier integration for formatting
-  eslintPluginPrettierRecommended,
+  ...prettierEslint,
   // Dynamic ordered imports
   ...orderedImportsEslint,
   // Import alias support

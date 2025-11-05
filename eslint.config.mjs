@@ -1,6 +1,9 @@
-import nodeConfigs from './.eslint/node.eslint.mjs';
+import { defineConfig } from 'eslint/config';
 
-export default [
+import nodeConfigs from './.eslint/node.eslint.mjs';
+import vitestEslint from './.eslint/vitest.eslint.mjs';
+
+export default defineConfig([
   // Apply this config to js and ts files only
   {
     name: 'Source Files to scan',
@@ -11,4 +14,6 @@ export default [
   },
   // Node config
   ...nodeConfigs,
-];
+  // Vitest rules for testing
+  ...vitestEslint,
+]);

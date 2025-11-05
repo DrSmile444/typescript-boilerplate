@@ -7,16 +7,18 @@ import vitest from '@vitest/eslint-plugin';
  */
 export default [
   {
-    name: vitest.configs.all.name,
-    files: ['tests/**'],
+    name: vitest.configs.recommended.name,
+    files: ['tests/**', 'test/**', '**/*.spec.{js,ts,jsx,tsx}'],
     plugins: {
       vitest,
     },
     rules: {
-      ...vitest.configs.all.rules,
+      ...vitest.configs.recommended.rules,
       'import/no-extraneous-dependencies': 'off',
-      'vitest/consistent-test-filename': ['error', { pattern: '\\.spec\\.(js|ts|jsx|tsx)$' }],
+      'vitest/consistent-test-filename': ['error', { pattern: String.raw`\.spec\.(js|ts|jsx|tsx)$` }],
       'vitest/max-nested-describe': ['error', { max: 3 }],
+      'vitest/valid-title': 'off',
+      'vitest/prefer-describe-function-title': 'off',
     },
   },
 ];
