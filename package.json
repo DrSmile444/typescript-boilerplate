@@ -1,7 +1,7 @@
 {
   "name": "typescript-boilerplate",
-  "version": "1.3.11",
-  "main": "index.js",
+  "version": "1.3.12",
+  "main": "src/main.ts",
   "scripts": {
     "start": "npx tsx ./src/main.ts",
     "lint": "cross-env TIMING=1 npx eslint",
@@ -14,10 +14,18 @@
     "parse-llm-response": "npx tsx ./scripts/split-plain-code.ts",
     "format": "npx prettier . --write"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "typescript",
+    "boilerplate",
+    "eslint",
+    "prettier",
+    "modern",
+    "vitest",
+    "template"
+  ],
+  "author": "Dmytro Vakulenko",
   "license": "ISC",
-  "description": "",
+  "description": "Modern, scalable TypeScript boilerplate for Node.js projects with strict linting, Prettier formatting, modular structure, and Vitest testing.",
   "dependencies": {
     "typed-dotenv": "^10.0.2"
   },
@@ -58,5 +66,12 @@
     "eslint-config-airbnb-base": {
       "eslint": "^9"
     }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-personal:DrSmile444/typescript-boilerplate.git"
   }
 }
