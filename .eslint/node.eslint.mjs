@@ -8,6 +8,7 @@ import customStyleEslint from './node/custom-style.eslint.mjs';
 import eslintRulesEslint from './node/eslint-rules.eslint.mjs';
 import importAliasEslint from './node/import-alias.eslint.mjs';
 import nConfig from './node/n.eslint.mjs';
+import noBarrelFilesEslint from './node/no-barrel-files.eslint.mjs';
 import noSecretsEslint from './node/no-secrets.eslint.mjs';
 import nodeEslint from './node/node.eslint.mjs';
 import orderedImportsEslint from './node/ordered-imports.eslint.mjs';
@@ -89,6 +90,8 @@ export default [
   ...unicornEslint,
   // Project folder/file structure rules
   ...projectStructureEslint,
+  // No barrel files rules
+  ...noBarrelFilesEslint,
   // TypeScript and test file overrides
   ...overridesEslint,
   // Custom style rules for JS/TS
