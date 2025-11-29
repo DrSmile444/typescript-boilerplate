@@ -1,7 +1,7 @@
 /**
  * @author Dmytro Vakulenko
  * @description Best practices for naming in JS / TS
- * @version 1.1
+ * @version 1.2
  * @legacy This is a legacy config and must be used through Eslint compat.
  * */
 module.exports = {
@@ -109,7 +109,7 @@ module.exports = {
           },
           {
             format: ['PascalCase'],
-            prefix: ['is', 'should', 'has', 'can', 'did', 'will'],
+            prefix: ['is', 'are', 'has', 'can', 'should', 'will', 'did'],
             selector: 'variable',
             types: ['boolean'],
           },
