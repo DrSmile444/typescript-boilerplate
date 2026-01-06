@@ -9,6 +9,7 @@ import customStyleEslint from './node/custom-style.eslint.mjs';
 import eslintRulesEslint from './node/eslint-rules.eslint.mjs';
 import importAliasEslint from './node/import-alias.eslint.mjs';
 import nConfig from './node/n.eslint.mjs';
+import namingEslint from './node/naming.eslint.mjs';
 import noBarrelFilesEslint from './node/no-barrel-files.eslint.mjs';
 import noSecretsEslint from './node/no-secrets.eslint.mjs';
 import orderedImportsEslint from './node/ordered-imports.eslint.mjs';
@@ -63,8 +64,11 @@ export default [
   // Compatibility helpers for extending configs
   ...compat.extends(
     path.join(__dirname, './node/typescript.eslintrc.json'),
-    path.join(__dirname, './node/typescript-naming-convention.eslint.cjs'),
+    // path.join(__dirname, './node/typescript-naming-convention.eslint.cjs'),
   ),
+  // Naming convention rules for TypeScript
+  ...namingEslint,
+  // Stylistic rules for JS/TS
   ...stylisticEslint,
   // Node.js best practices (eslint-plugin-n)
   ...nConfig,
