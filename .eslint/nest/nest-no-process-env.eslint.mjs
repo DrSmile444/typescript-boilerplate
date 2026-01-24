@@ -27,6 +27,7 @@ export default defineConfig([
       'src/main.ts', // main bootstrapping file
       'eslint.config.js', // The main config file itself
       'scripts/**/*', // e.g., build or setup scripts
+      'database/**/*', // e.g., build or setup scripts
     ],
     rules: {
       'no-process-env': 'off', // Disable the rule for these specific files
