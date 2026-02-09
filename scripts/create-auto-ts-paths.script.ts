@@ -52,7 +52,7 @@ async function main() {
 
   const config = (parsed.config as ts.server.ProjectInfoTelemetryEventData) ?? {};
   const compilerOptions = ensurePlainObject(config, 'compilerOptions') as CompilerOptions;
-  const paths = ensurePlainObject(compilerOptions, 'paths') || {};
+  const paths = (ensurePlainObject(compilerOptions, 'paths') || {}) as Record<string, string[]>;
 
   const baseUrl = typeof compilerOptions.baseUrl === 'string' ? compilerOptions.baseUrl : null;
   const baseForPathsAbs = baseUrl ? path.resolve(tsconfigDirectory, baseUrl) : tsconfigDirectory;
@@ -164,7 +164,7 @@ function ensurePlainObject<T>(container: T, key: keyof T) {
 
   // Create missing or invalid shape.
   // eslint-disable-next-line no-param-reassign
-  container[key] = {};
+  container[key] = {} as T[keyof T];
 
   return container[key];
 }
