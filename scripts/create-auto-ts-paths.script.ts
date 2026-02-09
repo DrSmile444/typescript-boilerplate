@@ -60,7 +60,7 @@ async function main() {
   const added = [];
 
   // Keep existing order, append new keys in a stable order.
-  for (const directoryName of sourceFolders.toSorted((a, b) => a.localeCompare(b))) {
+  for (const directoryName of sourceFolders.toSorted((firstFolder, secondFolder) => firstFolder.localeCompare(secondFolder))) {
     const aliasKey = `${ALIAS_PREFIX}${directoryName}/*`;
 
     if (Object.prototype.hasOwnProperty.call(paths, aliasKey)) {
@@ -182,13 +182,13 @@ function toPosixPath(originalPath: string) {
  * @param relativePath - Relative path (POSIX).
  */
 function ensureDotPrefix(relativePath: string) {
-  const s = String(relativePath);
+  const normalizedPath = String(relativePath);
 
-  if (s.startsWith('.') || s.startsWith('/')) {
-    return s;
+  if (normalizedPath.startsWith('.') || normalizedPath.startsWith('/')) {
+    return normalizedPath;
   }
 
-  return `./${s}`;
+  return `./${normalizedPath}`;
 }
 
 /**
