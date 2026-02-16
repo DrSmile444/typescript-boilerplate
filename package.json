@@ -50,7 +50,6 @@
     "eslint-plugin-no-secrets": "^2.2.1",
     "eslint-plugin-perfectionist": "^4.15.1",
     "eslint-plugin-prettier": "^5.5.5",
-    "eslint-plugin-project-structure": "^3.14.2",
     "eslint-plugin-security": "^3.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-sonarjs": "^3.0.6",

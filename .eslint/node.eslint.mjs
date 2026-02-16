@@ -16,7 +16,6 @@ import orderedImportsEslint from './node/ordered-imports.eslint.mjs';
 import overridesEslint from './node/overrides.eslint.mjs';
 import perfectionistEslint from './node/perfectionist.eslint.mjs';
 import prettierEslint from './node/prettier.eslint.mjs';
-import projectStructureEslint from './node/project-structure.eslint.mjs';
 import securityEslint from './node/security.eslint.mjs';
 import sonarEslint from './node/sonar.eslint.mjs';
 import stylisticEslint from './node/stylistic.eslint.mjs';
@@ -92,8 +91,6 @@ export default [
   ...perfectionistEslint,
   // Unicorn plugin for best practices
   ...unicornEslint,
-  // Project folder/file structure rules
-  ...projectStructureEslint,
   // No barrel files rules
   ...noBarrelFilesEslint,
   // TypeScript and test file overrides
