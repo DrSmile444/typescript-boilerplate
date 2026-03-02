@@ -1,39 +1,51 @@
 /**
  * @fileoverview Lintlord ESLint plugin/config:
- * Disallow inline object type literals inside interface property types and offer a suggestion
- * to extract them into a named interface.
+ * Disallow inline object type literals inside interface property types, function/method/arrow
+ * parameters, and return types — offering a suggestion (or autofix) to extract them into
+ * named interfaces.
  *
  * Why:
- * - Inline object types inside interfaces are hard to reuse and document.
+ * - Inline object types are hard to reuse and document.
  * - Extracted types improve readability and consistency across the codebase.
  *
  * What it reports (examples):
  * - interface X { events: { a: string }[] }            ❌
  * - interface X { events: Array<{ a: string }> }       ❌
- * - interface X { events: Readonly<{ a: string }> }    ❌
- * - interface X { events: ({ a: string } | null)[] }   ❌
+ * - function f(p: { a: string }) {}                    ❌
+ * - const f = (p: { a: string }) => {}                 ❌
+ * - function f(): { ok: boolean } {}                   ❌
  *
  * What it allows:
  * - interface Event { a: string }
  *   interface X { events: Event[] }                    ✅
  *
- * Suggestion fix:
- * - Inserts `interface Parent + SingularProp { ... }` above the containing interface
- *   (or above its leading comment block if present).
- * - Replaces the inline `{ ... }` type literal inside the property type with the new interface name.
- * - If the containing interface is exported, the extracted interface is exported too.
+ * Suggestion fix / autofix:
+ * - Inserts `interface ExtractedName { ... }` immediately before the containing declaration
+ *   (or before its leading comment block if present, so comments stay attached).
+ * - Replaces the inline literal with the new interface name.
+ * - If the containing declaration is exported, the extracted interface is also exported.
  *
  * Naming strategy:
- * - ParentInterfaceName + SingularizedPropertyName
- *   e.g. LogsData + events -> LogsDataEvent
- *
- * Singularization rules are conservative to avoid cases like `access` -> `acces`.
+ * - Interface property:  ContainingInterfaceName + SingularizedPropertyName
+ *   e.g. LogsData.events -> LogsDataEvent
+ * - Function param:      FunctionNamePascal + ParamNamePascal
+ *   e.g. handleUserUpdates(parameters) -> HandleUserUpdatesParameters
+ * - Method param:        ClassNamePascal + MethodNamePascal + ParamNamePascal
+ *   e.g. class X { handleUserUpdates(parameters) } -> XHandleUserUpdatesParameters
+ * - Arrow param:         ArrowNamePascal + ParamNamePascal  (or ArrowFunction + ParamNamePascal)
+ * - Return type:         CallableNamePascal + Return
+ *   e.g. handleUserUpdates(): { ... } -> HandleUserUpdatesReturn
  *
  * Options:
- * - allowTypeAliases: boolean (default: true)
- *   If false, also reports `type X = { ... }` (no suggestion fix provided for aliases by default).
+ * - checkInterfaceProperties: boolean (default: true)
+ * - checkFunctionParams:      boolean (default: true)
+ * - checkMethodParams:        boolean (default: true)
+ * - checkArrowFunctionParams: boolean (default: true)
+ * - checkReturnTypes:         boolean (default: true)
+ * - minMembersToExtract:      number  (default: 1)
+ *   Only report inline types with at least this many direct members.
  * - autofix: boolean (default: false)
- *   If true, applies the extraction fix automatically (usable with `eslint --fix`).
+ *   If true, applies the extraction as an automatic fix (eslint --fix).
  *   ESLint re-runs the rule after each fix pass, so deeply nested inline types are
  *   unwound level-by-level until the file is clean.
  *   When false (default), the fix is offered only as a manual suggestion.
@@ -45,11 +57,15 @@
  *   ];
  *
  * @author Dmytro Vakulenko
- * @version 1.3.0
+ * @version 2.0.0
  */
 
 /** @type {string} */
 export const RULE_NAME = 'no-inline-interface-object-types';
+
+// ---------------------------------------------------------------------------
+// Pure utilities (module-level — satisfies unicorn/consistent-function-scoping)
+// ---------------------------------------------------------------------------
 
 /**
  * Convert a string to PascalCase.
@@ -80,9 +96,6 @@ function toPascalCase(input) {
  */
 function singularize(name) {
   const s = String(name);
-
-  // Protect common endings where removing 's' is usually wrong
-  // access, class, status, analysis, alias, etc.
   const lower = s.toLowerCase();
 
   if (lower.endsWith('ss') || lower.endsWith('us') || lower.endsWith('is') || lower.endsWith('as')) {
@@ -95,7 +108,7 @@ function singularize(name) {
 
   // classes -> class, boxes -> box, watches -> watch
   if (/(sses|shes|ches|xes|zes)$/i.test(s) && s.length > 2) {
-    return s.slice(0, -2); // remove 'es'
+    return s.slice(0, -2);
   }
 
   // events -> event
@@ -107,17 +120,26 @@ function singularize(name) {
 }
 
 /**
- * Build extracted interface name using Strategy A:
- * ParentInterfaceName + SingularizedPropertyName
+ * Build an interface name from one or more PascalCase name segments joined together.
+ *
+ * @param {string[]} segments
+ * @returns {string}
+ */
+function buildNameFromSegments(segments) {
+  return segments.map((seg) => toPascalCase(seg) || 'Unknown').join('');
+}
+
+/**
+ * Build extracted interface name for an interface property (Strategy A):
+ * ContainingInterfaceName + SingularizedPropertyName
  *
  * @param {string} parentName
  * @param {string} propertyName
  * @returns {string}
  */
-function buildInterfaceName(parentName, propertyName) {
+function buildInterfacePropertyName(parentName, propertyName) {
   const parentPart = toPascalCase(parentName) || 'Parent';
-  const singularProperty = singularize(propertyName);
-  const propertyPart = toPascalCase(singularProperty) || 'Field';
+  const propertyPart = toPascalCase(singularize(propertyName)) || 'Field';
 
   return `${parentPart}${propertyPart}`;
 }
@@ -134,9 +156,9 @@ function pushChildNodes(node, stack) {
     if (key === 'parent' || key === 'tokens' || key === 'comments' || key === 'range' || key === 'loc') {
       // skip non-AST / cycle-prone fields
     } else if (value && Array.isArray(value)) {
-      for (const it of value) {
-        if (it && typeof it === 'object') {
-          stack.push(it);
+      for (const item of value) {
+        if (item && typeof item === 'object') {
+          stack.push(item);
         }
       }
     } else if (value && typeof value === 'object') {
@@ -177,7 +199,7 @@ function findTypeLiteralIterative(node) {
 
 /**
  * Finds the first TSTypeLiteral node inside a type annotation tree.
- * Returns the node itself (so we can replace exactly that literal in the suggestion fix).
+ * Returns the node itself so we can replace exactly that literal in the suggestion fix.
  *
  * @param {any} node
  * @returns {any | null}
@@ -256,18 +278,8 @@ function findFirstTypeLiteral(node) {
 }
 
 /**
- * Recursively checks if a TS type node contains a TSTypeLiteral (inline `{ ... }` type).
- *
- * @param {any} node
- * @returns {boolean}
- */
-function containsTypeLiteral(node) {
-  return Boolean(findFirstTypeLiteral(node));
-}
-
-/**
  * Determine whether a TSInterfaceDeclaration is exported.
- * In TypeScript-ESTree, `export interface X {}` is typically wrapped in ExportNamedDeclaration.
+ * In TypeScript-ESTree, `export interface X {}` is wrapped in ExportNamedDeclaration.
  *
  * @param {any} interfaceNode TSInterfaceDeclaration
  * @returns {boolean}
@@ -276,6 +288,18 @@ function isExportedInterface(interfaceNode) {
   const p = interfaceNode?.parent;
 
   return Boolean(p && p.type === 'ExportNamedDeclaration' && p.declaration === interfaceNode);
+}
+
+/**
+ * Determine whether a FunctionDeclaration or VariableDeclaration is directly exported.
+ *
+ * @param {any} node FunctionDeclaration | VariableDeclaration | ClassDeclaration
+ * @returns {boolean}
+ */
+function isDirectlyExported(node) {
+  const p = node?.parent;
+
+  return Boolean(p && p.type === 'ExportNamedDeclaration' && p.declaration === node);
 }
 
 /**
@@ -294,6 +318,130 @@ function resolvePropertyName(key) {
   }
 
   return 'field';
+}
+
+/**
+ * Extract a simple string name from a function/method key node.
+ * Returns null when the name cannot be statically determined.
+ *
+ * @param {any} keyNode  Identifier | Literal | PrivateIdentifier | computed key
+ * @returns {string | null}
+ */
+function resolveKeyName(keyNode) {
+  if (!keyNode) {
+    return null;
+  }
+
+  if (keyNode.type === 'Identifier' || keyNode.type === 'PrivateIdentifier') {
+    return keyNode.name;
+  }
+
+  if (keyNode.type === 'Literal' && typeof keyNode.value === 'string') {
+    return keyNode.value;
+  }
+
+  return null;
+}
+
+/**
+ * Walk up from a MethodDefinition node to the enclosing ClassDeclaration/ClassExpression
+ * and return its name, or "Class" if anonymous/not found.
+ * Uses at most 2 parent hops (MethodDefinition -> ClassBody -> ClassDecl).
+ *
+ * @param {any} methodDefinitionNode MethodDefinition
+ * @returns {string}
+ */
+function getClassNameForMethod(methodDefinitionNode) {
+  const classBody = methodDefinitionNode?.parent;
+
+  if (!classBody || classBody.type !== 'ClassBody') {
+    return 'Class';
+  }
+
+  const classDecl = classBody.parent;
+
+  if (!classDecl) {
+    return 'Class';
+  }
+
+  if (classDecl.type === 'ClassDeclaration' || classDecl.type === 'ClassExpression') {
+    return classDecl.id?.name || 'Class';
+  }
+
+  return 'Class';
+}
+
+/**
+ * Determine whether the class containing a MethodDefinition is directly exported.
+ *
+ * @param {any} methodDefinitionNode MethodDefinition
+ * @returns {boolean}
+ */
+function isMethodInExportedClass(methodDefinitionNode) {
+  const classBody = methodDefinitionNode?.parent;
+
+  if (!classBody || classBody.type !== 'ClassBody') {
+    return false;
+  }
+
+  const classDecl = classBody.parent;
+
+  if (!classDecl) {
+    return false;
+  }
+
+  return isDirectlyExported(classDecl);
+}
+
+/**
+ * For an ArrowFunctionExpression, attempt to resolve the name it is assigned to
+ * via its immediate parent VariableDeclarator.
+ * Returns null when the arrow is not directly assigned to a named variable.
+ *
+ * @param {any} arrowNode ArrowFunctionExpression
+ * @returns {string | null}
+ */
+function resolveArrowName(arrowNode) {
+  const declarator = arrowNode?.parent;
+
+  if (!declarator || declarator.type !== 'VariableDeclarator') {
+    return null;
+  }
+
+  if (declarator.id?.type === 'Identifier') {
+    return declarator.id.name;
+  }
+
+  return null;
+}
+
+/**
+ * For an ArrowFunctionExpression, find the enclosing VariableDeclaration anchor node
+ * (which can be inserted before) and determine whether it is exported.
+ * Returns null when the arrow is not directly assigned to a variable.
+ *
+ * @param {any} arrowNode ArrowFunctionExpression
+ * @returns {{ anchorNode: any; shouldExport: boolean } | null}
+ */
+function resolveArrowAnchor(arrowNode) {
+  const declarator = arrowNode?.parent;
+
+  if (!declarator || declarator.type !== 'VariableDeclarator') {
+    return null;
+  }
+
+  const variableDecl = declarator.parent;
+
+  if (!variableDecl || variableDecl.type !== 'VariableDeclaration') {
+    return null;
+  }
+
+  const exported = isDirectlyExported(variableDecl);
+  // When exported, anchor to the ExportNamedDeclaration wrapper so the inserted
+  // interface is placed before the whole `export const ...` statement.
+  const anchorNode = exported ? variableDecl.parent : variableDecl;
+
+  return { anchorNode, shouldExport: exported };
 }
 
 /**
@@ -324,11 +472,14 @@ function collectDeclaredNames(programNode, declaredNames) {
         declaredNames.add(n.id.name);
       }
 
-      // Walk child AST nodes safely
       pushChildNodes(n, stack);
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// Rule
+// ---------------------------------------------------------------------------
 
 /**
  * @type {import('eslint').Rule.RuleModule}
@@ -337,7 +488,8 @@ export const noInlineInterfaceObjectTypesRule = {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Disallow inline object type literals inside interface property types; suggest extracting to a named interface.',
+      description:
+        'Disallow inline object type literals inside interface properties, function/method/arrow params, and return types; suggest extracting to a named interface.',
       recommended: false,
     },
     fixable: 'code',
@@ -347,94 +499,112 @@ export const noInlineInterfaceObjectTypesRule = {
         type: 'object',
         additionalProperties: false,
         properties: {
-          allowTypeAliases: { type: 'boolean' },
+          checkInterfaceProperties: { type: 'boolean' },
+          checkFunctionParams: { type: 'boolean' },
+          checkMethodParams: { type: 'boolean' },
+          checkArrowFunctionParams: { type: 'boolean' },
+          checkReturnTypes: { type: 'boolean' },
+          minMembersToExtract: { type: 'number', minimum: 1 },
           autofix: { type: 'boolean' },
         },
       },
     ],
     messages: {
-      inlineObjectType:
-        'Inline object type literal is not allowed in interface properties. Extract it to a named type/interface and reference it.',
-      inlineObjectTypeAlias:
-        'Inline object type literal is not allowed in type aliases. Prefer a named interface/type with a meaningful name.',
+      inlineObjectType: 'Inline object type literal found. Extract it to a named interface.',
       extractSuggestion: 'Extract inline object type into a new interface and replace usage.',
     },
   },
 
   create(context) {
     const { sourceCode } = context;
-    const [{ allowTypeAliases = true, autofix = false } = {}] = context.options;
 
-    // Collect declared names to avoid collisions (even though Strategy A makes this rare)
+    const [
+      {
+        checkInterfaceProperties = true,
+        checkFunctionParams: checkFunctionParameters = true,
+        checkMethodParams: checkMethodParameters = true,
+        checkArrowFunctionParams: checkArrowFunctionParameters = true,
+        checkReturnTypes = true,
+        minMembersToExtract = 1,
+        autofix = false,
+      } = {},
+    ] = context.options;
+
     /** @type {Set<string>} */
     const declaredNames = new Set();
 
+    // ------------------------------------------------------------------
+    // Inner helpers (need sourceCode / declaredNames / autofix closure)
+    // ------------------------------------------------------------------
+
     /**
-     * Returns a safe insertion point:
-     * - If the interface has leading comments directly before it, insert BEFORE the first leading comment
-     *   so the comment stays attached to the original interface.
-     * - Otherwise, insert before the interface itself.
+     * Returns the safe insertion range:
+     * - Before the first leading comment if one exists (so the comment stays attached).
+     * - Otherwise, before the node itself.
      *
-     * @param {any} interfaceNode TSInterfaceDeclaration (or ExportNamedDeclaration wrapper)
-     * @returns {{ range: [number, number], isBeforeComment: boolean }}
+     * @param {any} anchorNode  The statement/declaration to insert before.
+     * @returns {[number, number]}
      */
-    function getInsertionTarget(interfaceNode) {
-      // If exported, interfaceNode might be TSInterfaceDeclaration but parent is ExportNamedDeclaration.
-      const exportWrapper = interfaceNode?.parent?.type === 'ExportNamedDeclaration' ? interfaceNode.parent : null;
-
-      const targetNode = exportWrapper || interfaceNode;
-
-      const leadingComments = sourceCode.getCommentsBefore(targetNode) || [];
+    function getInsertionRange(anchorNode) {
+      const leadingComments = sourceCode.getCommentsBefore(anchorNode) || [];
 
       if (leadingComments.length > 0) {
-        const first = leadingComments[0];
-
-        return { range: first.range, isBeforeComment: true };
+        return leadingComments[0].range;
       }
 
-      return { range: targetNode.range, isBeforeComment: false };
+      return anchorNode.range;
     }
 
     /**
-     * Suggestion fixer: insert new interface above containing interface and replace the inline literal with its name.
+     * Build a unique interface name, appending a numeric suffix on collision.
      *
-     * @param {any} containingInterface TSInterfaceDeclaration
-     * @param {any} typeLiteralNode TSTypeLiteral
-     * @param {string} newName
+     * @param {string} candidate
+     * @returns {string}
+     */
+    function resolveUniqueName(candidate) {
+      if (!declaredNames.has(candidate)) {
+        return candidate;
+      }
+
+      let index = 2;
+
+      while (declaredNames.has(`${candidate}${index}`)) {
+        index += 1;
+      }
+
+      return `${candidate}${index}`;
+    }
+
+    /**
+     * Build the fixer function: insert the new interface before anchorNode and replace the literal.
+     *
+     * @param {any}     anchorNode       Statement/declaration to insert before.
+     * @param {any}     typeLiteralNode  TSTypeLiteral to replace.
+     * @param {string}  newName          Extracted interface name.
+     * @param {boolean} shouldExport     Whether to emit `export interface ...`.
      * @returns {(fixer: import('eslint').Rule.RuleFixer) => import('eslint').Rule.Fix[]}
      */
-    function makeExtractFix(containingInterface, typeLiteralNode, newName) {
-      const shouldExport = isExportedInterface(containingInterface);
-
-      // Use the original text of the literal `{ ... }` as the interface body
+    function makeExtractFix(anchorNode, typeLiteralNode, newName, shouldExport) {
       const literalText = sourceCode.getText(typeLiteralNode);
+      const prefix = shouldExport ? 'export ' : '';
+      const declText = `${prefix}interface ${newName} ${literalText}\n\n`;
+      const insertionRange = getInsertionRange(anchorNode);
 
-      // Insert with spacing: ensure a blank line after the new interface.
-      // If we insert before a comment, we keep comment attached to original interface, so we add extra newline.
-      const declText = `${shouldExport ? 'export ' : ''}interface ${newName} ${literalText}\n\n`;
-
-      const insertion = getInsertionTarget(containingInterface);
-
-      return (fixer) => [
-        // Insert extracted interface
-        fixer.insertTextBeforeRange(insertion.range, declText),
-        // Replace just the inline type literal node (preserves wrappers like [] / Array<> / unions)
-        fixer.replaceText(typeLiteralNode, newName),
-      ];
+      return (fixer) => [fixer.insertTextBeforeRange(insertionRange, declText), fixer.replaceText(typeLiteralNode, newName)];
     }
 
     /**
-     * Build the ESLint report descriptor for an inline object type violation.
-     * When autofix is enabled, attaches a direct fix; otherwise attaches a suggestion.
+     * Build the ESLint report descriptor — direct fix when autofix is on, suggestion otherwise.
      *
-     * @param {any} reportNode
-     * @param {any} containingInterface TSInterfaceDeclaration
-     * @param {any} typeLiteralNode TSTypeLiteral
-     * @param {string} newName
+     * @param {any}     reportNode
+     * @param {any}     anchorNode
+     * @param {any}     typeLiteralNode
+     * @param {string}  newName
+     * @param {boolean} shouldExport
      * @returns {import('eslint').Rule.ReportDescriptor}
      */
-    function buildReport(reportNode, containingInterface, typeLiteralNode, newName) {
-      const extractFix = makeExtractFix(containingInterface, typeLiteralNode, newName);
+    function buildReport(reportNode, anchorNode, typeLiteralNode, newName, shouldExport) {
+      const extractFix = makeExtractFix(anchorNode, typeLiteralNode, newName, shouldExport);
 
       if (autofix) {
         return { node: reportNode, messageId: 'inlineObjectType', fix: extractFix };
@@ -448,28 +618,72 @@ export const noInlineInterfaceObjectTypesRule = {
     }
 
     /**
-     * Build a unique interface name for the extracted type, avoiding collisions.
+     * Core check: if the typeAnnotation node contains a qualifying TSTypeLiteral, report it.
      *
-     * @param {string} parentInterfaceName
-     * @param {string} propertyName
-     * @returns {string}
+     * @param {any}     typeAnnotationNode  The TSTypeAnnotation (or bare type node) to inspect.
+     * @param {string}  candidateName       Pre-built candidate interface name.
+     * @param {any}     anchorNode          Statement node to insert the new interface before.
+     * @param {boolean} shouldExport        Whether the extracted interface should be exported.
+     * @param {any}     reportNode          The node to highlight in the lint report.
      */
-    function resolveUniqueName(parentInterfaceName, propertyName) {
-      let newName = buildInterfaceName(parentInterfaceName, propertyName);
+    function checkTypeAnnotation(typeAnnotationNode, candidateName, anchorNode, shouldExport, reportNode) {
+      const typeLiteral = findFirstTypeLiteral(typeAnnotationNode);
 
-      // Very rare with Strategy A, but keep a safety net:
-      if (declaredNames.has(newName)) {
-        let index = 2;
-
-        while (declaredNames.has(`${newName}${index}`)) {
-          index += 1;
-        }
-
-        newName = `${newName}${index}`;
+      if (!typeLiteral) {
+        return;
       }
 
-      return newName;
+      if (!Array.isArray(typeLiteral.members) || typeLiteral.members.length < minMembersToExtract) {
+        return;
+      }
+
+      const newName = resolveUniqueName(candidateName);
+
+      declaredNames.add(newName);
+
+      context.report(buildReport(reportNode, anchorNode, typeLiteral, newName, shouldExport));
     }
+
+    /**
+     * Check all parameters of a callable for inline object type annotations.
+     *
+     * @param {any[]}   params          Array of AST parameter nodes.
+     * @param {string}  callablePascal  PascalCase name of the callable (prefix).
+     * @param {any}     anchorNode      Statement to insert extracted interfaces before.
+     * @param {boolean} shouldExport    Whether to export the extracted interface.
+     */
+    function checkParameters(parameters, callablePascal, anchorNode, shouldExport) {
+      for (const param of parameters) {
+        if (param?.typeAnnotation) {
+          const paramName = resolvePropertyName(param.type === 'AssignmentPattern' ? param.left : param);
+          const candidateName = buildNameFromSegments([callablePascal, paramName]);
+
+          checkTypeAnnotation(param.typeAnnotation, candidateName, anchorNode, shouldExport, param.typeAnnotation);
+        }
+      }
+    }
+
+    /**
+     * Check the return type of a callable for an inline object type annotation.
+     *
+     * @param {any}     returnTypeNode  TSTypeAnnotation node for the return type (node.returnType).
+     * @param {string}  callablePascal  PascalCase name of the callable.
+     * @param {any}     anchorNode      Statement to insert extracted interfaces before.
+     * @param {boolean} shouldExport    Whether to export the extracted interface.
+     */
+    function checkReturnType(returnTypeNode, callablePascal, anchorNode, shouldExport) {
+      if (!returnTypeNode) {
+        return;
+      }
+
+      const candidateName = buildNameFromSegments([callablePascal, 'Return']);
+
+      checkTypeAnnotation(returnTypeNode, candidateName, anchorNode, shouldExport, returnTypeNode);
+    }
+
+    // ------------------------------------------------------------------
+    // Visitors
+    // ------------------------------------------------------------------
 
     return {
       Program(node) {
@@ -477,47 +691,86 @@ export const noInlineInterfaceObjectTypesRule = {
       },
 
       TSInterfaceDeclaration(node) {
+        if (!checkInterfaceProperties) {
+          return;
+        }
+
         const parentInterfaceName = node.id?.name;
 
-        if (!parentInterfaceName) {
+        if (!parentInterfaceName || !node.body || !Array.isArray(node.body.body)) {
           return;
         }
 
-        const { body } = node;
+        const anchorNode = isExportedInterface(node) ? node.parent : node;
+        const shouldExport = isExportedInterface(node);
 
-        if (!body || !Array.isArray(body.body)) {
-          return;
-        }
+        for (const member of node.body.body) {
+          if (member?.type === 'TSPropertySignature' && member.typeAnnotation) {
+            const propertyName = resolvePropertyName(member.key);
+            const candidateName = buildInterfacePropertyName(parentInterfaceName, propertyName);
 
-        for (const member of body.body) {
-          if (member?.type !== 'TSPropertySignature' || !member.typeAnnotation) {
-            // skip non-property members and members without type annotations
-          } else {
-            const typeLiteral = findFirstTypeLiteral(member.typeAnnotation);
-
-            if (typeLiteral) {
-              // Property name: only handle simple identifiers safely
-              const propertyName = resolvePropertyName(member.key);
-              const newName = resolveUniqueName(parentInterfaceName, propertyName);
-
-              declaredNames.add(newName);
-
-              context.report(buildReport(member.typeAnnotation, node, typeLiteral, newName));
-            }
+            checkTypeAnnotation(member.typeAnnotation, candidateName, anchorNode, shouldExport, member.typeAnnotation);
           }
         }
       },
 
-      TSTypeAliasDeclaration(node) {
-        if (allowTypeAliases) {
+      FunctionDeclaration(node) {
+        const functionName = node.id?.name;
+        const functionPascal = toPascalCase(functionName || 'Function');
+        const anchorNode = isDirectlyExported(node) ? node.parent : node;
+        const shouldExport = isDirectlyExported(node);
+
+        if (checkFunctionParameters && Array.isArray(node.params)) {
+          checkParameters(node.params, functionPascal, anchorNode, shouldExport);
+        }
+
+        if (checkReturnTypes && node.returnType) {
+          checkReturnType(node.returnType, functionPascal, anchorNode, shouldExport);
+        }
+      },
+
+      MethodDefinition(node) {
+        const methodName = resolveKeyName(node.key);
+        const methodPascal = toPascalCase(methodName || 'Method');
+        const className = getClassNameForMethod(node);
+        const classDecl = node.parent?.parent;
+        const shouldExport = isMethodInExportedClass(node);
+        // When the class is exported, anchor to the ExportNamedDeclaration wrapper
+        const anchorNode = shouldExport && classDecl ? classDecl.parent : classDecl || node;
+        const callable = node.value;
+
+        if (!callable || !Array.isArray(callable.params)) {
           return;
         }
 
-        if (containsTypeLiteral(node.typeAnnotation)) {
-          context.report({
-            node: node.typeAnnotation,
-            messageId: 'inlineObjectTypeAlias',
-          });
+        const callablePascal = buildNameFromSegments([className, methodPascal]);
+
+        if (checkMethodParameters) {
+          checkParameters(callable.params, callablePascal, anchorNode, shouldExport);
+        }
+
+        if (checkReturnTypes && callable.returnType) {
+          checkReturnType(callable.returnType, callablePascal, anchorNode, shouldExport);
+        }
+      },
+
+      ArrowFunctionExpression(node) {
+        const arrowAnchor = resolveArrowAnchor(node);
+
+        if (!arrowAnchor) {
+          return;
+        }
+
+        const { anchorNode, shouldExport } = arrowAnchor;
+        const arrowName = resolveArrowName(node);
+        const arrowPascal = toPascalCase(arrowName || 'ArrowFunction');
+
+        if (checkArrowFunctionParameters && Array.isArray(node.params)) {
+          checkParameters(node.params, arrowPascal, anchorNode, shouldExport);
+        }
+
+        if (checkReturnTypes && node.returnType) {
+          checkReturnType(node.returnType, arrowPascal, anchorNode, shouldExport);
         }
       },
     };
