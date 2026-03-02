@@ -4,6 +4,7 @@ import { includeIgnoreFile } from '@eslint/compat';
 import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
+import lintlordEslint from './lintlord/lintlord.eslint.mjs';
 import airbnbBaseEslint from './node/airbnb-base.eslint.mjs';
 import customStyleEslint from './node/custom-style.eslint.mjs';
 import eslintRulesEslint from './node/eslint-rules.eslint.mjs';
@@ -93,6 +94,8 @@ export default [
   ...unicornEslint,
   // No barrel files rules
   ...noBarrelFilesEslint,
+  // Custom lintlord rules for JS/TS
+  ...lintlordEslint,
   // TypeScript and test file overrides
   ...overridesEslint,
   // Custom style rules for JS/TS
