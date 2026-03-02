@@ -32,6 +32,11 @@
  * Options:
  * - allowTypeAliases: boolean (default: true)
  *   If false, also reports `type X = { ... }` (no suggestion fix provided for aliases by default).
+ * - autofix: boolean (default: false)
+ *   If true, applies the extraction fix automatically (usable with `eslint --fix`).
+ *   ESLint re-runs the rule after each fix pass, so deeply nested inline types are
+ *   unwound level-by-level until the file is clean.
+ *   When false (default), the fix is offered only as a manual suggestion.
  *
  * Usage (flat config):
  *   import lintlordEslint from './eslint/lintlord/lintlord.eslint.mjs';
@@ -40,7 +45,7 @@
  *   ];
  *
  * @author Dmytro Vakulenko
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 /** @type {string} */
@@ -335,6 +340,7 @@ export const noInlineInterfaceObjectTypesRule = {
       description: 'Disallow inline object type literals inside interface property types; suggest extracting to a named interface.',
       recommended: false,
     },
+    fixable: 'code',
     hasSuggestions: true,
     schema: [
       {
@@ -342,6 +348,7 @@ export const noInlineInterfaceObjectTypesRule = {
         additionalProperties: false,
         properties: {
           allowTypeAliases: { type: 'boolean' },
+          autofix: { type: 'boolean' },
         },
       },
     ],
@@ -356,7 +363,7 @@ export const noInlineInterfaceObjectTypesRule = {
 
   create(context) {
     const { sourceCode } = context;
-    const [{ allowTypeAliases = true } = {}] = context.options;
+    const [{ allowTypeAliases = true, autofix = false } = {}] = context.options;
 
     // Collect declared names to avoid collisions (even though Strategy A makes this rare)
     /** @type {Set<string>} */
@@ -417,6 +424,30 @@ export const noInlineInterfaceObjectTypesRule = {
     }
 
     /**
+     * Build the ESLint report descriptor for an inline object type violation.
+     * When autofix is enabled, attaches a direct fix; otherwise attaches a suggestion.
+     *
+     * @param {any} reportNode
+     * @param {any} containingInterface TSInterfaceDeclaration
+     * @param {any} typeLiteralNode TSTypeLiteral
+     * @param {string} newName
+     * @returns {import('eslint').Rule.ReportDescriptor}
+     */
+    function buildReport(reportNode, containingInterface, typeLiteralNode, newName) {
+      const extractFix = makeExtractFix(containingInterface, typeLiteralNode, newName);
+
+      if (autofix) {
+        return { node: reportNode, messageId: 'inlineObjectType', fix: extractFix };
+      }
+
+      return {
+        node: reportNode,
+        messageId: 'inlineObjectType',
+        suggest: [{ messageId: 'extractSuggestion', fix: extractFix }],
+      };
+    }
+
+    /**
      * Build a unique interface name for the extracted type, avoiding collisions.
      *
      * @param {string} parentInterfaceName
@@ -471,16 +502,7 @@ export const noInlineInterfaceObjectTypesRule = {
 
               declaredNames.add(newName);
 
-              context.report({
-                node: member.typeAnnotation,
-                messageId: 'inlineObjectType',
-                suggest: [
-                  {
-                    messageId: 'extractSuggestion',
-                    fix: makeExtractFix(node, typeLiteral, newName),
-                  },
-                ],
-              });
+              context.report(buildReport(member.typeAnnotation, node, typeLiteral, newName));
             }
           }
         }
