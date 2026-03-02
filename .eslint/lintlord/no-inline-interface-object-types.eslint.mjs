@@ -18,13 +18,13 @@
  *   interface X { events: Event[] }                    ✅
  *
  * Suggestion fix:
- * - Inserts `interface <Parent><SingularProp> { ... }` above the containing interface
+ * - Inserts `interface Parent + SingularProp { ... }` above the containing interface
  *   (or above its leading comment block if present).
  * - Replaces the inline `{ ... }` type literal inside the property type with the new interface name.
  * - If the containing interface is exported, the extracted interface is exported too.
  *
  * Naming strategy:
- * - <ParentInterfaceName> + <SingularizedPropertyName>
+ * - ParentInterfaceName + SingularizedPropertyName
  *   e.g. LogsData + events -> LogsDataEvent
  *
  * Singularization rules are conservative to avoid cases like `access` -> `acces`.
@@ -40,7 +40,7 @@
  *   ];
  *
  * @author Dmytro Vakulenko
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 /** @type {string} */
@@ -102,13 +102,72 @@ function singularize(name) {
 }
 
 /**
- * Recursively checks if a TS type node contains a TSTypeLiteral (inline `{ ... }` type).
+ * Build extracted interface name using Strategy A:
+ * ParentInterfaceName + SingularizedPropertyName
+ *
+ * @param {string} parentName
+ * @param {string} propertyName
+ * @returns {string}
+ */
+function buildInterfaceName(parentName, propertyName) {
+  const parentPart = toPascalCase(parentName) || 'Parent';
+  const singularProperty = singularize(propertyName);
+  const propertyPart = toPascalCase(singularProperty) || 'Field';
+
+  return `${parentPart}${propertyPart}`;
+}
+
+/**
+ * Walk child properties of an AST node onto a stack, skipping non-AST fields.
  *
  * @param {any} node
- * @returns {boolean}
+ * @param {any[]} stack
+ * @returns {void}
  */
-function containsTypeLiteral(node) {
-  return Boolean(findFirstTypeLiteral(node));
+function pushChildNodes(node, stack) {
+  for (const [key, value] of Object.entries(node)) {
+    if (key === 'parent' || key === 'tokens' || key === 'comments' || key === 'range' || key === 'loc') {
+      // skip non-AST / cycle-prone fields
+    } else if (value && Array.isArray(value)) {
+      for (const it of value) {
+        if (it && typeof it === 'object') {
+          stack.push(it);
+        }
+      }
+    } else if (value && typeof value === 'object') {
+      stack.push(value);
+    }
+  }
+}
+
+/**
+ * Fallback iterative search for TSTypeLiteral inside an unknown node type.
+ *
+ * @param {any} node
+ * @returns {any | null}
+ */
+function findTypeLiteralIterative(node) {
+  /** @type {WeakSet<object>} */
+  const visited = new WeakSet();
+  const stack = [node];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+
+    if (!current || typeof current !== 'object' || visited.has(current)) {
+      // skip nullish, non-objects and already-visited nodes
+    } else {
+      visited.add(current);
+
+      if (current.type === 'TSTypeLiteral') {
+        return current;
+      }
+
+      pushChildNodes(current, stack);
+    }
+  }
+
+  return null;
 }
 
 /**
@@ -142,7 +201,7 @@ function findFirstTypeLiteral(node) {
 
     case 'TSUnionType':
     case 'TSIntersectionType': {
-      return (Array.isArray(node.types) && node.types.map(findFirstTypeLiteral).find(Boolean)) || null;
+      return (Array.isArray(node.types) && node.types.map((n) => findFirstTypeLiteral(n)).find(Boolean)) || null;
     }
 
     case 'TSTypeOperator': {
@@ -172,7 +231,7 @@ function findFirstTypeLiteral(node) {
 
     case 'TSTypeReference': {
       if (node.typeArguments && node.typeArguments.type === 'TSTypeParameterInstantiation' && Array.isArray(node.typeArguments.params)) {
-        return node.typeArguments.params.map(findFirstTypeLiteral).find(Boolean) || null;
+        return node.typeArguments.params.map((n) => findFirstTypeLiteral(n)).find(Boolean) || null;
       }
 
       return null;
@@ -180,58 +239,25 @@ function findFirstTypeLiteral(node) {
 
     case 'TSFunctionType':
     case 'TSConstructorType': {
-      const fromParameters = Array.isArray(node.params) && node.params.map(findFirstTypeLiteral).find(Boolean);
+      const fromParameters = Array.isArray(node.params) && node.params.map((n) => findFirstTypeLiteral(n)).find(Boolean);
 
       return fromParameters || findFirstTypeLiteral(node.returnType);
     }
 
     default: {
-      /** @type {WeakSet<object>} */
-      const visited = new WeakSet();
-
-      const stack = [node];
-
-      while (stack.length > 0) {
-        const current = stack.pop();
-
-        if (!current || typeof current !== 'object') {
-          continue;
-        }
-
-        if (visited.has(current)) {
-          continue;
-        }
-
-        visited.add(current);
-
-        if (current.type === 'TSTypeLiteral') {
-          return current;
-        }
-
-        for (const [key, value] of Object.entries(current)) {
-          if (key === 'parent' || key === 'tokens' || key === 'comments' || key === 'range' || key === 'loc') {
-            continue;
-          }
-
-          if (!value) {
-            continue;
-          }
-
-          if (Array.isArray(value)) {
-            for (const it of value) {
-              if (it && typeof it === 'object') {
-                stack.push(it);
-              }
-            }
-          } else if (typeof value === 'object') {
-            stack.push(value);
-          }
-        }
-      }
-
-      return null;
+      return findTypeLiteralIterative(node);
     }
   }
+}
+
+/**
+ * Recursively checks if a TS type node contains a TSTypeLiteral (inline `{ ... }` type).
+ *
+ * @param {any} node
+ * @returns {boolean}
+ */
+function containsTypeLiteral(node) {
+  return Boolean(findFirstTypeLiteral(node));
 }
 
 /**
@@ -245,6 +271,58 @@ function isExportedInterface(interfaceNode) {
   const p = interfaceNode?.parent;
 
   return Boolean(p && p.type === 'ExportNamedDeclaration' && p.declaration === interfaceNode);
+}
+
+/**
+ * Resolve the property name string from a TSPropertySignature key node.
+ *
+ * @param {any} key
+ * @returns {string}
+ */
+function resolvePropertyName(key) {
+  if (key?.type === 'Identifier') {
+    return key.name;
+  }
+
+  if (key?.type === 'Literal' && typeof key.value === 'string') {
+    return key.value;
+  }
+
+  return 'field';
+}
+
+/**
+ * Collect declared interface/type names from the whole program node into the provided set.
+ *
+ * @param {any} programNode
+ * @param {Set<string>} declaredNames
+ * @returns {void}
+ */
+function collectDeclaredNames(programNode, declaredNames) {
+  /** @type {WeakSet<object>} */
+  const visited = new WeakSet();
+  const stack = [programNode];
+
+  while (stack.length > 0) {
+    const n = stack.pop();
+
+    if (!n || typeof n !== 'object' || visited.has(n)) {
+      // skip nullish, non-objects and already-visited nodes
+    } else {
+      visited.add(n);
+
+      if (n.type === 'TSInterfaceDeclaration' && n.id?.name) {
+        declaredNames.add(n.id.name);
+      }
+
+      if (n.type === 'TSTypeAliasDeclaration' && n.id?.name) {
+        declaredNames.add(n.id.name);
+      }
+
+      // Walk child AST nodes safely
+      pushChildNodes(n, stack);
+    }
+  }
 }
 
 /**
@@ -284,73 +362,6 @@ export const noInlineInterfaceObjectTypesRule = {
     /** @type {Set<string>} */
     const declaredNames = new Set();
 
-    function collectDeclaredNames(programNode) {
-      /** @type {WeakSet<object>} */
-      const visited = new WeakSet();
-
-      const stack = [programNode];
-
-      while (stack.length > 0) {
-        const n = stack.pop();
-
-        if (!n || typeof n !== 'object') {
-          continue;
-        }
-
-        if (visited.has(n)) {
-          continue;
-        }
-
-        visited.add(n);
-
-        if (n.type === 'TSInterfaceDeclaration' && n.id?.name) {
-          declaredNames.add(n.id.name);
-        }
-
-        if (n.type === 'TSTypeAliasDeclaration' && n.id?.name) {
-          declaredNames.add(n.id.name);
-        }
-
-        // Walk child AST nodes safely
-        for (const [key, value] of Object.entries(n)) {
-          // Prevent cycles / non-AST junk
-          if (key === 'parent' || key === 'tokens' || key === 'comments' || key === 'range' || key === 'loc') {
-            continue;
-          }
-
-          if (!value) {
-            continue;
-          }
-
-          if (Array.isArray(value)) {
-            for (const it of value) {
-              if (it && typeof it === 'object') {
-                stack.push(it);
-              }
-            }
-          } else if (typeof value === 'object') {
-            stack.push(value);
-          }
-        }
-      }
-    }
-
-    /**
-     * Build extracted interface name using Strategy A:
-     * <ParentInterfaceName> + <SingularizedPropertyName>
-     *
-     * @param {string} parentName
-     * @param {string} propName
-     * @returns {string}
-     */
-    function buildInterfaceName(parentName, propertyName) {
-      const parentPart = toPascalCase(parentName) || 'Parent';
-      const singularProperty = singularize(propertyName);
-      const propertyPart = toPascalCase(singularProperty) || 'Field';
-
-      return `${parentPart}${propertyPart}`;
-    }
-
     /**
      * Returns a safe insertion point:
      * - If the interface has leading comments directly before it, insert BEFORE the first leading comment
@@ -381,12 +392,11 @@ export const noInlineInterfaceObjectTypesRule = {
      * Suggestion fixer: insert new interface above containing interface and replace the inline literal with its name.
      *
      * @param {any} containingInterface TSInterfaceDeclaration
-     * @param {any} propMember TSPropertySignature
      * @param {any} typeLiteralNode TSTypeLiteral
      * @param {string} newName
      * @returns {(fixer: import('eslint').Rule.RuleFixer) => import('eslint').Rule.Fix[]}
      */
-    function makeExtractFix(containingInterface, propertyMember, typeLiteralNode, newName) {
+    function makeExtractFix(containingInterface, typeLiteralNode, newName) {
       const shouldExport = isExportedInterface(containingInterface);
 
       // Use the original text of the literal `{ ... }` as the interface body
@@ -398,23 +408,41 @@ export const noInlineInterfaceObjectTypesRule = {
 
       const insertion = getInsertionTarget(containingInterface);
 
-      return (fixer) => {
-        /** @type {import('eslint').Rule.Fix[]} */
-        const fixes = [];
-
+      return (fixer) => [
         // Insert extracted interface
-        fixes.push(fixer.insertTextBeforeRange(insertion.range, declText));
-
+        fixer.insertTextBeforeRange(insertion.range, declText),
         // Replace just the inline type literal node (preserves wrappers like [] / Array<> / unions)
-        fixes.push(fixer.replaceText(typeLiteralNode, newName));
+        fixer.replaceText(typeLiteralNode, newName),
+      ];
+    }
 
-        return fixes;
-      };
+    /**
+     * Build a unique interface name for the extracted type, avoiding collisions.
+     *
+     * @param {string} parentInterfaceName
+     * @param {string} propertyName
+     * @returns {string}
+     */
+    function resolveUniqueName(parentInterfaceName, propertyName) {
+      let newName = buildInterfaceName(parentInterfaceName, propertyName);
+
+      // Very rare with Strategy A, but keep a safety net:
+      if (declaredNames.has(newName)) {
+        let index = 2;
+
+        while (declaredNames.has(`${newName}${index}`)) {
+          index += 1;
+        }
+
+        newName = `${newName}${index}`;
+      }
+
+      return newName;
     }
 
     return {
       Program(node) {
-        collectDeclaredNames(node);
+        collectDeclaredNames(node, declaredNames);
       },
 
       TSInterfaceDeclaration(node) {
@@ -431,51 +459,30 @@ export const noInlineInterfaceObjectTypesRule = {
         }
 
         for (const member of body.body) {
-          if (member?.type !== 'TSPropertySignature') {
-            continue;
-          }
+          if (member?.type !== 'TSPropertySignature' || !member.typeAnnotation) {
+            // skip non-property members and members without type annotations
+          } else {
+            const typeLiteral = findFirstTypeLiteral(member.typeAnnotation);
 
-          if (!member.typeAnnotation) {
-            continue;
-          }
+            if (typeLiteral) {
+              // Property name: only handle simple identifiers safely
+              const propertyName = resolvePropertyName(member.key);
+              const newName = resolveUniqueName(parentInterfaceName, propertyName);
 
-          const typeLiteral = findFirstTypeLiteral(member.typeAnnotation);
+              declaredNames.add(newName);
 
-          if (!typeLiteral) {
-            continue;
-          }
-
-          // Property name: only handle simple identifiers safely
-          const { key } = member;
-
-          const propertyName =
-            key?.type === 'Identifier' ? key.name : (key?.type === 'Literal' && typeof key.value === 'string' ? key.value : 'field');
-
-          let newName = buildInterfaceName(parentInterfaceName, propertyName);
-
-          // Very rare with Strategy A, but keep a safety net:
-          if (declaredNames.has(newName)) {
-            let index = 2;
-
-            while (declaredNames.has(`${newName}${index}`)) {
-              index += 1;
+              context.report({
+                node: member.typeAnnotation,
+                messageId: 'inlineObjectType',
+                suggest: [
+                  {
+                    messageId: 'extractSuggestion',
+                    fix: makeExtractFix(node, typeLiteral, newName),
+                  },
+                ],
+              });
             }
-
-            newName = `${newName}${index}`;
           }
-
-          declaredNames.add(newName);
-
-          context.report({
-            node: member.typeAnnotation,
-            messageId: 'inlineObjectType',
-            suggest: [
-              {
-                messageId: 'extractSuggestion',
-                fix: makeExtractFix(node, member, typeLiteral, newName),
-              },
-            ],
-          });
         }
       },
 
