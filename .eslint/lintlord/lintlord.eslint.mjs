@@ -23,7 +23,7 @@ export default defineConfig([
       lintlord: plugin,
     },
     rules: {
-      'lintlord/no-inline-interface-object-types': 'error',
+      'lintlord/no-inline-interface-object-types': ['error', { autofix: true }],
 
       // Optional example: also forbid `type X = { ... }`
       // "lintlord/no-inline-interface-object-types": ["error", { allowTypeAliases: false }],
