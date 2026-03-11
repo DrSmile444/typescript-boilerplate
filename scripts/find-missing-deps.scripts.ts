@@ -218,10 +218,12 @@ async function collectReferencedFromFile(file: string, tsconfigAliases: string[]
   }
 }
 
-async function findUninstalledDeps(root: string): Promise<{
+interface FindUninstalledDepsReturn {
   referencedTopLevel: Set<string>;
   uninstalled: string[];
-}> {
+}
+
+async function findUninstalledDeps(root: string): Promise<FindUninstalledDepsReturn> {
   const referenced = new Set<string>();
 
   // Get tsconfig path aliases

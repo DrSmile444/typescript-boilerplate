@@ -5,15 +5,15 @@ import path from 'node:path';
 
 import deepmerge from 'deepmerge';
 
-type Json = Record<string, any>;
+type Json = Record<string, unknown>;
 
 const PKG = 'package.json';
 const PKG_ORIGINAL = 'package-original.json';
 const SPLIT_SCRIPT = path.join('scripts', 'split-plain-code.ts');
 
-function run(cmd: string, arguments_: string[]): Promise<number> {
+function run(cmd: string, commandArguments: string[]): Promise<number> {
   return new Promise((resolve, reject) => {
-    const child = spawn(cmd, arguments_, { stdio: 'inherit' });
+    const child = spawn(cmd, commandArguments, { stdio: 'inherit' });
 
     child.on('error', reject);
     child.on('close', (code) => resolve(code ?? 1));
@@ -26,8 +26,8 @@ async function readJson(filePath: string): Promise<Json> {
   return JSON.parse(raw) as Json;
 }
 
-async function writeJson(filePath: string, data: Json): Promise<void> {
-  const raw = `${JSON.stringify(data, null, 2)}\n`;
+async function writeJson(filePath: string, json: Json): Promise<void> {
+  const raw = `${JSON.stringify(json, null, 2)}\n`;
 
   await fs.writeFile(filePath, raw, 'utf8');
 }
@@ -43,13 +43,13 @@ async function exists(filePath: string): Promise<boolean> {
 }
 
 async function main(): Promise<void> {
-  const cwd = process.cwd();
-  const packagePath = path.join(cwd, PKG);
-  const originalPath = path.join(cwd, PKG_ORIGINAL);
-  const splitPath = path.join(cwd, SPLIT_SCRIPT);
+  const currentWorkingDirectory = process.cwd();
+  const packagePath = path.join(currentWorkingDirectory, PKG);
+  const originalPath = path.join(currentWorkingDirectory, PKG_ORIGINAL);
+  const splitPath = path.join(currentWorkingDirectory, SPLIT_SCRIPT);
 
   if (!(await exists(packagePath))) {
-    throw new Error(`Cannot find ${PKG} in: ${cwd}`);
+    throw new Error(`Cannot find ${PKG} in: ${currentWorkingDirectory}`);
   }
 
   if (!(await exists(splitPath))) {
@@ -86,7 +86,7 @@ async function main(): Promise<void> {
 
     const merged = deepmerge(originalPackage, newPackage, {
       // package.json arrays (keywords/files/etc.) should usually be replaced, not concatenated
-      arrayMerge: (_destination, source) => source,
+      arrayMerge: (_destination, source) => source as string[],
     });
 
     // 4) write merged back to package.json
