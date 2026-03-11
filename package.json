@@ -11,6 +11,7 @@
     "typecheck": "npx tsc --noEmit",
     "test": "npx vitest",
     "test:run": "npx vitest run",
+    "test:coverage": "npx vitest run --coverage",
     "bump-version": "npx tsx ./scripts/bump-version.script.ts && npm audit fix",
     "parse-llm-response": "npx tsx ./scripts/split-plain-code.wrap.ts",
     "after-parse-llm-response": "npx tsx ./scripts/create-auto-ts-paths.script.ts && npm run lint:fix && npm run format:md",

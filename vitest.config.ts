@@ -11,7 +11,6 @@ export default defineConfig({
     include: ['**/*.spec.ts', '**/*.test.ts'],
     exclude: ['node_modules', 'dist'],
     coverage: {
-      enabled: true,
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       thresholds: {
