@@ -1,7 +1,7 @@
 ---
 name: typescript-feature
 description: A comprehensive checklist and workflow for implementing or updating TypeScript features in this repository, covering design, implementation, testing, documentation, and versioning.
-version: 1.1.0
+version: 1.2.0
 ---
 
 # TypeScript Boilerplate - Feature Checklist
@@ -135,11 +135,9 @@ If `package.json` includes a build script, run the repository build command afte
 - Do not bypass failures with `@ts-ignore`, disabled lint rules, or relaxed config unless the user explicitly asks for that tradeoff.
 - Do not leave warnings, type errors, or failing tests for later.
 
-### Step 6 - Update documentation and bump the version
+### Step 6 - Update README when the change is important
 
-#### README.md
-
-Update `README.md` whenever the change affects any of the following:
+Review `README.md` after implementation and update it whenever the change affects any of the following:
 
 - public behavior or usage
 - setup or installation steps
@@ -147,6 +145,10 @@ Update `README.md` whenever the change affects any of the following:
 - file structure or documented extension points
 
 If none of the above apply, no README update is needed, but you must explicitly confirm that.
+
+### Step 7 - Bump the version
+
+Increment the `version` field in `package.json` after the implementation and documentation updates are complete.
 
 #### Semantic Versioning
 
@@ -165,7 +167,7 @@ Rules:
 - Never skip a segment.
 - `package.json` is the source of truth for the project version.
 
-### Step 7 - Self-review checklist
+### Step 8 - Self-review checklist
 
 Before declaring the task complete, verify each item:
 
@@ -181,7 +183,7 @@ Before declaring the task complete, verify each item:
 - [ ] `npm run test:run` exits 0
 - [ ] `npm run test:coverage` exits 0 and coverage remains at or above 80%
 - [ ] `npm build` passes if a build script exists
-- [ ] `README.md` was updated when public behavior or workflow changed, or explicitly confirmed unnecessary
+- [ ] `README.md` was reviewed and updated when the change was important, or explicitly confirmed unnecessary
 - [ ] `version` in `package.json` was bumped according to Semantic Versioning
 - [ ] No rules, tests, or coverage thresholds were weakened to make the task pass
 
