@@ -10,3 +10,5 @@ projectStructure.cache.json
 
 .idea
 .env
+coverage
+.agents

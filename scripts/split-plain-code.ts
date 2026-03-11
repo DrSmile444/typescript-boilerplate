@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/no-process-exit */
+/* eslint-disable unicorn/no-process-exit,security/detect-non-literal-fs-filename */
 /**
  * Multi-file Plain Code Splitter (TypeScript, Node ≥ 18)
  * ------------------------------------------------------
@@ -206,11 +206,11 @@ function maybeStripMdFence(text: string): string {
   let start = 0;
   let end = array.length - 1;
 
-  while (start < array.length && typeof array[start] === 'string' && array[start].trim() === '') {
+  while (start < array.length && typeof array.at(start) === 'string' && array.at(start)?.trim() === '') {
     start += 1;
   }
 
-  while (end >= 0 && typeof array[end] === 'string' && array[end].trim() === '') {
+  while (end >= 0 && typeof array.at(end) === 'string' && array.at(end)?.trim() === '') {
     end -= 1;
   }
 
@@ -218,8 +218,8 @@ function maybeStripMdFence(text: string): string {
     return text;
   }
 
-  const open = typeof array[start] === 'string' ? array[start].trim() : '';
-  const close = typeof array[end] === 'string' ? array[end].trim() : '';
+  const open = typeof array.at(start) === 'string' ? (array.at(start)?.trim() ?? '') : '';
+  const close = typeof array.at(end) === 'string' ? (array.at(end)?.trim() ?? '') : '';
   const isOpenFence = open.startsWith('```');
   const isCloseFence = close === '```';
 
@@ -263,7 +263,7 @@ async function main() {
     byRelativePath.set(section.relativePath, content);
   });
 
-  const writes: Array<Promise<unknown>> = [];
+  const writes: Promise<unknown>[] = [];
 
   [...byRelativePath.entries()].forEach(([relativePath, content]) => {
     // Validate relativePath before using in fs functions

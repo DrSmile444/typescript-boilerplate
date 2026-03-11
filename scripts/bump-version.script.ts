@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 import * as fs from 'node:fs';
 import * as readline from 'node:readline';
 
@@ -13,8 +14,8 @@ const readJSONFile = (filePath: string): PackageJSON => {
 };
 
 // Helper function to write JSON file
-const writeJSONFile = (filePath: string, data: unknown): void => {
-  const jsonData = JSON.stringify(data, null, 2);
+const writeJSONFile = (filePath: string, newJson: unknown): void => {
+  const jsonData = JSON.stringify(newJson, null, 2);
 
   fs.writeFileSync(filePath, `${jsonData}\n`);
 };
@@ -23,8 +24,8 @@ const writeJSONFile = (filePath: string, data: unknown): void => {
 const readTextFile = (filePath: string): string => fs.readFileSync(filePath, 'utf8');
 
 // Helper function to write text file
-const writeTextFile = (filePath: string, data: string): void => {
-  fs.writeFileSync(filePath, data, 'utf8');
+const writeTextFile = (filePath: string, text: string): void => {
+  fs.writeFileSync(filePath, text, 'utf8');
 };
 
 // Function to update the version in package.json and registry/package.json

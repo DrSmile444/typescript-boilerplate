@@ -10,7 +10,13 @@ export default defineConfig([
     rules: {
       // enable all recommended rules to report an error
       ...eslintPluginBetterTailwindcss.configs['recommended-error'].rules,
-      'better-tailwindcss/no-unregistered-classes': ['error', { detectComponentClasses: true }],
+      'better-tailwindcss/no-unknown-classes': ['error', { detectComponentClasses: true }],
+      'better-tailwindcss/enforce-consistent-line-wrapping': [
+        'error',
+        {
+          strictness: 'loose', // Enable this option if prettier is used in your project.
+        },
+      ],
     },
   },
   {

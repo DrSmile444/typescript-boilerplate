@@ -4,6 +4,7 @@ import { includeIgnoreFile } from '@eslint/compat';
 import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
+import lintlordEslint from './lintlord/lintlord.eslint.mjs';
 import airbnbBaseEslint from './node/airbnb-base.eslint.mjs';
 import customStyleEslint from './node/custom-style.eslint.mjs';
 import eslintRulesEslint from './node/eslint-rules.eslint.mjs';
@@ -16,7 +17,6 @@ import orderedImportsEslint from './node/ordered-imports.eslint.mjs';
 import overridesEslint from './node/overrides.eslint.mjs';
 import perfectionistEslint from './node/perfectionist.eslint.mjs';
 import prettierEslint from './node/prettier.eslint.mjs';
-import projectStructureEslint from './node/project-structure.eslint.mjs';
 import securityEslint from './node/security.eslint.mjs';
 import sonarEslint from './node/sonar.eslint.mjs';
 import stylisticEslint from './node/stylistic.eslint.mjs';
@@ -92,10 +92,10 @@ export default [
   ...perfectionistEslint,
   // Unicorn plugin for best practices
   ...unicornEslint,
-  // Project folder/file structure rules
-  ...projectStructureEslint,
   // No barrel files rules
   ...noBarrelFilesEslint,
+  // Custom lintlord rules for JS/TS
+  ...lintlordEslint,
   // TypeScript and test file overrides
   ...overridesEslint,
   // Custom style rules for JS/TS

@@ -1,6 +1,6 @@
 {
   "name": "typescript-boilerplate",
-  "version": "1.3.19",
+  "version": "1.4.1",
   "main": "src/main.ts",
   "scripts": {
     "start": "npx tsx ./src/main.ts",
@@ -11,9 +11,13 @@
     "format:md": "npx prettier --write \"**/*.md\"",
     "typecheck": "npx tsc --noEmit",
     "test": "npx vitest",
+    "test:run": "npx vitest run",
+    "test:coverage": "npx vitest run --coverage",
     "bump-version": "npx tsx ./scripts/bump-version.script.ts && npm audit fix",
-    "parse-llm-response": "npx tsx ./scripts/split-plain-code.ts",
-    "format": "npx prettier . --write"
+    "parse-llm-response": "npx tsx ./scripts/split-plain-code.wrap.ts",
+    "after-parse-llm-response": "npx tsx ./scripts/create-auto-ts-paths.script.ts && npm run lint:fix && npm run format:md",
+    "format": "npx prettier . --write",
+    "postinstall": "./scripts/link-codex-skills.sh"
   },
   "keywords": [
     "typescript",
@@ -32,45 +36,49 @@
     "typed-dotenv": "^10.0.2"
   },
   "devDependencies": {
-    "@darraghor/eslint-plugin-nestjs-typed": "^7.1.10",
-    "@dword-design/eslint-plugin-import-alias": "^8.1.3",
-    "@eslint/compat": "^2.0.0",
-    "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.2",
-    "@stylistic/eslint-plugin": "^5.6.1",
-    "@types/node": "^22.18.8",
-    "@vitest/eslint-plugin": "^1.6.5",
+    "@darraghor/eslint-plugin-nestjs-typed": "^7.1.26",
+    "@dword-design/eslint-plugin-import-alias": "^8.1.7",
+    "@eslint/compat": "^2.0.3",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/node": "^24.12.0",
+    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/eslint-plugin": "^1.6.10",
     "cross-env": "^10.1.0",
     "deepmerge": "^4.3.1",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.3",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-naming": "^1.7.0",
+    "eslint-config-naming": "^1.9.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^17.23.1",
+    "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-no-barrel-files": "^1.2.2",
-    "eslint-plugin-no-secrets": "^2.2.1",
-    "eslint-plugin-perfectionist": "^4.15.1",
-    "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-project-structure": "^3.14.1",
-    "eslint-plugin-security": "^3.0.1",
+    "eslint-plugin-no-secrets": "^2.3.3",
+    "eslint-plugin-perfectionist": "^5.6.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-security": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-sonarjs": "^3.0.5",
-    "eslint-plugin-unicorn": "^62.0.0",
-    "eslint-plugin-unused-imports": "^4.3.0",
-    "globals": "^17.0.0",
+    "eslint-plugin-sonarjs": "^4.0.2",
+    "eslint-plugin-unicorn": "^63.0.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "globals": "^17.4.0",
     "json5": "^2.2.3",
-    "prettier": "^3.7.4",
-    "type-fest": "^5.3.1",
+    "prettier": "^3.8.1",
+    "type-fest": "^5.4.4",
     "tsup": "^8.5.0",
-    "typescript-eslint": "^8.52.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.0",
     "unplugin-swc": "^1.5.9",
-    "vite-tsconfig-paths": "^6.0.3",
-    "vitest": "^3.2.4"
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.0.18"
   },
   "overrides": {
     "eslint-config-airbnb-base": {
-      "eslint": "^9"
+      "eslint": "^10"
+    },
+    "eslint-plugin-import": {
+      "eslint": "^10"
     }
   },
   "directories": {

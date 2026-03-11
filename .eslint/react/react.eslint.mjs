@@ -16,9 +16,10 @@ export default defineConfig([
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
+      ecmaVersion: 2020,
       globals: globals.browser,
     },
-    extends: [reactHooks.configs['recommended-latest'], reactRefresh.configs.vite],
+    extends: [reactHooks.configs.flat['recommended-latest'], reactRefresh.configs.vite],
     plugins: {
       react,
       // 'react-hooks': reactHooks,
