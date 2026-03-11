@@ -5,12 +5,12 @@ import { environmentConfig } from '@config/environment.config';
 import { showHello } from '../src/main';
 import { OVERALL_PROJECT_RELEASE_VERSION } from '../src/version';
 
-/**
- * Unit tests for showHello function.
- * @see src/main.ts
- */
-describe('showHello', () => {
-  it('should return "Hello world"', () => {
-    expect(showHello()).toBe(`Hello world ${environmentConfig.CI} ${OVERALL_PROJECT_RELEASE_VERSION}`);
+describe('main.ts', () => {
+  describe('showHello', () => {
+    describe('positive', () => {
+      it('returns the greeting with CI flag and release version', () => {
+        expect(showHello()).toBe(`Hello world ${environmentConfig.CI} ${OVERALL_PROJECT_RELEASE_VERSION}`);
+      });
+    });
   });
 });

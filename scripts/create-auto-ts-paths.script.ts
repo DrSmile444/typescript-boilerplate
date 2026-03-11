@@ -1,4 +1,4 @@
-/* eslint-disable no-await-in-loop,import/no-extraneous-dependencies,no-use-before-define,no-continue */
+/* eslint-disable no-await-in-loop,import/no-extraneous-dependencies,no-use-before-define,no-continue,security/detect-non-literal-fs-filename */
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -77,6 +77,8 @@ async function main() {
       target = ensureDotPrefix(target);
     }
 
+    // aliasKey is derived from validated folder names under src/
+    // eslint-disable-next-line security/detect-object-injection
     paths[aliasKey] = [target];
     added.push(aliasKey);
   }
@@ -156,6 +158,8 @@ async function readImmediateSubdirs(directoryAbs: string) {
  * @param key - Property name.
  */
 function ensurePlainObject<T>(container: T, key: keyof T) {
+  // key is constrained by the caller and only used against known config objects
+  // eslint-disable-next-line security/detect-object-injection
   const value = container?.[key];
 
   if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -163,9 +167,10 @@ function ensurePlainObject<T>(container: T, key: keyof T) {
   }
 
   // Create missing or invalid shape.
-  // eslint-disable-next-line no-param-reassign
+  // eslint-disable-next-line no-param-reassign,security/detect-object-injection
   container[key] = {} as T[keyof T];
 
+  // eslint-disable-next-line security/detect-object-injection
   return container[key];
 }
 
