@@ -23,7 +23,6 @@ import stylisticEslint from './node/stylistic.eslint.mjs';
 import typescriptProjectEslint from './node/typescript-project.eslint.mjs';
 import unicornEslint from './node/unicorn.eslint.mjs';
 import unusedImportsEslint from './node/unused-imports.eslint.mjs';
-import { __dirname, compat } from './eslint-compat.config.mjs';
 import { eslintLogger } from './logger.mjs';
 
 const gitignorePath = path.resolve('.', '.gitignore');
@@ -61,11 +60,6 @@ export default [
   },
   // Airbnb base style for Node.js
   ...airbnbBaseEslint,
-  // Compatibility helpers for extending configs
-  ...compat.extends(
-    path.join(__dirname, './node/typescript.eslintrc.json'),
-    // path.join(__dirname, './node/typescript-naming-convention.eslint.cjs'),
-  ),
   // Naming convention rules for TypeScript
   ...namingEslint,
   // Stylistic rules for JS/TS

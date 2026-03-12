@@ -18,6 +18,8 @@ export default [
       'no-shadow': 'off',
       '@typescript-eslint/no-shadow': 'error',
 
+      // disable base rule; @typescript-eslint/no-unused-vars is a superset
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
       '@typescript-eslint/consistent-type-imports': [
         'error',
@@ -28,6 +30,7 @@ export default [
         },
       ],
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
+      '@typescript-eslint/array-type': 'error',
     },
   },
   // Test-file override
