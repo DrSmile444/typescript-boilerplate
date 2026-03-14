@@ -21,7 +21,7 @@ function colorContext(context, method) {
 
 export function eslintLogger(context) {
   return {
-    // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console,lintlord/prefer-logger
     log: (...arguments_) => console.log(colorContext(context, 'log'), ...arguments_),
     info: (...arguments_) => console.info(colorContext(context, 'info'), ...arguments_),
     warn: (...arguments_) => console.warn(colorContext(context, 'warn'), ...arguments_),

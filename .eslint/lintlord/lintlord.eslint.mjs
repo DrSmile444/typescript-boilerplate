@@ -1,15 +1,5 @@
 import { defineConfig } from 'eslint/config';
-
-import {
-  noInlineInterfaceObjectTypesRule,
-  RULE_NAME as noInlineInterfaceObjectTypesRuleName,
-} from './no-inline-interface-object-types.eslint.mjs';
-
-const plugin = {
-  rules: {
-    [noInlineInterfaceObjectTypesRuleName]: noInlineInterfaceObjectTypesRule,
-  },
-};
+import lintlord from 'eslint-plugin-lintlord';
 
 /**
  * @description ESLint config for enforcing no inline object types in TypeScript interfaces. Applies the custom rule defined in no-inline-interface-object-types.eslint.mjs to prevent usage of inline `{ ... }` types in interface properties, function parameters, etc. Can be configured to also forbid type aliases with inline object types.
@@ -17,13 +7,15 @@ const plugin = {
  * @version 1.1.0
  */
 export default defineConfig([
+  lintlord.configs.strict,
   {
-    name: 'lintlord/no-inline-interface-object-types',
-    plugins: {
-      lintlord: plugin,
-    },
     rules: {
-      'lintlord/no-inline-interface-object-types': ['error', { autofix: true }],
+      'lintlord/prefer-logger': [
+        'error',
+        {
+          mode: 'log-only',
+        },
+      ],
     },
   },
 ]);
