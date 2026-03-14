@@ -1,6 +1,6 @@
 {
   "name": "typescript-boilerplate",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "main": "src/main.ts",
   "scripts": {
     "start": "npx tsx ./src/main.ts",
@@ -41,8 +41,8 @@
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^24.12.0",
-    "@vitest/coverage-v8": "^4.0.18",
-    "@vitest/eslint-plugin": "^1.6.10",
+    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/eslint-plugin": "^1.6.12",
     "cross-env": "^10.1.0",
     "deepmerge": "^4.3.1",
     "eslint": "^10.0.3",
@@ -69,7 +69,7 @@
     "typescript-eslint": "^8.57.0",
     "unplugin-swc": "^1.5.9",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.0"
   },
   "overrides": {
     "eslint-config-airbnb-base": {
