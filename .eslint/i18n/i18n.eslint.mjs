@@ -1,3 +1,4 @@
+import { fixupPluginRules } from '@eslint/compat';
 import i18next from 'eslint-plugin-i18next';
 
 /**
@@ -9,9 +10,9 @@ export default [
   // Disallow literal user-facing strings in Nest code
   {
     files: ['**/*.ts'],
-    ignores: ['test/**', 'src/**/*.spec.*', 'src/**/exceptions/**', '**/migrations/**', 'src/config/**', 'src/**/__mocks__/**'],
-    plugins: { i18next },
+    ignores: ['tests/**', 'src/**/exceptions/**', '**/migrations/**', 'src/config/**', 'src/**/__mocks__/**', 'dataset/**'],
     ...i18next.configs['flat/recommended'],
+    plugins: { i18next: fixupPluginRules(i18next) },
     rules: {
       // Core rule: push developers to use i18nService.t(...)
       'i18next/no-literal-string': ['error', { mode: 'all' }],
