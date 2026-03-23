@@ -79,9 +79,9 @@
  *
  * EXAMPLE
  *  // File: src/index.css
- *  @tailwind base;
- *  @tailwind components;
- *  @tailwind utilities;
+ *  \@tailwind base;
+ *  \@tailwind components;
+ *  \@tailwind utilities;
  *
  *  // File: src/main.tsx
  *  import React from "react";
@@ -106,6 +106,11 @@ interface Section {
 // eslint-disable-next-line sonarjs/slow-regex
 const HEADER_RE = /^\s*(?:\/\/|#|;|--|<!--)\s*File:\s*([^\s][^\n]*)\s*(?:-->)?\s*$/;
 
+/**
+ * Parse CLI arguments into structured options for the script.
+ * @param argv - Raw process argument list (typically `process.argv.slice(2)`).
+ * @returns Parsed options including bundle path, output directory, and flags.
+ */
 function parseArguments(argv: string[]) {
   let bundlePath: string | undefined;
   let outputDirectory: string | undefined;
@@ -147,6 +152,11 @@ function parseArguments(argv: string[]) {
   return { bundlePath, outputDirectory, isDryRun, shouldStripMdFences };
 }
 
+/**
+ * Normalize a relative path by rejecting absolute paths and stripping leading `./`.
+ * @param relativePath - The raw relative path string from a section header.
+ * @returns The cleaned relative path with forward slashes and no leading `./`.
+ */
 function normalizeRelativePath(relativePath: string): string {
   if (path.isAbsolute(relativePath) || /^[A-Za-z]:[\\/]/.test(relativePath)) {
     throw new Error(`Absolute paths are not allowed: ${relativePath}`);
@@ -157,6 +167,12 @@ function normalizeRelativePath(relativePath: string): string {
   return normalized.replace(/^.\//, '');
 }
 
+/**
+ * Resolve a relative path under a root directory, rejecting any path that escapes the root.
+ * @param root - The output root directory to resolve against.
+ * @param relativePath - The relative path to resolve.
+ * @returns The absolute path guaranteed to be under `root`.
+ */
 function safeResolveUnder(root: string, relativePath: string): string {
   const cleanRelative = relativePath.replaceAll('\0', '');
   const abs = path.resolve(root, cleanRelative);
@@ -169,6 +185,11 @@ function safeResolveUnder(root: string, relativePath: string): string {
   return abs;
 }
 
+/**
+ * Parse a raw bundle string into an array of sections delimited by file headers.
+ * @param raw - The full text content of the bundle file.
+ * @returns An array of sections, each containing a relative path and file content.
+ */
 function parseSections(raw: string): Section[] {
   const lines = raw.split(/\r?\n/);
   const sections: Section[] = [];
@@ -201,6 +222,11 @@ function parseSections(raw: string): Section[] {
   return sections;
 }
 
+/**
+ * Strip surrounding Markdown code fences from a section's content when detected.
+ * @param text - The raw section content that may be wrapped in triple-backtick fences.
+ * @returns The content with the outermost fence removed, or the original text if no fence is found.
+ */
 function maybeStripMdFence(text: string): string {
   const array = text.split(/\r?\n/);
   let start = 0;
@@ -232,6 +258,9 @@ function maybeStripMdFence(text: string): string {
   return text;
 }
 
+/**
+ * Entry point: parse arguments, split the bundle, and write files to disk.
+ */
 async function main() {
   const { bundlePath, outputDirectory, isDryRun, shouldStripMdFences } = parseArguments(process.argv.slice(2));
 

@@ -3,7 +3,6 @@ import { OVERALL_PROJECT_RELEASE_VERSION } from './version';
 
 /**
  * Builds the default startup message with environment and release metadata.
- *
  * @returns Human-readable application greeting.
  */
 export function showHello() {

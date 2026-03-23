@@ -57,7 +57,7 @@ async function main() {
   const baseUrl = typeof compilerOptions.baseUrl === 'string' ? compilerOptions.baseUrl : null;
   const baseForPathsAbs = baseUrl ? path.resolve(tsconfigDirectory, baseUrl) : tsconfigDirectory;
 
-  const added = [];
+  const added: string[] = [];
 
   // Keep existing order, append new keys in a stable order.
   for (const directoryName of sourceFolders.toSorted((firstFolder, secondFolder) => firstFolder.localeCompare(secondFolder))) {
@@ -103,6 +103,7 @@ async function main() {
 /**
  * Returns true if a path exists (file or directory).
  * @param filePath - Path to check.
+ * @returns A promise resolving to true if the path exists, false otherwise.
  */
 async function pathExists(filePath: string) {
   try {
@@ -118,6 +119,7 @@ async function pathExists(filePath: string) {
  * Finds a file by walking up from a start directory.
  * @param fileName - Name to look for (e.g. tsconfig.json).
  * @param startDirectory - Directory to start from.
+ * @returns A promise resolving to the found file path, or null if not found.
  */
 async function findUp(fileName: string, startDirectory: string) {
   let directory = path.resolve(startDirectory);
@@ -142,6 +144,7 @@ async function findUp(fileName: string, startDirectory: string) {
 /**
  * Reads only the immediate subdirectories of a directory.
  * @param directoryAbs - Absolute directory path.
+ * @returns A promise resolving to an array of subdirectory names.
  */
 async function readImmediateSubdirs(directoryAbs: string) {
   const entries = await fs.readdir(directoryAbs, { withFileTypes: true });
@@ -156,6 +159,7 @@ async function readImmediateSubdirs(directoryAbs: string) {
  * Ensures an object property is a plain object; otherwise sets it to {}.
  * @param container - The object to mutate.
  * @param key - Property name.
+ * @returns The existing or newly created plain object value at the given key.
  */
 function ensurePlainObject<T>(container: T, key: keyof T) {
   // key is constrained by the caller and only used against known config objects
@@ -177,6 +181,7 @@ function ensurePlainObject<T>(container: T, key: keyof T) {
 /**
  * Converts Windows backslashes to POSIX slashes for tsconfig paths.
  * @param originalPath - Path to normalize.
+ * @returns The path string with all backslashes replaced by forward slashes.
  */
 function toPosixPath(originalPath: string) {
   return String(originalPath).replaceAll('\\', '/');
@@ -185,6 +190,7 @@ function toPosixPath(originalPath: string) {
 /**
  * Adds "./" prefix when a relative path doesn't already start with "." or "/".
  * @param relativePath - Relative path (POSIX).
+ * @returns The path string with a "./" prefix if it was missing.
  */
 function ensureDotPrefix(relativePath: string) {
   const normalizedPath = String(relativePath);
@@ -199,6 +205,7 @@ function ensureDotPrefix(relativePath: string) {
 /**
  * Formats a TypeScript diagnostic into a readable string.
  * @param diagnostic - TS diagnostic object.
+ * @returns A formatted human-readable diagnostic message string.
  */
 function formatTsDiagnostic(diagnostic: ts.Diagnostic) {
   const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');

@@ -37,6 +37,8 @@ const DEFAULT_EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '
  *   await import('pkg')
  *
  * It ignores relative/absolute paths and filters built-ins later.
+ * @param code - The source file content to extract specifiers from.
+ * @returns An array of unique module specifier strings found in the source.
  */
 function extractModuleSpecifiers(code: string): string[] {
   const specs = new Set<string>();
@@ -65,7 +67,12 @@ function extractModuleSpecifiers(code: string): string[] {
   return [...specs];
 }
 
-/** Convert 'lodash/map' -> 'lodash', '@types/node/fs' -> '@types/node' */
+/**
+ * Convert a deep import specifier to its top-level package name.
+ * For example: `lodash/map` → `lodash`, `@types/node/fs` → `@types/node`.
+ * @param spec - The module specifier to normalize.
+ * @returns The top-level package name.
+ */
 function toTopLevelPackageName(spec: string): string {
   if (spec.startsWith('@')) {
     const parts = spec.split('/');
@@ -76,10 +83,22 @@ function toTopLevelPackageName(spec: string): string {
   return spec.split('/')[0];
 }
 
+/**
+ * Determine whether a specifier looks like an installable package (not a relative or absolute path).
+ * @param spec - The module specifier to check.
+ * @returns `true` if the specifier is a package-like reference, `false` otherwise.
+ */
 function isPackageLike(spec: string): boolean {
   return !!spec && !spec.startsWith('.') && !spec.startsWith('/') && !spec.includes(':');
 }
 
+/**
+ * Recursively walk a directory tree and yield paths to files with allowed extensions.
+ * @param directory - The root directory to start walking from.
+ * @param includeExtension - Set of file extensions (e.g. `.ts`) to include.
+ * @param excludeDirectories - Set of directory names to skip entirely.
+ * @yields {string} Absolute file paths for each matching file found.
+ */
 async function* walkDirectory(directory: string, includeExtension: Set<string>, excludeDirectories: Set<string>): AsyncGenerator<string> {
   let entries: Dirent[];
 
@@ -106,6 +125,11 @@ async function* walkDirectory(directory: string, includeExtension: Set<string>, 
   }
 }
 
+/**
+ * Read and parse a JSON file, returning `null` if the file cannot be read or parsed.
+ * @param filePath - Path to the JSON file.
+ * @returns The parsed value typed as `T`, or `null` on failure.
+ */
 async function readJson<T = unknown>(filePath: string): Promise<T | null> {
   try {
     const txt = await fs.readFile(filePath, 'utf8');
@@ -116,6 +140,12 @@ async function readJson<T = unknown>(filePath: string): Promise<T | null> {
   }
 }
 
+/**
+ * Detect the package manager in use by inspecting lock files and the `packageManager` field.
+ * @param projectDirectory - The project root directory to inspect.
+ * @param forced - An explicit package manager override from CLI options.
+ * @returns The detected or forced package manager name.
+ */
 function detectPackageManager(projectDirectory: string, forced?: CliOptions['packageManager']) {
   if (forced) {
     return forced;
@@ -166,6 +196,11 @@ function detectPackageManager(projectDirectory: string, forced?: CliOptions['pac
   return 'npm'; // default fallback
 }
 
+/**
+ * Synchronously check whether a file system path is accessible.
+ * @param filePath - The path to check.
+ * @returns `true` if accessible, `false` otherwise.
+ */
 function safeExists(filePath: string): boolean {
   try {
     // Using sync here is fine: tiny calls and avoids race conditions
@@ -177,6 +212,12 @@ function safeExists(filePath: string): boolean {
   }
 }
 
+/**
+ * Check whether a top-level package is present in the project's `node_modules`.
+ * @param projectDirectory - The project root directory containing `node_modules`.
+ * @param topLevel - The top-level package name to look up.
+ * @returns `true` if the package directory exists in `node_modules`, `false` otherwise.
+ */
 function isInstalledInNodeModules(projectDirectory: string, topLevel: string): boolean {
   // Support scoped packages in node_modules
   const nmPath = path.join(projectDirectory, 'node_modules', topLevel);
@@ -185,6 +226,11 @@ function isInstalledInNodeModules(projectDirectory: string, topLevel: string): b
 }
 
 // Helper to get tsconfig path aliases
+/**
+ * Read a `tsconfig.json` and return the list of configured path alias prefixes.
+ * @param tsconfigPath - Absolute path to the `tsconfig.json` file.
+ * @returns An array of alias prefix strings (e.g. `@/`, `~src/`).
+ */
 function getTsconfigAliases(tsconfigPath: string): string[] {
   try {
     const pathsObject = resolveTsconfigPaths(tsconfigPath);
@@ -196,6 +242,12 @@ function getTsconfigAliases(tsconfigPath: string): string[] {
 }
 
 // Helper to process a file and collect referenced packages
+/**
+ * Extract package references from a single source file and add them to the shared set.
+ * @param file - Absolute path to the source file to analyze.
+ * @param tsconfigAliases - List of tsconfig path alias prefixes to skip.
+ * @param referenced - Mutable set that accumulates discovered top-level package names.
+ */
 async function collectReferencedFromFile(file: string, tsconfigAliases: string[], referenced: Set<string>) {
   const code = await fs.readFile(file, 'utf8');
 
@@ -223,6 +275,11 @@ interface FindUninstalledDepsReturn {
   uninstalled: string[];
 }
 
+/**
+ * Scan a project directory for all imported packages and identify those not installed in `node_modules`.
+ * @param root - The project root directory to scan.
+ * @returns An object with the full set of referenced packages and the subset that are uninstalled.
+ */
 async function findUninstalledDeps(root: string): Promise<FindUninstalledDepsReturn> {
   const referenced = new Set<string>();
 
@@ -239,6 +296,14 @@ async function findUninstalledDeps(root: string): Promise<FindUninstalledDepsRet
   return { referencedTopLevel: referenced, uninstalled };
 }
 
+/**
+ * Install a list of packages using the specified package manager.
+ * @param projectDirectory - The project root where the install command will run.
+ * @param pkgs - The list of package names to install.
+ * @param pm - The package manager to use.
+ * @param development - Whether to install as devDependencies.
+ * @returns The exit code of the install process.
+ */
 async function installDependencies(
   projectDirectory: string,
   pkgs: string[],
@@ -266,6 +331,11 @@ async function installDependencies(
   });
 }
 
+/**
+ * Parse CLI arguments into structured options for the script.
+ * @param argv - Raw process argument list (typically `process.argv`).
+ * @returns Parsed `CliOptions` with directory, flags, and package manager selection.
+ */
 function parseArguments(argv: string[]): CliOptions {
   const out: CliOptions = { dir: '', dryRun: false, dev: false };
 
@@ -301,6 +371,10 @@ function parseArguments(argv: string[]): CliOptions {
   return out;
 }
 
+/**
+ * Print usage information to stdout and exit the process.
+ * @param code - The exit code to use (default `0` for success).
+ */
 function printHelpAndExit(code = 0): never {
   console.info(
     `
@@ -321,6 +395,9 @@ Examples:
   process.exit(code);
 }
 
+/**
+ * Entry point: parse arguments, scan for uninstalled dependencies, and install them if needed.
+ */
 async function main() {
   const options = parseArguments(process.argv);
 
