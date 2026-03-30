@@ -1,6 +1,6 @@
 {
   "name": "typescript-boilerplate",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "main": "src/main.ts",
   "scripts": {
     "start": "npx tsx ./src/main.ts",
@@ -35,13 +35,13 @@
   },
   "devDependencies": {
     "@darraghor/eslint-plugin-nestjs-typed": "^7.1.27",
-    "@dword-design/eslint-plugin-import-alias": "^8.1.7",
+    "@dword-design/eslint-plugin-import-alias": "^8.1.8",
     "@eslint/compat": "^2.0.3",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^24.12.0",
-    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/coverage-v8": "^4.1.2",
     "@vitest/eslint-plugin": "^1.6.13",
     "cross-env": "^10.1.0",
     "deepmerge": "^4.3.1",
@@ -50,7 +50,7 @@
     "eslint-config-naming": "^1.9.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsdoc": "^62.8.0",
+    "eslint-plugin-jsdoc": "^62.8.1",
     "eslint-plugin-lintlord": "^1.1.0",
     "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-no-barrel-files": "^1.2.2",
@@ -60,17 +60,17 @@
     "eslint-plugin-security": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-sonarjs": "^4.0.2",
-    "eslint-plugin-unicorn": "^63.0.0",
+    "eslint-plugin-unicorn": "^64.0.0",
     "eslint-plugin-unused-imports": "^4.4.1",
     "globals": "^17.4.0",
     "json5": "^2.2.3",
     "prettier": "^3.8.1",
     "type-fest": "^5.5.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.1",
+    "typescript-eslint": "^8.57.2",
     "unplugin-swc": "^1.5.9",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.2"
   },
   "overrides": {
     "eslint-config-airbnb-base": {
