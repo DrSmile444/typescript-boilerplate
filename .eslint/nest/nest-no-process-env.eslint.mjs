@@ -1,36 +1,30 @@
 import { defineConfig } from 'eslint/config';
 
 /**
- * @description ESLint config for enforcing no usage of process.env except in whitelisted files. Applies 'no-process-env' rule globally and disables it for specific files where environment access is required (e.g., config, main entrypoint, ESLint config itself).
+ * @description ESLint config enforcing no process.env usage except in whitelisted paths.
+ * Uses n/no-process-env from eslint-plugin-n, ensuring environment access is centralized.
  * @author Dmytro Vakulenko
- * @see https://eslint.org/docs/latest/rules/no-process-env
- * @type {import('eslint').Linter.FlatConfig[]}
+ * @see https://github.com/eslint-community/eslint-plugin-n/blob/main/docs/rules/no-process-env.md
  */
 export default defineConfig([
   {
-    // This configuration object applies to all files by default if no 'files' key is present
+    name: 'no-process-env/global',
     rules: {
-      'no-process-env': 'error',
+      'n/no-process-env': 'error',
     },
   },
   {
-    // This object targets test files where process.env usage IS warned in spec files
+    name: 'no-process-env/test-files',
     files: ['**/*.spec.ts', '**/*.test.ts'],
     rules: {
-      'no-process-env': 'warn', // Warn instead of error in test files
+      'n/no-process-env': 'warn',
     },
   },
   {
-    // This object targets files where process.env usage IS allowed
-    files: [
-      'src/config/**/*.ts', // e.g., src/config/configuration.ts
-      'src/main.ts', // main bootstrapping file
-      'eslint.config.js', // The main config file itself
-      'scripts/**/*', // e.g., build or setup scripts
-      'database/**/*', // e.g., build or setup scripts
-    ],
+    name: 'no-process-env/allowed-files',
+    files: ['src/config/**/*.ts', 'src/main.ts', 'eslint.config.js', 'scripts/**/*', 'database/**/*'],
     rules: {
-      'no-process-env': 'off', // Disable the rule for these specific files
+      'n/no-process-env': 'off',
     },
   },
 ]);

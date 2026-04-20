@@ -1,29 +1,20 @@
+import tseslint from 'typescript-eslint';
+
 /**
- * @description ESLint overrides for test files. Provides test globals and
- * relaxes documentation rules for test files.
+ * @description TypeScript overrides for test files: relaxes documentation and TS-strict rules
+ * that are impractical in test code (mocks, stubs, empty functions).
+ * Globals are handled by the vitest or jest config — not defined here.
  * @author Dmytro Vakulenko
  */
-export default [
-  // Test-file override
-  {
-    name: 'overrides-test',
-    files: ['**/*.test.ts', '**/*.spec.ts'],
-    languageOptions: {
-      globals: {
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        vi: 'readonly',
-      },
-    },
-    rules: {
-      'jsdoc/require-description': 'off',
-      'jsdoc/require-returns': 'off',
-      'jsdoc/require-param-description': 'off',
-      'jsdoc/require-param-type': 'off',
-    },
+export default tseslint.config({
+  name: 'overrides-test',
+  files: ['**/*.test.ts', '**/*.spec.ts'],
+  rules: {
+    'jsdoc/require-description': 'off',
+    'jsdoc/require-returns': 'off',
+    'jsdoc/require-param-description': 'off',
+    'jsdoc/require-param-type': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/unbound-method': 'off',
   },
-];
+});

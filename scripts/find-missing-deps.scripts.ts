@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/slow-regex,no-continue,no-plusplus,no-use-before-define,unicorn/no-process-exit,sonarjs/no-alphabetical-sort,unicorn/no-array-sort,security/detect-non-literal-fs-filename,security/detect-object-injection,security/detect-unsafe-regex */
+/* eslint-disable sonarjs/slow-regex,no-continue,no-plusplus,no-use-before-define,unicorn/no-process-exit,sonarjs/no-alphabetical-sort,unicorn/no-array-sort,security/detect-non-literal-fs-filename,security/detect-object-injection,security/detect-unsafe-regex,regexp/no-super-linear-backtracking */
 import { spawn } from 'node:child_process';
 import type { Dirent } from 'node:fs';
 import { accessSync, promises as fs, readFileSync } from 'node:fs';

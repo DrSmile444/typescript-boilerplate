@@ -1,27 +1,28 @@
+import tseslint from 'typescript-eslint';
+
 /**
- * @description ESLint overrides for TypeScript files. Enforces TS-specific rules,
- * disables conflicting base JS rules, and provides TypeScript-specific customizations.
+ * @description TypeScript-specific rule overrides: enables TS equivalents of base JS rules,
+ * disables conflicting base rules, and enforces TypeScript best practices.
  * @author Dmytro Vakulenko
  */
-export default [
+export default tseslint.config(
   {
     name: 'overrides-ts',
     files: ['**/*.{ts,tsx,mts,cts}'],
     rules: {
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       'import/prefer-default-export': 'off',
-      'import/no-unresolved': 'off', // for path aliases
+      'import/no-unresolved': 'off',
 
-      // prefer the TS-specific version of these:
       'no-useless-constructor': 'off',
       '@typescript-eslint/no-useless-constructor': 'error',
 
       'no-shadow': 'off',
       '@typescript-eslint/no-shadow': 'error',
 
-      // disable base rule; @typescript-eslint/no-unused-vars is a superset
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+
       '@typescript-eslint/consistent-type-imports': [
         'error',
         {
@@ -32,12 +33,16 @@ export default [
       ],
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
       '@typescript-eslint/array-type': 'error',
+      '@typescript-eslint/prefer-readonly': 'error',
 
-      // Disable no-undef for TypeScript files (handled by TypeScript compiler)
       'no-undef': 'off',
+
+      // TypeScript compiler handles module resolution — n plugin doesn't understand
+      // extensionless TS imports or path aliases, so these produce false positives.
+      'n/no-missing-import': 'off',
+      'n/no-unresolved': 'off',
     },
   },
-  // Disable no-extraneous-class for module files (e.g. NestJS *.module.ts)
   {
     name: 'overrides-modules',
     files: ['**/*.module.{ts,tsx}'],
@@ -45,4 +50,4 @@ export default [
       '@typescript-eslint/no-extraneous-class': 'off',
     },
   },
-];
+);

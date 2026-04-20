@@ -1,12 +1,14 @@
+import { defineConfig } from 'eslint/config';
 import unusedImports from 'eslint-plugin-unused-imports';
 
 /**
- * @description ESLint config for removing unused imports using eslint-plugin-unused-imports. Automatically detects and removes unused imports to keep code clean.
+ * @description ESLint config for detecting and auto-removing unused imports.
  * @author Dmytro Vakulenko
  * @see https://github.com/sweepline/eslint-plugin-unused-imports
  */
-export default [
+export default defineConfig([
   {
+    name: 'unused-imports',
     plugins: {
       'unused-imports': unusedImports,
     },
@@ -14,4 +16,4 @@ export default [
       'unused-imports/no-unused-imports': 'error',
     },
   },
-];
+]);

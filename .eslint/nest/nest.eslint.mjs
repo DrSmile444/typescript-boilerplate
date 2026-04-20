@@ -1,16 +1,18 @@
 import eslintNestJs from '@darraghor/eslint-plugin-nestjs-typed';
+import { defineConfig } from 'eslint/config';
 
 /**
- * @description ESLint config for enforcing best practices and recommended rules for NestJS projects using `@darraghor`/eslint-plugin-nestjs-typed. Applies recommended NestJS rules and disables specific rules for flexibility in project structure and dependency management.
+ * @description ESLint config for NestJS projects using `@darraghor/eslint-plugin-nestjs-typed`.
  * @author Dmytro Vakulenko
  * @see https://github.com/darraghoriordan/eslint-plugin-nestjs-typed
  */
-export default [
+export default defineConfig([
   {
     files: ['**/*.ts'],
-    ...eslintNestJs.configs.flatRecommended[0],
+    extends: [...eslintNestJs.configs.flatRecommended],
   },
   {
+    name: 'nestjs/overrides',
     files: ['**/*.ts'],
     rules: {
       '@darraghor/nestjs-typed/injectable-should-be-provided': 'off',
@@ -20,12 +22,14 @@ export default [
     },
   },
   {
+    name: 'nestjs/module-files',
     files: ['**/*.module.*'],
     rules: {
       '@typescript-eslint/no-extraneous-class': 'off',
     },
   },
   {
+    name: 'nestjs/model-entity-files',
     files: ['**/models/**/*.ts', '**/entities/**/*.ts'],
     rules: {
       '@darraghor/nestjs-typed/param-decorator-name-matches-route-param': 'off',
@@ -34,4 +38,4 @@ export default [
       '@darraghor/nestjs-typed/api-property-matches-property-optionality': 'off',
     },
   },
-];
+]);

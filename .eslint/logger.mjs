@@ -1,4 +1,5 @@
-// Simple logger for ESLint configs with colored context
+const VERBOSE = process.env.ESLINT_DEBUG === 'true';
+
 /**
  * Colors a console output with ANSI escape codes based on the context and method.
  * @param {string} context - The context label (e.g., ESLint plugin name).
@@ -7,12 +8,12 @@
  */
 function colorContext(context, method) {
   const METHOD_COLORS = {
-    log: '\u001B[32m', // green
-    info: '\u001B[36m', // cyan
-    warn: '\u001B[33m', // yellow
-    error: '\u001B[31m', // red
-    dir: '\u001B[35m', // magenta
-    table: '\u001B[32m', // green
+    log: '\u001B[32m',
+    info: '\u001B[36m',
+    warn: '\u001B[33m',
+    error: '\u001B[31m',
+    dir: '\u001B[35m',
+    table: '\u001B[32m',
   };
 
   // eslint-disable-next-line security/detect-object-injection
@@ -25,12 +26,19 @@ function colorContext(context, method) {
   return `[ESLint:${context}]`;
 }
 
+const noop = () => {};
+
 /**
  * Creates a logger instance with context-prefixed, colored console output.
+ * Enable output by setting ESLINT_DEBUG=true in your environment.
  * @param {string} context - The context label to prefix log messages with.
  * @returns {object} An object with log, info, warn, error, dir, and table methods.
  */
 export function eslintLogger(context) {
+  if (!VERBOSE) {
+    return { log: noop, info: noop, warn: noop, error: noop, dir: noop, table: noop };
+  }
+
   return {
     /* eslint-disable no-console, lintlord/prefer-logger */
     log: (...arguments_) => console.log(colorContext(context, 'log'), ...arguments_),

@@ -1,31 +1,27 @@
+import { defineConfig } from 'eslint/config';
 import airbnbBase from 'eslint-config-airbnb-base';
 
 import { compat } from '../eslint-compat.config.mjs';
 
 /**
- * @description ESLint config for Node.js code. Applies Airbnb base style and disables class-methods-use-this rule.
+ * @description Airbnb base style for Node.js via FlatCompat, with modern overrides.
  * @author Dmytro Vakulenko
  * @see https://github.com/airbnb/javascript
  */
-export default [
+export default defineConfig([
   ...compat.config(airbnbBase),
   {
-    name: 'airbnb-base - disable class-methods-use',
+    name: 'airbnb-base/overrides',
     rules: {
       'class-methods-use-this': 'off',
       'import/order': 'off',
-      /**
-       * This is Airbnb’s no-restricted-syntax text, written back when:
-       *
-       * - A lot of projects still supported IE11 / very old Chrome/Firefox/Safari.
-       * - Babel transpiled for...of & generators to ES5.
-       * - That required regenerator-runtime, which was relatively heavy.
-       */
+      // for...of restriction was added when Babel + regenerator-runtime added significant bundle weight.
+      // Node 22 and modern TS targets emit native for...of — the concern no longer applies.
       'no-restricted-syntax': 'off',
     },
   },
   {
-    name: 'no-restricted-syntax - disallow labels and with statement',
+    name: 'airbnb-base/restricted-syntax',
     rules: {
       /**
        * Old airbnb config has for-of loop restriction.
@@ -45,7 +41,7 @@ export default [
         'error',
         {
           selector: 'LabeledStatement',
-          message: 'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.',
+          message: 'Labels are a form of GOTO; using them makes code confusing and hard to maintain.',
         },
         {
           selector: 'WithStatement',
@@ -54,4 +50,4 @@ export default [
       ],
     },
   },
-];
+]);

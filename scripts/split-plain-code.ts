@@ -103,8 +103,8 @@ interface Section {
 }
 
 // Improved regex: avoids super-linear backtracking and empty alternatives
-// eslint-disable-next-line sonarjs/slow-regex
-const HEADER_RE = /^\s*(?:\/\/|#|;|--|<!--)\s*File:\s*([^\s][^\n]*)\s*(?:-->)?\s*$/;
+// eslint-disable-next-line sonarjs/slow-regex, regexp/no-super-linear-backtracking
+const HEADER_RE = /^\s*(?:\/\/|#|;|--|<!--)\s*File:\s*(\S[^\n]*)\s*(?:-->\s*)?$/;
 
 /**
  * Parse CLI arguments into structured options for the script.
@@ -156,7 +156,7 @@ function parseArguments(argv: string[]) {
  * @returns The cleaned relative path with forward slashes and no leading `./`.
  */
 function normalizeRelativePath(relativePath: string): string {
-  if (path.isAbsolute(relativePath) || /^[A-Za-z]:[\\/]/.test(relativePath)) {
+  if (path.isAbsolute(relativePath) || /^[A-Z]:[\\/]/i.test(relativePath)) {
     throw new Error(`Absolute paths are not allowed: ${relativePath}`);
   }
 
@@ -309,6 +309,7 @@ async function main() {
         fs
           .mkdir(path.dirname(abs), { recursive: true })
           .then(() => fs.writeFile(abs, content, 'utf8'))
+          // eslint-disable-next-line promise/always-return -- void side-effect: logs write confirmation, no return needed
           .then(() => {
             const size = new TextEncoder().encode(content).length;
 
