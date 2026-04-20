@@ -73,6 +73,72 @@ The `src` folder is organized into a modular structure with the following subfol
 
 ---
 
+## ESLint Configuration
+
+The `.eslint/` directory provides modular, framework-specific ESLint configs. Compose them in your `eslint.config.mjs`.
+
+### Node.js (default)
+
+```js
+import nodeConfigs from './.eslint/node.eslint.mjs';
+export default [...nodeConfigs];
+```
+
+### React
+
+```js
+import { createNodeConfig } from './.eslint/node.eslint.mjs';
+import { createReactConfig } from './.eslint/react.eslint.mjs';
+export default [...createNodeConfig(), ...createReactConfig()];
+```
+
+### NestJS
+
+```js
+import { createNestConfig } from './.eslint/nest.eslint.mjs';
+export default [...createNestConfig()];
+```
+
+### Vue (JavaScript SFCs)
+
+Requires `eslint-plugin-vue` installed in your project.
+
+```js
+import { createNodeConfig } from './.eslint/node.eslint.mjs';
+import { createVueConfig } from './.eslint/vue.eslint.mjs';
+export default [...createNodeConfig(), ...createVueConfig()];
+```
+
+### Vue (TypeScript SFCs)
+
+Requires `eslint-plugin-vue` installed. Also add `**/*.vue` to your `tsconfig.json` `include` array.
+
+```js
+import { createNodeConfig } from './.eslint/node.eslint.mjs';
+import { createVueTsConfig } from './.eslint/vue.eslint.mjs';
+export default [...createNodeConfig(), ...createVueTsConfig()];
+```
+
+Update your root `files` glob to include `.vue`:
+
+```js
+{
+  files: ['**/*.{js,mjs,cjs,ts,vue}'];
+}
+```
+
+### Architectural boundaries (opt-in)
+
+Enforce layered import rules per framework:
+
+```js
+import nodeBoundaries from './.eslint/boundaries/node.eslint.mjs';
+import vueBoundaries from './.eslint/boundaries/vue.eslint.mjs';
+// react, nest, vue variants available
+```
+
+---
+
 ## Dependencies
 
 - **TypeScript**: Type safety and enhanced developer experience.
