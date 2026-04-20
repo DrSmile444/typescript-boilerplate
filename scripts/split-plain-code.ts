@@ -103,7 +103,7 @@ interface Section {
 }
 
 // Improved regex: avoids super-linear backtracking and empty alternatives
-// eslint-disable-next-line sonarjs/slow-regex, regexp/no-super-linear-backtracking
+// eslint-disable-next-line sonarjs/slow-regex, regexp/no-super-linear-backtracking, security/detect-unsafe-regex
 const HEADER_RE = /^\s*(?:\/\/|#|;|--|<!--)\s*File:\s*(\S[^\n]*)\s*(?:-->\s*)?$/;
 
 /**

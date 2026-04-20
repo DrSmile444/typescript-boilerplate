@@ -54,6 +54,7 @@ async function main() {
   const compilerOptions = ensurePlainObject(config, 'compilerOptions') as CompilerOptions;
   const paths = (ensurePlainObject(compilerOptions, 'paths') ?? {}) as Record<string, string[]>;
 
+  // eslint-disable-next-line sonarjs/deprecation, @typescript-eslint/no-deprecated
   const baseUrl = typeof compilerOptions.baseUrl === 'string' ? compilerOptions.baseUrl : null;
   const baseForPathsAbs = baseUrl ? path.resolve(tsconfigDirectory, baseUrl) : tsconfigDirectory;
 
