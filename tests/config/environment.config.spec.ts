@@ -33,6 +33,7 @@ describe('environment.config.ts', () => {
         } satisfies EnvironmentConfig;
 
         const typedDotenvConfig = vi.fn(() => ({ env: mockEnvironment, error: undefined }));
+
         const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
         vi.doMock('typed-dotenv', () => ({
@@ -51,7 +52,9 @@ describe('environment.config.ts', () => {
       it('logs the failure and exits when dotenv loading fails', async () => {
         const configError = new Error('Invalid env');
         const typedDotenvConfig = vi.fn(() => ({ env: {}, error: configError }));
+
         const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
         const exitError = new Error('process.exit called');
 
         const processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {

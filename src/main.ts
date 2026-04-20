@@ -6,7 +6,7 @@ import { OVERALL_PROJECT_RELEASE_VERSION } from './version';
  * @returns Human-readable application greeting.
  */
 export function showHello() {
-  return `Hello world ${environmentConfig.CI} ${OVERALL_PROJECT_RELEASE_VERSION}`;
+  return `Hello world ${String(environmentConfig.CI)} ${OVERALL_PROJECT_RELEASE_VERSION}`;
 }
 
 console.info(showHello());
