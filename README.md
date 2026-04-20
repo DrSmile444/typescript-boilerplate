@@ -4,6 +4,8 @@
 
 This is a Typescript boilerplate project designed to streamline modern TypeScript practices. It includes robust configurations, reusable decorators, and interfaces to ensure scalability and maintainability. The project is modular, making it easy to integrate into existing workflows or use as a standalone solution.
 
+<img src="docs/typescript-boilerplate-banner.svg" alt="TypeScript Boilerplate Banner" style="max-width: 800px; width: 100%;" />
+
 ---
 
 ## Table of Contents
