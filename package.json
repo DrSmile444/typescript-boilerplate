@@ -1,6 +1,6 @@
 {
   "name": "typescript-boilerplate",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "main": "src/main.ts",
   "scripts": {
     "start": "npx tsx ./src/main.ts",
@@ -49,6 +49,8 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-naming": "^1.9.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-boundaries": "^6.0.2",
+    "eslint-plugin-depend": "^1.5.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^62.8.1",
     "eslint-plugin-lintlord": "^1.1.0",
@@ -57,6 +59,9 @@
     "eslint-plugin-no-secrets": "^2.3.3",
     "eslint-plugin-perfectionist": "^5.7.0",
     "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-promise": "^7.2.1",
+    "eslint-plugin-react-compiler": "^19.1.0-rc.2",
+    "eslint-plugin-regexp": "^3.1.0",
     "eslint-plugin-security": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-sonarjs": "^4.0.2",
@@ -68,12 +73,14 @@
     "type-fest": "^5.5.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.2",
-    "unplugin-swc": "^1.5.9",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.2"
   },
   "overrides": {
     "eslint-config-airbnb-base": {
+      "eslint": "^10"
+    },
+    "eslint-plugin-promise": {
       "eslint": "^10"
     },
     "eslint-plugin-import": {
