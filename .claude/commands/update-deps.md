@@ -38,16 +38,19 @@ npm install
 Run all checks in sequence. Stop and report if any step fails.
 
 **Type check:**
+
 ```bash
 npm run typecheck
 ```
 
 **Lint:**
+
 ```bash
 npm run lint
 ```
 
 **Tests:**
+
 ```bash
 npm run test:run
 ```
@@ -55,6 +58,7 @@ npm run test:run
 ### 5. Report results
 
 Summarize:
+
 - Which packages were updated (name, old version → new version)
 - Which checks passed
 - If any check failed: which one, the error output, and what to do next (e.g. revert a specific package with `npm install <pkg>@<old-version>`)
