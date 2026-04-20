@@ -9,8 +9,8 @@ import tseslint from 'typescript-eslint';
  */
 export default defineConfig([
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts,cts}'],
     plugins: { '@typescript-eslint': tseslint.plugin },
-    rules: namingConfig[0].rules,
+    extends: [namingConfig],
   },
 ]);

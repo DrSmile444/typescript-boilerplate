@@ -22,4 +22,13 @@ export default [
       'no-process-env': 'off', // Disable the rule for these specific files
     },
   },
+  // TypeScript-specific test overrides (mocks, stubs, and test helpers often use empty functions)
+  {
+    name: 'vitest/typescript-overrides',
+    files: ['tests/**/*.{ts,tsx}', 'test/**/*.{ts,tsx}', '**/*.spec.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+    },
+  },
 ];

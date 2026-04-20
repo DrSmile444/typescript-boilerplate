@@ -11,7 +11,6 @@ export default [
     ...nodePlugin.configs['flat/recommended-module'],
     rules: {
       'n/exports-style': ['error', 'exports'],
-      'no-undef': 'off', // handled by TypeScript
     },
   },
 ];

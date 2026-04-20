@@ -48,14 +48,7 @@ const scriptsConfig = fs.existsSync(tsconfigScriptsPath)
  */
 export default [
   {
-    files: ['**/*.{js,jsx,cjs,mjs}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-    },
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['**/*.{ts,tsx,mts,cts}'],
     ignores: ['scripts/**'],
     languageOptions: {
       parser: tseslint.parser,

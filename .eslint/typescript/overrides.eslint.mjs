@@ -1,11 +1,12 @@
 /**
- * @description ESLint config for TypeScript and test file overrides. Enforces TS-specific rules and disables conflicting JS rules.
+ * @description ESLint overrides for TypeScript files. Enforces TS-specific rules,
+ * disables conflicting base JS rules, and provides TypeScript-specific customizations.
  * @author Dmytro Vakulenko
  */
 export default [
   {
     name: 'overrides-ts',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts,cts}'],
     rules: {
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       'import/prefer-default-export': 'off',
@@ -31,29 +32,9 @@ export default [
       ],
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
       '@typescript-eslint/array-type': 'error',
-    },
-  },
-  // Test-file override
-  {
-    name: 'overrides-test',
-    files: ['**/*.test.ts', '**/*.spec.ts'],
-    languageOptions: {
-      globals: {
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        vi: 'readonly',
-      },
-    },
-    rules: {
-      '@typescript-eslint/unbound-method': 'off',
-      'jsdoc/require-description': 'off',
-      'jsdoc/require-returns': 'off',
-      'jsdoc/require-param-description': 'off',
-      'jsdoc/require-param-type': 'off',
+
+      // Disable no-undef for TypeScript files (handled by TypeScript compiler)
+      'no-undef': 'off',
     },
   },
   // Disable no-extraneous-class for module files (e.g. NestJS *.module.ts)
