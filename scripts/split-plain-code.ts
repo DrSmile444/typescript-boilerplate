@@ -120,7 +120,7 @@ function parseArguments(argv: string[]) {
   const argumentList = [...argv];
 
   while (argumentList.length > 0) {
-    const argument = argumentList.shift()!;
+    const argument = argumentList.shift() ?? '';
 
     switch (argument) {
       case '--out': {
@@ -142,9 +142,7 @@ function parseArguments(argv: string[]) {
       }
 
       default: {
-        if (!bundlePath) {
-          bundlePath = argument;
-        }
+        bundlePath ??= argument;
       }
     }
   }
@@ -305,7 +303,7 @@ async function main() {
     if (isDryRun) {
       const size = new TextEncoder().encode(content).length;
 
-      console.info(`[dry-run] write ${path.relative(process.cwd(), abs)} (${size} bytes)`);
+      console.info(`[dry-run] write ${path.relative(process.cwd(), abs)} (${String(size)} bytes)`);
     } else {
       writes.push(
         fs
@@ -314,7 +312,7 @@ async function main() {
           .then(() => {
             const size = new TextEncoder().encode(content).length;
 
-            console.info(`write ${path.relative(process.cwd(), abs)} (${size} bytes)`);
+            console.info(`write ${path.relative(process.cwd(), abs)} (${String(size)} bytes)`);
           }),
       );
     }

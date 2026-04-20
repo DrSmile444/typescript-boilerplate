@@ -50,9 +50,9 @@ async function main() {
     throw new Error(formatTsDiagnostic(parsed.error));
   }
 
-  const config = (parsed.config as ts.server.ProjectInfoTelemetryEventData) ?? {};
+  const config = parsed.config as ts.server.ProjectInfoTelemetryEventData;
   const compilerOptions = ensurePlainObject(config, 'compilerOptions') as CompilerOptions;
-  const paths = (ensurePlainObject(compilerOptions, 'paths') || {}) as Record<string, string[]>;
+  const paths = (ensurePlainObject(compilerOptions, 'paths') ?? {}) as Record<string, string[]>;
 
   const baseUrl = typeof compilerOptions.baseUrl === 'string' ? compilerOptions.baseUrl : null;
   const baseForPathsAbs = baseUrl ? path.resolve(tsconfigDirectory, baseUrl) : tsconfigDirectory;
@@ -93,7 +93,7 @@ async function main() {
 
   await fs.writeFile(tsconfigPath, nextText, 'utf8');
 
-  console.info(`Added ${added.length} alias(es) to compilerOptions.paths:`);
+  console.info(`Added ${String(added.length)} alias(es) to compilerOptions.paths:`);
 
   for (const newPath of added) {
     console.info(`  - ${newPath}`);
@@ -124,6 +124,7 @@ async function pathExists(filePath: string) {
 async function findUp(fileName: string, startDirectory: string) {
   let directory = path.resolve(startDirectory);
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (true) {
     const candidate = path.join(directory, fileName);
 
@@ -184,7 +185,7 @@ function ensurePlainObject<T>(container: T, key: keyof T) {
  * @returns The path string with all backslashes replaced by forward slashes.
  */
 function toPosixPath(originalPath: string) {
-  return String(originalPath).replaceAll('\\', '/');
+  return originalPath.replaceAll('\\', '/');
 }
 
 /**
@@ -193,13 +194,11 @@ function toPosixPath(originalPath: string) {
  * @returns The path string with a "./" prefix if it was missing.
  */
 function ensureDotPrefix(relativePath: string) {
-  const normalizedPath = String(relativePath);
-
-  if (normalizedPath.startsWith('.') || normalizedPath.startsWith('/')) {
-    return normalizedPath;
+  if (relativePath.startsWith('.') || relativePath.startsWith('/')) {
+    return relativePath;
   }
 
-  return `./${normalizedPath}`;
+  return `./${relativePath}`;
 }
 
 /**
@@ -214,7 +213,7 @@ function formatTsDiagnostic(diagnostic: ts.Diagnostic) {
   return `Failed to parse tsconfig.json${file}: ${message}`;
 }
 
-main().catch((error) => {
+main().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
 
   console.error(message);

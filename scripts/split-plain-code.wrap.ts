@@ -22,7 +22,10 @@ function run(cmd: string, commandArguments: string[]): Promise<number> {
     const child = spawn(cmd, commandArguments, { stdio: 'inherit' });
 
     child.on('error', reject);
-    child.on('close', (code) => resolve(code ?? 1));
+
+    child.on('close', (code) => {
+      resolve(code ?? 1);
+    });
   });
 }
 
@@ -99,7 +102,7 @@ async function main(): Promise<void> {
     const exitCode = await run(npxCmd, ['tsx', splitPath, ...forwardedArguments]);
 
     if (exitCode !== 0) {
-      throw new Error(`split-plain-code.ts failed with exit code ${exitCode}`);
+      throw new Error(`split-plain-code.ts failed with exit code ${String(exitCode)}`);
     }
 
     // 3) merge: "new one into the original one"
@@ -122,12 +125,14 @@ async function main(): Promise<void> {
   } finally {
     // 5) remove temp backup
     if (await exists(originalPath)) {
-      await fs.unlink(originalPath).catch(() => {});
+      await fs.unlink(originalPath).catch(() => {
+        // intentionally swallowed
+      });
     }
   }
 }
 
-main().catch((error) => {
+main().catch((error: unknown) => {
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);
 });

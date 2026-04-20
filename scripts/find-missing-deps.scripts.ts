@@ -1,7 +1,7 @@
-/* eslint-disable sonarjs/slow-regex,no-continue,no-plusplus,no-use-before-define,global-require,unicorn/no-process-exit,sonarjs/no-alphabetical-sort,unicorn/no-array-sort,security/detect-non-literal-fs-filename,security/detect-object-injection,security/detect-unsafe-regex */
+/* eslint-disable sonarjs/slow-regex,no-continue,no-plusplus,no-use-before-define,unicorn/no-process-exit,sonarjs/no-alphabetical-sort,unicorn/no-array-sort,security/detect-non-literal-fs-filename,security/detect-object-injection,security/detect-unsafe-regex */
 import { spawn } from 'node:child_process';
 import type { Dirent } from 'node:fs';
-import { promises as fs } from 'node:fs';
+import { accessSync, promises as fs, readFileSync } from 'node:fs';
 import { builtinModules } from 'node:module';
 import path from 'node:path';
 
@@ -169,10 +169,8 @@ function detectPackageManager(projectDirectory: string, forced?: CliOptions['pac
   // packageManager field
   try {
     const packageJsonPath = path.join('package.json');
-
-    const packageFile = JSON.parse(fs.readFile(packageJsonPath, 'utf8') as unknown as string);
-
-    const pm: string | undefined = packageFile?.packageManager;
+    const packageFile = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as Record<string, unknown>;
+    const pm = typeof packageFile.packageManager === 'string' ? packageFile.packageManager : undefined;
 
     if (pm?.startsWith('pnpm@')) {
       return 'pnpm';
@@ -204,7 +202,7 @@ function detectPackageManager(projectDirectory: string, forced?: CliOptions['pac
 function safeExists(filePath: string): boolean {
   try {
     // Using sync here is fine: tiny calls and avoids race conditions
-    require('node:fs').accessSync(filePath);
+    accessSync(filePath);
 
     return true;
   } catch {
@@ -326,7 +324,10 @@ async function installDependencies(
   return new Promise<number>((resolve, reject) => {
     const child = spawn(cmd, parsedArguments, { stdio: 'inherit', cwd: projectDirectory, shell: process.platform === 'win32' });
 
-    child.on('close', (code) => resolve(code ?? 1));
+    child.on('close', (code) => {
+      resolve(code ?? 1);
+    });
+
     child.on('error', reject);
   });
 }
@@ -403,7 +404,7 @@ async function main() {
 
   const packageJsonPath = path.join('package.json');
 
-  const packageJson = await readJson<unknown>(packageJsonPath);
+  const packageJson = await readJson(packageJsonPath);
 
   if (!packageJson) {
     console.error(`Error: package.json not found under ${options.dir}`);
@@ -418,7 +419,7 @@ async function main() {
   console.info(`📦 Package manager: ${pm}`);
 
   // Optional: give visibility into what's referenced
-  console.info(`📚 Referenced packages (top-level): ${referencedTopLevel.size}`);
+  console.info(`📚 Referenced packages (top-level): ${String(referencedTopLevel.size)}`);
 
   if (referencedTopLevel.size > 0) {
     console.info([...referencedTopLevel].sort().join(', '));
@@ -450,12 +451,12 @@ async function main() {
   if (code === 0) {
     console.info(`✅ Installed missing packages as ${installType}.`);
   } else {
-    console.error(`❌ Installer exited with code ${code}`);
+    console.error(`❌ Installer exited with code ${String(code)}`);
     process.exit(code);
   }
 }
 
-main().catch((error) => {
+main().catch((error: unknown) => {
   console.error('Unexpected error:', error);
   process.exit(1);
 });
