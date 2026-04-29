@@ -1,6 +1,6 @@
 {
   "name": "typescript-boilerplate",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "main": "src/main.ts",
   "scripts": {
     "start": "npx tsx ./src/main.ts",
@@ -16,6 +16,7 @@
     "parse-llm-response": "npx tsx ./scripts/split-plain-code.wrap.ts",
     "after-parse-llm-response": "npx tsx ./scripts/create-auto-ts-paths.script.ts && npm run lint:fix && npm run format:md",
     "format": "npx prettier . --write",
+    "generate:env-template": "npx tsx ./scripts/generate-env-template.ts",
     "postinstall": "./scripts/link-codex-skills.sh"
   },
   "keywords": [
@@ -31,7 +32,7 @@
   "license": "ISC",
   "description": "Modern, scalable TypeScript boilerplate for Node.js projects with strict linting, Prettier formatting, modular structure, and Vitest testing.",
   "dependencies": {
-    "typed-dotenv": "^10.0.2"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@darraghor/eslint-plugin-nestjs-typed": "^7.1.30",
@@ -52,6 +53,7 @@
     "eslint-plugin-boundaries": "^6.0.2",
     "eslint-plugin-depend": "^1.5.0",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-import-zod": "^1.2.1",
     "eslint-plugin-jsdoc": "^62.9.0",
     "eslint-plugin-lintlord": "^1.1.0",
     "eslint-plugin-n": "^17.24.0",
@@ -67,6 +69,7 @@
     "eslint-plugin-sonarjs": "^4.0.3",
     "eslint-plugin-unicorn": "^64.0.0",
     "eslint-plugin-unused-imports": "^4.4.1",
+    "eslint-plugin-zod": "^3.11.0",
     "globals": "^17.5.0",
     "json5": "^2.2.3",
     "prettier": "^3.8.3",
@@ -86,6 +89,9 @@
     "eslint-plugin-import": {
       "eslint": "^10"
     }
+  },
+  "engines": {
+    "node": ">=22.0.0"
   },
   "directories": {
     "test": "tests"
