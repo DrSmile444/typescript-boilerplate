@@ -57,7 +57,8 @@ The `src` folder is organized into a modular structure with the following subfol
 1. **`config/`**
 
 - Centralized configuration for the project, such as environment-specific settings.
-- Example: `environment.config.ts`.
+- `environment.schema.ts` — Zod schema that defines and validates all environment variables. `EnvironmentConfig` is inferred from this schema.
+- `environment.config.ts` — loads `.env` via `process.loadEnvFile()` and exports the validated `environmentConfig` object.
 
 2. **`decorators/`**
 
@@ -67,7 +68,6 @@ The `src` folder is organized into a modular structure with the following subfol
 3. **`interfaces/`**
 
 - TypeScript interfaces that define the structure of configurations, settings, and more.
-- Example: `environment.interface.ts`, `playwright-config.interface.ts`.
 
 4. **`utils/`**
 
@@ -146,8 +146,22 @@ import vueBoundaries from './.eslint/boundaries/vue.eslint.mjs';
 - **TypeScript**: Type safety and enhanced developer experience.
 - **ESLint**: Linter for maintaining code quality.
 - **Prettier**: Code formatter for consistent style.
+- **Zod**: Runtime schema validation for environment variables.
 
 Full list of dependencies is available in `package.json`.
+
+### Environment Variables
+
+Copy `.env.template` to `.env` and fill in your values. The template is auto-generated from
+the Zod schema — regenerate it with:
+
+```bash
+npm run generate:env-template
+```
+
+`.env.template` is the single source of truth for which variables exist and what format they
+expect. The schema (`src/config/environment.schema.ts`) is the source of truth for types and
+validation.
 
 ---
 
