@@ -31,7 +31,7 @@ export default tseslint.config(
           fixStyle: 'separate-type-imports',
         },
       ],
-      '@typescript-eslint/switch-exhaustiveness-check': 'error',
+      '@typescript-eslint/switch-exhaustiveness-check': ['error', { considerDefaultExhaustiveForUnions: true }],
       '@typescript-eslint/array-type': 'error',
       '@typescript-eslint/prefer-readonly': 'error',
 
