@@ -1,27 +1,44 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as z from 'zod';
 
-import type { EnvironmentConfig } from '@interfaces/environment.interface';
+import type { EnvironmentConfig } from '@config/environment.schema';
 
 interface EnvironmentConfigModule {
   environmentConfig: EnvironmentConfig;
 }
 
+const validEnvironment: Record<string, string> = {
+  CI: 'false',
+  DEV_API_BASE_URL: 'https://dev-api.example.com',
+  DEV_BASE_URL: 'https://dev.example.com',
+  LOCAL_API_BASE_URL: 'http://localhost:3001',
+  LOCAL_BASE_URL: 'http://localhost:3000',
+  PLAYWRIGHT_RECORD: 'false',
+  PROD_API_BASE_URL: 'https://api.example.com',
+  PROD_BASE_URL: 'https://example.com',
+};
+
 describe('environment.config.ts', () => {
   beforeEach(() => {
     vi.resetModules();
-    vi.clearAllMocks();
+
+    for (const [key, value] of Object.entries(validEnvironment)) {
+      vi.stubEnv(key, value);
+    }
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
     vi.resetModules();
-    vi.doUnmock('typed-dotenv');
+    vi.unstubAllEnvs();
   });
 
   describe('module initialization', () => {
     describe('positive', () => {
-      it('exports the parsed environment when dotenv loading succeeds', async () => {
-        const mockEnvironment = {
+      it('exports parsed environment when validation succeeds', async () => {
+        const { environmentConfig } = await vi.importActual<EnvironmentConfigModule>('../../src/config/environment.config');
+
+        expect(environmentConfig).toStrictEqual({
           CI: false,
           DEV_API_BASE_URL: 'https://dev-api.example.com',
           DEV_BASE_URL: 'https://dev.example.com',
@@ -30,47 +47,15 @@ describe('environment.config.ts', () => {
           PLAYWRIGHT_RECORD: false,
           PROD_API_BASE_URL: 'https://api.example.com',
           PROD_BASE_URL: 'https://example.com',
-        } satisfies EnvironmentConfig;
-
-        const typedDotenvConfig = vi.fn(() => ({ env: mockEnvironment, error: undefined }));
-
-        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-        vi.doMock('typed-dotenv', () => ({
-          config: typedDotenvConfig,
-        }));
-
-        const { environmentConfig } = await vi.importActual<EnvironmentConfigModule>('../../src/config/environment.config');
-
-        expect(typedDotenvConfig).toHaveBeenCalledTimes(1);
-        expect(environmentConfig).toBe(mockEnvironment);
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        } satisfies EnvironmentConfig);
       });
     });
 
     describe('negative', () => {
-      it('logs the failure and exits when dotenv loading fails', async () => {
-        const configError = new Error('Invalid env');
-        const typedDotenvConfig = vi.fn(() => ({ env: {}, error: configError }));
+      it('throws ZodError when an env var fails validation', async () => {
+        vi.stubEnv('LOCAL_BASE_URL', 'not-a-url');
 
-        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-        const exitError = new Error('process.exit called');
-
-        const processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-          throw exitError;
-        });
-
-        vi.doMock('typed-dotenv', () => ({
-          config: typedDotenvConfig,
-        }));
-
-        await expect(vi.importActual<EnvironmentConfigModule>('../../src/config/environment.config')).rejects.toThrow(exitError);
-
-        expect(typedDotenvConfig).toHaveBeenCalledTimes(1);
-        expect(consoleErrorSpy).toHaveBeenNthCalledWith(1, 'Something wrong with env variables');
-        expect(consoleErrorSpy).toHaveBeenNthCalledWith(2, configError);
-        expect(processExitSpy).toHaveBeenCalledTimes(1);
+        await expect(vi.importActual<EnvironmentConfigModule>('../../src/config/environment.config')).rejects.toBeInstanceOf(z.ZodError);
       });
     });
   });
