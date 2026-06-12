@@ -1,7 +1,9 @@
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     globals: true,
     root: './',
@@ -30,5 +32,4 @@ export default defineConfig({
     },
     setupFiles: ['./tests/setup.ts'],
   },
-  plugins: [tsconfigPaths()],
 });
