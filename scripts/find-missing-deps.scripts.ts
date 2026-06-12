@@ -75,12 +75,12 @@ function extractModuleSpecifiers(code: string): string[] {
  */
 function toTopLevelPackageName(spec: string): string {
   if (spec.startsWith('@')) {
-    const parts = spec.split('/');
+    const parts = spec.split('/', 2);
 
     return parts.length >= 2 ? `${parts[0]}/${parts[1]}` : spec;
   }
 
-  return spec.split('/')[0];
+  return spec.split('/', 1)[0];
 }
 
 /**
