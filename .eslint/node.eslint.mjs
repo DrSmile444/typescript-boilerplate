@@ -3,11 +3,12 @@ import pluginJs from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 
 import lintlordEslint from './lintlord/lintlord.eslint.mjs';
-import airbnbBaseEslint from './node/airbnb-base.eslint.mjs';
+import bestPracticesEslint from './node/best-practices.eslint.mjs';
 import customStyleEslint from './node/custom-style.eslint.mjs';
 import dependEslint from './node/depend.eslint.mjs';
 import eslintRulesEslint from './node/eslint-rules.eslint.mjs';
 import { createImportAliasConfig } from './node/import-alias.eslint.mjs';
+import importXEslint from './node/import-x.eslint.mjs';
 import jsdocEslint from './node/jsdoc.eslint.mjs';
 import nConfig from './node/n.eslint.mjs';
 import noBarrelFilesEslint from './node/no-barrel-files.eslint.mjs';
@@ -74,7 +75,8 @@ export function createNodeConfig(options = {}) {
     // Shared: JavaScript + TypeScript
     // ──────────────────────────────────────────────
     pluginJs.configs.recommended,
-    ...airbnbBaseEslint,
+    ...bestPracticesEslint,
+    ...importXEslint,
     ...jsdocEslint,
     ...stylisticEslint,
     ...nConfig,

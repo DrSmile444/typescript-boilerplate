@@ -10,9 +10,7 @@ export default defineConfig([
   {
     name: 'custom-style',
     rules: {
-      'import/extensions': 'off',
       'class-methods-use-this': 'off',
-      'import/prefer-default-export': 'off',
       'no-unneeded-ternary': 'error',
       'arrow-body-style': 'error',
       'constructor-super': 'error',

@@ -13,6 +13,11 @@ export default defineConfig([
       '@stylistic': stylistic,
     },
     rules: {
+      // Migrated from airbnb's deprecated core `lines-between-class-members`. `exceptAfterOverload`
+      // is set to `false` explicitly: the core rule had no such option, so leaving @stylistic's
+      // `true` default would silently stop requiring a blank line after TS method-overload signatures.
+      // `false` preserves the original behavior exactly.
+      '@stylistic/lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: false, exceptAfterOverload: false }],
       '@stylistic/padding-line-between-statements': [
         'error',
         { blankLine: 'always', next: 'return', prev: '*' },

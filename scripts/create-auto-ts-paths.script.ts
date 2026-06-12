@@ -1,4 +1,4 @@
-/* eslint-disable no-await-in-loop,import/no-extraneous-dependencies,no-use-before-define,no-continue,security/detect-non-literal-fs-filename */
+/* eslint-disable no-await-in-loop,import-x/no-extraneous-dependencies,no-use-before-define,no-continue,security/detect-non-literal-fs-filename */
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 

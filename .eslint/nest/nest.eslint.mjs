@@ -18,7 +18,7 @@ export default defineConfig([
       '@darraghor/nestjs-typed/injectable-should-be-provided': 'off',
       '@darraghor/nestjs-typed/api-enum-property-best-practices': 'off',
       'max-classes-per-file': 'off',
-      'import/no-extraneous-dependencies': 'off',
+      'import-x/no-extraneous-dependencies': 'off',
     },
   },
   {

@@ -11,8 +11,6 @@ export default tseslint.config(
     files: ['**/*.{ts,tsx,mts,cts}'],
     rules: {
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
-      'import/prefer-default-export': 'off',
-      'import/no-unresolved': 'off',
 
       'no-useless-constructor': 'off',
       '@typescript-eslint/no-useless-constructor': 'error',

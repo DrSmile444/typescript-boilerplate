@@ -10,8 +10,7 @@ export default defineConfig([
     name: 'eslint-rules/config-files',
     files: ['./.eslint/**/*.{js,mjs,cjs,ts,tsx}', './eslint.config.mjs', './vitest.config.ts', './*.config.{ts,js,mjs,cjs}'],
     rules: {
-      'import/no-extraneous-dependencies': 'off',
-      'import/no-unresolved': 'off',
+      'import-x/no-extraneous-dependencies': 'off',
       'n/no-unpublished-import': 'off',
       'n/no-missing-import': 'off',
       'jsdoc/require-param-description': 'off',
