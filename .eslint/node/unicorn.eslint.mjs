@@ -15,7 +15,7 @@ export default defineConfig([
       'unicorn/no-array-for-each': 'off',
       'unicorn/no-null': 'off',
       'unicorn/prefer-top-level-await': 'off',
-      'unicorn/prevent-abbreviations': [
+      'unicorn/name-replacements': [
         'error',
         {
           checkFilenames: false,

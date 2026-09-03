@@ -7,4 +7,4 @@ import noBarrelFiles from 'eslint-plugin-no-barrel-files';
  * @author Dmytro Vakulenko
  * @see https://github.com/nicolo-ribaudo/eslint-plugin-no-barrel-files
  */
-export default defineConfig([noBarrelFiles.flat]);
+export default defineConfig([...noBarrelFiles.configs['flat/recommended']]);
