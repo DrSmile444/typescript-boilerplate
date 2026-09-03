@@ -12,3 +12,10 @@ rules:
     - Every implementation task MUST have a paired test task, unless the change explicitly has no behavior to test (pure config/docs)
     - Coverage MUST NOT drop below the 80% threshold already enforced in vitest.config.mts; phases touching only .md/.json/config files MAY omit the coverage criterion but MUST say so explicitly
     - Never delete or skip an existing test to make the suite pass — if coverage or a test fails, fix the code or add tests
+    - >-
+      After implementation and before archiving: commit the work with the commit skill,
+      then run three independent reviews in parallel and only collect findings (fix nothing
+      yet): (a) /security-review, (b) `claude -p '/code-review high'` via Bash, (c) Codex
+      adversarial review if the codex plugin is installed (skip silently if not, but report
+      a real failure as a failure, not as "plugin missing").
+    - Apply fixes from all three reviews together in one pass once every review has finished, then commit the fixes separately from the implementation commit
