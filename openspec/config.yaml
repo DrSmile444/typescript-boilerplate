@@ -1,20 +1,14 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Tech stack: TypeScript (strict), ESLint (owned ruleset in .eslint/), Prettier, Vitest.
+  Quality commands: npm run lint / npm run typecheck / npm run test:run / npm run test:coverage.
+  Coverage floor: 80% lines/functions/branches/statements (enforced in vitest.config.mts).
+  npm scripts double as the gate — no separate CI pipeline exists yet.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  tasks:
+    - Every phase that touches source files MUST end with a verification task running lint, typecheck, and tests (npm run lint && npm run typecheck && npm run test:run)
+    - Every implementation task MUST have a paired test task, unless the change explicitly has no behavior to test (pure config/docs)
+    - Coverage MUST NOT drop below the 80% threshold already enforced in vitest.config.mts; phases touching only .md/.json/config files MAY omit the coverage criterion but MUST say so explicitly
+    - Never delete or skip an existing test to make the suite pass — if coverage or a test fails, fix the code or add tests
