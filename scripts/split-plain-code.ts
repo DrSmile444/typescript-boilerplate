@@ -103,51 +103,59 @@ interface Section {
 }
 
 // Improved regex: avoids super-linear backtracking and empty alternatives
-// eslint-disable-next-line sonarjs/slow-regex, regexp/no-super-linear-backtracking, security/detect-unsafe-regex
+// eslint-disable-next-line regexp/no-super-linear-backtracking, security/detect-unsafe-regex, sonarjs/super-linear-regex
 const HEADER_RE = /^\s*(?:\/\/|#|;|--|<!--)\s*File:\s*(\S[^\n]*)\s*(?:-->\s*)?$/;
+
+interface ParsedArguments {
+  bundlePath?: string;
+  outputDirectory?: string;
+  isDryRun: boolean;
+  shouldStripMdFences: boolean;
+}
+
+/**
+ * Compute the next parsed-options state after applying a single CLI argument.
+ * @param argument - The current CLI argument (flag or positional value).
+ * @param argumentList - The remaining, mutable argument queue (consumed for flags with values).
+ * @param parsed - The current accumulator state.
+ * @returns The updated accumulator state.
+ */
+function applyArgument(argument: string, argumentList: string[], parsed: ParsedArguments): ParsedArguments {
+  switch (argument) {
+    case '--out': {
+      return { ...parsed, outputDirectory: argumentList.shift() };
+    }
+
+    case '--dry-run': {
+      return { ...parsed, isDryRun: true };
+    }
+
+    case '--strip-md-fences': {
+      return { ...parsed, shouldStripMdFences: true };
+    }
+
+    default: {
+      return { ...parsed, bundlePath: parsed.bundlePath ?? argument };
+    }
+  }
+}
 
 /**
  * Parse CLI arguments into structured options for the script.
  * @param argv - Raw process argument list (typically `process.argv.slice(2)`).
  * @returns Parsed options including bundle path, output directory, and flags.
  */
-function parseArguments(argv: string[]) {
-  let bundlePath: string | undefined;
-  let outputDirectory: string | undefined;
-  let isDryRun = false;
-  let shouldStripMdFences = false;
-
+function parseArguments(argv: string[]): ParsedArguments {
+  let parsed: ParsedArguments = { isDryRun: false, shouldStripMdFences: false };
   const argumentList = [...argv];
 
   while (argumentList.length > 0) {
     const argument = argumentList.shift() ?? '';
 
-    switch (argument) {
-      case '--out': {
-        outputDirectory = argumentList.shift();
-
-        break;
-      }
-
-      case '--dry-run': {
-        isDryRun = true;
-
-        break;
-      }
-
-      case '--strip-md-fences': {
-        shouldStripMdFences = true;
-
-        break;
-      }
-
-      default: {
-        bundlePath ??= argument;
-      }
-    }
+    parsed = applyArgument(argument, argumentList, parsed);
   }
 
-  return { bundlePath, outputDirectory, isDryRun, shouldStripMdFences };
+  return parsed;
 }
 
 /**
@@ -205,7 +213,7 @@ function parseSections(raw: string): Section[] {
     currentPath = null;
   };
 
-  lines.forEach((line, index) => {
+  for (const [index, line] of lines.entries()) {
     const match = HEADER_RE.exec(line);
 
     if (match) {
@@ -213,7 +221,7 @@ function parseSections(raw: string): Section[] {
       currentPath = match[1].replace('(CHANGED)', '').replace('(NEW)', '').trim();
       currentStart = index + 1;
     }
-  });
+  }
 
   flush(lines.length);
 
@@ -284,15 +292,15 @@ async function main() {
 
   const byRelativePath = new Map<string, string>();
 
-  sections.forEach((section) => {
+  for (const section of sections) {
     const content = shouldStripMdFences ? maybeStripMdFence(section.content) : section.content;
 
     byRelativePath.set(section.relativePath, content);
-  });
+  }
 
   const writes: Promise<unknown>[] = [];
 
-  [...byRelativePath.entries()].forEach(([relativePath, content]) => {
+  for (const [relativePath, content] of byRelativePath) {
     // Validate relativePath before using in fs functions
     if (typeof relativePath !== 'string' || relativePath.includes('..') || path.isAbsolute(relativePath)) {
       throw new Error('Invalid relativePath argument');
@@ -306,26 +314,26 @@ async function main() {
       console.info(`[dry-run] write ${path.relative(process.cwd(), abs)} (${String(size)} bytes)`);
     } else {
       writes.push(
-        fs
-          .mkdir(path.dirname(abs), { recursive: true })
-          .then(() => fs.writeFile(abs, content, 'utf8'))
-          // eslint-disable-next-line promise/always-return -- void side-effect: logs write confirmation, no return needed
-          .then(() => {
-            const size = new TextEncoder().encode(content).length;
+        (async () => {
+          await fs.mkdir(path.dirname(abs), { recursive: true });
+          await fs.writeFile(abs, content, 'utf8');
 
-            console.info(`write ${path.relative(process.cwd(), abs)} (${String(size)} bytes)`);
-          }),
+          const size = new TextEncoder().encode(content).length;
+
+          console.info(`write ${path.relative(process.cwd(), abs)} (${String(size)} bytes)`);
+        })(),
       );
     }
-  });
+  }
 
   if (!isDryRun) {
     await Promise.all(writes);
   }
 }
 
+// eslint-disable-next-line unicorn/prefer-await -- top-level entry point bootstrap, see unicorn/prefer-top-level-await
 main().catch((error: unknown) => {
-  const errorMessage = error && typeof error === 'object' && 'message' in error ? String(error.message) : String(error);
+  const errorMessage = String(error && typeof error === 'object' && 'message' in error ? error.message : error);
 
   console.error(errorMessage);
   process.exit(1);

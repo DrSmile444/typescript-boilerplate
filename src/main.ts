@@ -9,5 +9,5 @@ export function showHello() {
   return `Hello world ${String(environmentConfig.CI)} ${OVERALL_PROJECT_RELEASE_VERSION}`;
 }
 
-// eslint-disable-next-line no-console, lintlord/prefer-logger
+// eslint-disable-next-line no-console, lintlord/prefer-logger, unicorn/no-top-level-side-effects -- this file is the application entry point (see package.json "main"/"start")
 console.info(showHello());

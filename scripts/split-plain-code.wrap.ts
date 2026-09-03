@@ -13,13 +13,13 @@ const SPLIT_SCRIPT = path.join('scripts', 'split-plain-code.ts');
 
 /**
  * Spawn a child process and resolve with its exit code.
- * @param cmd - The command to execute.
+ * @param command - The command to execute.
  * @param commandArguments - Arguments to pass to the command.
  * @returns A promise that resolves to the process exit code.
  */
-function run(cmd: string, commandArguments: string[]): Promise<number> {
+function run(command: string, commandArguments: string[]): Promise<number> {
   return new Promise((resolve, reject) => {
-    const child = spawn(cmd, commandArguments, { stdio: 'inherit' });
+    const child = spawn(command, commandArguments, { stdio: 'inherit' });
 
     child.on('error', reject);
 
@@ -56,7 +56,7 @@ async function writeJson(filePath: string, json: Json): Promise<void> {
  * @param filePath - The path to check.
  * @returns `true` if the path is accessible, `false` otherwise.
  */
-async function exists(filePath: string): Promise<boolean> {
+async function isPathAccessible(filePath: string): Promise<boolean> {
   try {
     await fs.access(filePath);
 
@@ -75,11 +75,11 @@ async function main(): Promise<void> {
   const originalPath = path.join(currentWorkingDirectory, PKG_ORIGINAL);
   const splitPath = path.join(currentWorkingDirectory, SPLIT_SCRIPT);
 
-  if (!(await exists(packagePath))) {
+  if (!(await isPathAccessible(packagePath))) {
     throw new Error(`Cannot find ${PKG} in: ${currentWorkingDirectory}`);
   }
 
-  if (!(await exists(splitPath))) {
+  if (!(await isPathAccessible(splitPath))) {
     throw new Error(`Cannot find split script at: ${SPLIT_SCRIPT}`);
   }
 
@@ -87,7 +87,7 @@ async function main(): Promise<void> {
   await fs.copyFile(packagePath, originalPath);
 
   const restoreOriginal = async () => {
-    if (await exists(originalPath)) {
+    if (await isPathAccessible(originalPath)) {
       await fs.copyFile(originalPath, packagePath);
     }
   };
@@ -98,8 +98,8 @@ async function main(): Promise<void> {
 
     console.dir({ forwardedArgs: forwardedArguments, splitPath });
 
-    const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-    const exitCode = await run(npxCmd, ['tsx', splitPath, ...forwardedArguments]);
+    const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+    const exitCode = await run(npxCommand, ['tsx', splitPath, ...forwardedArguments]);
 
     if (exitCode !== 0) {
       throw new Error(`split-plain-code.ts failed with exit code ${String(exitCode)}`);
@@ -124,14 +124,17 @@ async function main(): Promise<void> {
     throw error;
   } finally {
     // 5) remove temp backup
-    if (await exists(originalPath)) {
-      await fs.unlink(originalPath).catch(() => {
+    if (await isPathAccessible(originalPath)) {
+      try {
+        await fs.unlink(originalPath);
+      } catch {
         // intentionally swallowed
-      });
+      }
     }
   }
 }
 
+// eslint-disable-next-line unicorn/prefer-await -- top-level entry point bootstrap, see unicorn/prefer-top-level-await
 main().catch((error: unknown) => {
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);

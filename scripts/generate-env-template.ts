@@ -38,6 +38,7 @@ function buildTemplateContent(schema: typeof environmentSchema): string {
   const blocks = Object.entries(schema.shape).map(([key, field]) => {
     const { description, example, type } = getFieldMeta(field as z.ZodType, key);
     const defaultSuffix = example ? ` = ${example}` : '';
+    // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation -- "{string}" is a literal type-label marker in the template output, not a missed interpolation
     const typeAnnotation = type === 'boolean' ? '{boolean} = false' : `{string}${defaultSuffix}`;
 
     return ['##', `# ${description}`, '#', `# @optional ${typeAnnotation}`, `${key}=${example}`].join('\n');

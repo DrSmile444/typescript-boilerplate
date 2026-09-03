@@ -40,9 +40,9 @@ const updatePackageJSON = (filePath: string, newVersion: string): void => {
 // Function to update the version in appVersion.ts
 const updateAppVersion = (filePath: string, newVersion: string): void => {
   let fileContent = readTextFile(filePath);
-  const versionRegex = /export const OVERALL_PROJECT_RELEASE_VERSION = '(\d+\.\d+\.\d+)';/;
+  const versionRegex = /export const OVERALL_PROJECT_RELEASE_VERSION = '\d+\.\d+\.\d+';/;
 
-  fileContent = fileContent.replace(versionRegex, `export const OVERALL_PROJECT_RELEASE_VERSION = '${newVersion}';`);
+  fileContent = fileContent.replace(versionRegex, () => `export const OVERALL_PROJECT_RELEASE_VERSION = '${newVersion}';`);
   writeTextFile(filePath, fileContent);
   console.info(`Updated version in ${filePath} to ${newVersion}`);
 };

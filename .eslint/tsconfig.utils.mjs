@@ -8,7 +8,9 @@ import { eslintLogger } from './logger.mjs';
 
 const logger = eslintLogger('tsconfig-utils');
 
-/** Ordered list of tsconfig filenames to try during auto-discovery. */
+/**
+Ordered list of tsconfig filenames to try during auto-discovery.
+ */
 const TSCONFIG_CANDIDATES = ['tsconfig.json', 'tsconfig.base.json', 'tsconfig.main.json', 'tsconfig.app.json'];
 
 /**

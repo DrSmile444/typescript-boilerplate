@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/slow-regex,no-continue,no-plusplus,no-use-before-define,unicorn/no-process-exit,sonarjs/no-alphabetical-sort,unicorn/no-array-sort,security/detect-non-literal-fs-filename,security/detect-object-injection,security/detect-unsafe-regex,regexp/no-super-linear-backtracking */
+/* eslint-disable no-continue,no-plusplus,no-use-before-define,unicorn/no-process-exit,unicorn/no-array-sort,security/detect-non-literal-fs-filename,security/detect-object-injection,security/detect-unsafe-regex,regexp/no-super-linear-backtracking,sonarjs/super-linear-regex */
 import { spawn } from 'node:child_process';
 import type { Dirent } from 'node:fs';
 import { accessSync, promises as fs, readFileSync } from 'node:fs';
@@ -151,18 +151,18 @@ function detectPackageManager(projectDirectory: string, forced?: CliOptions['pac
     return forced;
   }
 
-  const has = (filePath: string) => safeExists(path.join(projectDirectory, filePath));
+  const hasFile = (filePath: string) => isPathAccessible(path.join(projectDirectory, filePath));
 
   // lockfile-based detection
-  if (has('pnpm-lock.yaml')) {
+  if (hasFile('pnpm-lock.yaml')) {
     return 'pnpm';
   }
 
-  if (has('yarn.lock')) {
+  if (hasFile('yarn.lock')) {
     return 'yarn';
   }
 
-  if (has('bun.lockb')) {
+  if (hasFile('bun.lockb')) {
     return 'bun';
   }
 
@@ -188,7 +188,9 @@ function detectPackageManager(projectDirectory: string, forced?: CliOptions['pac
       return 'npm';
     }
   } catch {
-    /* ignore */
+    /*
+    ignore
+    */
   }
 
   return 'npm'; // default fallback
@@ -199,7 +201,7 @@ function detectPackageManager(projectDirectory: string, forced?: CliOptions['pac
  * @param filePath - The path to check.
  * @returns `true` if accessible, `false` otherwise.
  */
-function safeExists(filePath: string): boolean {
+function isPathAccessible(filePath: string): boolean {
   try {
     // Using sync here is fine: tiny calls and avoids race conditions
     accessSync(filePath);
@@ -220,7 +222,7 @@ function isInstalledInNodeModules(projectDirectory: string, topLevel: string): b
   // Support scoped packages in node_modules
   const nmPath = path.join(projectDirectory, 'node_modules', topLevel);
 
-  return safeExists(nmPath);
+  return isPathAccessible(nmPath);
 }
 
 // Helper to get tsconfig path aliases
@@ -268,7 +270,7 @@ async function collectReferencedFromFile(file: string, tsconfigAliases: string[]
   }
 }
 
-interface FindUninstalledDepsReturn {
+interface FindUninstalledDependenciesReturn {
   referencedTopLevel: Set<string>;
   uninstalled: string[];
 }
@@ -278,7 +280,7 @@ interface FindUninstalledDepsReturn {
  * @param root - The project root directory to scan.
  * @returns An object with the full set of referenced packages and the subset that are uninstalled.
  */
-async function findUninstalledDeps(root: string): Promise<FindUninstalledDepsReturn> {
+async function findUninstalledDependencies(root: string): Promise<FindUninstalledDependenciesReturn> {
   const referenced = new Set<string>();
 
   // Get tsconfig path aliases
@@ -299,30 +301,30 @@ async function findUninstalledDeps(root: string): Promise<FindUninstalledDepsRet
  * @param projectDirectory - The project root where the install command will run.
  * @param pkgs - The list of package names to install.
  * @param pm - The package manager to use.
- * @param development - Whether to install as devDependencies.
+ * @param isDevelopment - Whether to install as devDependencies.
  * @returns The exit code of the install process.
  */
 async function installDependencies(
   projectDirectory: string,
   pkgs: string[],
   pm: ReturnType<typeof detectPackageManager>,
-  development: boolean,
+  isDevelopment: boolean,
 ): Promise<number> {
   if (pkgs.length === 0) {
     return 0;
   }
 
   const cmds: Record<string, [string, string[]]> = {
-    pnpm: development ? ['pnpm', ['add', '-D', ...pkgs]] : ['pnpm', ['add', ...pkgs]],
-    yarn: development ? ['yarn', ['add', '--dev', ...pkgs]] : ['yarn', ['add', ...pkgs]],
-    npm: development ? ['npm', ['i', '-D', ...pkgs]] : ['npm', ['i', ...pkgs]],
-    bun: development ? ['bun', ['add', '-d', ...pkgs]] : ['bun', ['add', ...pkgs]],
+    pnpm: isDevelopment ? ['pnpm', ['add', '-D', ...pkgs]] : ['pnpm', ['add', ...pkgs]],
+    yarn: isDevelopment ? ['yarn', ['add', '--dev', ...pkgs]] : ['yarn', ['add', ...pkgs]],
+    npm: isDevelopment ? ['npm', ['i', '-D', ...pkgs]] : ['npm', ['i', ...pkgs]],
+    bun: isDevelopment ? ['bun', ['add', '-d', ...pkgs]] : ['bun', ['add', ...pkgs]],
   };
 
-  const [cmd, parsedArguments] = cmds[pm] ?? cmds.npm;
+  const [command, parsedArguments] = cmds[pm] ?? cmds.npm;
 
   return new Promise<number>((resolve, reject) => {
-    const child = spawn(cmd, parsedArguments, { stdio: 'inherit', cwd: projectDirectory, shell: process.platform === 'win32' });
+    const child = spawn(command, parsedArguments, { stdio: 'inherit', cwd: projectDirectory, shell: process.platform === 'win32' });
 
     child.on('close', (code) => {
       resolve(code ?? 1);
@@ -412,7 +414,7 @@ async function main() {
   }
 
   console.info(`🔎 Scanning: ${options.dir}`);
-  const { uninstalled, referencedTopLevel } = await findUninstalledDeps(options.dir);
+  const { uninstalled, referencedTopLevel } = await findUninstalledDependencies(options.dir);
 
   const pm = detectPackageManager(options.dir, options.packageManager);
 
@@ -422,7 +424,7 @@ async function main() {
   console.info(`📚 Referenced packages (top-level): ${String(referencedTopLevel.size)}`);
 
   if (referencedTopLevel.size > 0) {
-    console.info([...referencedTopLevel].sort().join(', '));
+    console.info([...referencedTopLevel].sort((firstPackage, secondPackage) => firstPackage.localeCompare(secondPackage)).join(', '));
   }
 
   if (uninstalled.length === 0) {
@@ -456,6 +458,7 @@ async function main() {
   }
 }
 
+// eslint-disable-next-line unicorn/prefer-await -- top-level entry point bootstrap, see unicorn/prefer-top-level-await
 main().catch((error: unknown) => {
   console.error('Unexpected error:', error);
   process.exit(1);

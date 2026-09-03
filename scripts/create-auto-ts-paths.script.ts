@@ -29,7 +29,7 @@ async function main() {
   const tsconfigDirectory = path.dirname(tsconfigPath);
   const sourceDirectoryAbs = path.resolve(tsconfigDirectory, SRC_DIR_NAME);
 
-  const hasSource = await pathExists(sourceDirectoryAbs);
+  const hasSource = await isPathAccessible(sourceDirectoryAbs);
 
   if (!hasSource) {
     throw new Error(`Cannot find "${SRC_DIR_NAME}" folder at: ${sourceDirectoryAbs}`);
@@ -61,7 +61,9 @@ async function main() {
   const added: string[] = [];
 
   // Keep existing order, append new keys in a stable order.
-  for (const directoryName of sourceFolders.toSorted((firstFolder, secondFolder) => firstFolder.localeCompare(secondFolder))) {
+  const sortedSourceFolders = sourceFolders.toSorted((firstFolder, secondFolder) => firstFolder.localeCompare(secondFolder));
+
+  for (const directoryName of sortedSourceFolders) {
     const aliasKey = `${ALIAS_PREFIX}${directoryName}/*`;
 
     if (Object.prototype.hasOwnProperty.call(paths, aliasKey)) {
@@ -106,7 +108,7 @@ async function main() {
  * @param filePath - Path to check.
  * @returns A promise resolving to true if the path exists, false otherwise.
  */
-async function pathExists(filePath: string) {
+async function isPathAccessible(filePath: string) {
   try {
     await fs.access(filePath);
 
@@ -129,7 +131,7 @@ async function findUp(fileName: string, startDirectory: string) {
   while (true) {
     const candidate = path.join(directory, fileName);
 
-    if (await pathExists(candidate)) {
+    if (await isPathAccessible(candidate)) {
       return candidate;
     }
 
@@ -214,6 +216,7 @@ function formatTsDiagnostic(diagnostic: ts.Diagnostic) {
   return `Failed to parse tsconfig.json${file}: ${message}`;
 }
 
+// eslint-disable-next-line unicorn/prefer-await -- top-level entry point bootstrap, see unicorn/prefer-top-level-await
 main().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
 

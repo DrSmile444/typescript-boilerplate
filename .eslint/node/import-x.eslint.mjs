@@ -90,7 +90,7 @@ export default defineConfig([
       'import-x/no-dynamic-require': 'error',
       'import-x/no-webpack-loader-syntax': 'error',
       'import-x/no-self-import': 'error',
-      'import-x/no-cycle': ['error', { maxDepth: Number.POSITIVE_INFINITY }],
+      'import-x/no-cycle': ['error', { maxDepth: Infinity }],
       'import-x/no-useless-path-segments': ['error', { commonjs: true }],
       'import-x/no-relative-packages': 'error',
     },

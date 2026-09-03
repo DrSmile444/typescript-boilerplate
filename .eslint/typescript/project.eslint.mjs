@@ -21,9 +21,10 @@ export function createProjectConfig(options = {}) {
     logger.warn(`tsconfig not found at ${tsconfigPath}. Falling back to projectService.`);
   }
 
-  const scriptsTsconfigPath = options.scriptstsconfig
-    ? resolveTsconfigPath({ rootDir, tsconfig: options.scriptstsconfig })
-    : resolveTsconfigPath({ rootDir, tsconfig: 'tsconfig.scripts.json' });
+  const scriptsTsconfigPath = resolveTsconfigPath({
+    rootDir,
+    tsconfig: options.scriptstsconfig || 'tsconfig.scripts.json',
+  });
 
   const scriptsConfig = fs.existsSync(scriptsTsconfigPath)
     ? {
