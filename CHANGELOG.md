@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.6.3] - 2026-11-03
+
+### Changed
+
+- Updated npm dependencies to their latest versions, including the ESLint plugin majors `eslint-plugin-unicorn` 74→79, `eslint-plugin-jsdoc` 64→65, and `eslint-plugin-zod` 4→5.
+- `npm run typecheck` runs on TypeScript 7 (`typescript-7` alias); the `typescript` package resolves to `@typescript/typescript6`, which provides the TypeScript 6 API that `typescript-eslint` needs.
+- `eslint-plugin-zod` config composes `recommended` and `stylistic` and keeps `prefer-trim-before-string-length-checks`, so all rules from v4 `recommended` stay active.
+- Turned off `unicorn/no-asterisk-prefix-in-documentation-comments` (conflicts with JSDoc style) and core `no-continue` (conflicts with `unicorn/prefer-continue`).
+- Updated `.nvmrc` to Node v24.22.2.
+- Applied `npm audit fix`; no critical or high advisories remain.
+
+### Removed
+
+- `eslint-plugin-react-compiler` and `.eslint/react/react-compiler.eslint.mjs`. The `react-hooks` `recommended-latest` config already includes the React Compiler rules.
+
+### Fixed
+
+- Lint findings from the new `eslint-plugin-unicorn` v79 rules in `scripts/`, `src/`, and `.eslint/`.
+- `EnvironmentConfig` type uses `z.output` per `zod/consistent-schema-output-type-style`.
+
 ## [1.6.2] - 2026-09-03
 
 ### Changed
