@@ -52,7 +52,7 @@
     "eslint-plugin-depend": "^1.5.0",
     "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-import-zod": "^1.2.1",
-    "eslint-plugin-jsdoc": "^64.3.4",
+    "eslint-plugin-jsdoc": "^65.4.2",
     "eslint-plugin-lintlord": "^1.2.0",
     "eslint-plugin-n": "^18.5.0",
     "eslint-plugin-no-barrel-files": "^2.3.0",
