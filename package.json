@@ -8,7 +8,7 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:debug": "npm run lint -- --debug",
     "format:md": "npx prettier --write \"**/*.md\"",
-    "typecheck": "npx tsc --noEmit",
+    "typecheck": "node ./node_modules/typescript-7/bin/tsc --noEmit",
     "test": "npx vitest",
     "test:run": "npx vitest run",
     "test:coverage": "npx vitest run --coverage",
@@ -72,7 +72,8 @@
     "prettier": "^3.9.10",
     "ts-declaration-location": "^1.0.7",
     "type-fest": "^5.10.0",
-    "typescript": "^6.0.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-7": "npm:typescript@^7.0.2",
     "typescript-eslint": "^8.72.1",
     "vitest": "^5.1.0"
   },
