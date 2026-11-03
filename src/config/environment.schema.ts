@@ -36,4 +36,4 @@ export const environmentSchema = z.object({
     .meta({ description: 'Base URL for the production environment', example: 'https://production.example.com', type: 'string' }),
 });
 
-export type EnvironmentConfig = z.infer<typeof environmentSchema>;
+export type EnvironmentConfig = z.output<typeof environmentSchema>;

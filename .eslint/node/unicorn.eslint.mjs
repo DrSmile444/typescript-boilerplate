@@ -15,6 +15,8 @@ export default defineConfig([
       'unicorn/no-array-for-each': 'off',
       'unicorn/no-null': 'off',
       'unicorn/prefer-top-level-await': 'off',
+      // Conflicts with the standard JSDoc ` * ` style enforced by eslint-plugin-jsdoc
+      'unicorn/no-asterisk-prefix-in-documentation-comments': 'off',
       'unicorn/name-replacements': [
         'error',
         {

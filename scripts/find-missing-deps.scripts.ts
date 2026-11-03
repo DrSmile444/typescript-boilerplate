@@ -1,4 +1,4 @@
-/* eslint-disable no-continue,no-plusplus,no-use-before-define,unicorn/no-process-exit,unicorn/no-array-sort,security/detect-non-literal-fs-filename,security/detect-object-injection,security/detect-unsafe-regex,regexp/no-super-linear-backtracking,sonarjs/super-linear-regex */
+/* eslint-disable no-plusplus,no-use-before-define,unicorn/no-process-exit,unicorn/no-array-sort,security/detect-non-literal-fs-filename,security/detect-object-injection,security/detect-unsafe-regex,regexp/no-super-linear-backtracking,sonarjs/super-linear-regex */
 import { spawn } from 'node:child_process';
 import type { Dirent } from 'node:fs';
 import { accessSync, promises as fs, readFileSync } from 'node:fs';
@@ -252,11 +252,7 @@ async function collectReferencedFromFile(file: string, tsconfigAliases: string[]
   const code = await fs.readFile(file, 'utf8');
 
   for (const spec of extractModuleSpecifiers(code)) {
-    if (!isPackageLike(spec)) {
-      continue;
-    }
-
-    if (tsconfigAliases.some((alias) => spec.startsWith(alias))) {
+    if (!isPackageLike(spec) || tsconfigAliases.some((alias) => spec.startsWith(alias))) {
       continue;
     }
 
@@ -315,10 +311,10 @@ async function installDependencies(
   }
 
   const cmds: Record<string, [string, string[]]> = {
-    pnpm: isDevelopment ? ['pnpm', ['add', '-D', ...pkgs]] : ['pnpm', ['add', ...pkgs]],
-    yarn: isDevelopment ? ['yarn', ['add', '--dev', ...pkgs]] : ['yarn', ['add', ...pkgs]],
-    npm: isDevelopment ? ['npm', ['i', '-D', ...pkgs]] : ['npm', ['i', ...pkgs]],
-    bun: isDevelopment ? ['bun', ['add', '-d', ...pkgs]] : ['bun', ['add', ...pkgs]],
+    pnpm: ['pnpm', isDevelopment ? ['add', '-D', ...pkgs] : ['add', ...pkgs]],
+    yarn: ['yarn', isDevelopment ? ['add', '--dev', ...pkgs] : ['add', ...pkgs]],
+    npm: ['npm', isDevelopment ? ['i', '-D', ...pkgs] : ['i', ...pkgs]],
+    bun: ['bun', isDevelopment ? ['add', '-d', ...pkgs] : ['add', ...pkgs]],
   };
 
   const [command, parsedArguments] = cmds[pm] ?? cmds.npm;

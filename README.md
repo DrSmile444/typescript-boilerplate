@@ -50,6 +50,13 @@ This is a Typescript boilerplate project designed to streamline modern TypeScrip
 - **`package.json`**: Lists dependencies and scripts.
 - **`tsconfig.json`**: TypeScript compiler configuration.
 
+### TypeScript versions
+
+Two TypeScript versions are installed side by side:
+
+- **`typescript-7`** (`typescript@7`, the native compiler) runs `npm run typecheck`.
+- **`typescript`** (`@typescript/typescript6`) provides the TypeScript 6 JS API for `typescript-eslint`, the IDE, and scripts that import `typescript`. TypeScript 7 does not ship this API.
+
 ### `src` Folder
 
 The `src` folder is organized into a modular structure with the following subfolders:

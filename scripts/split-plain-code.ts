@@ -216,11 +216,13 @@ function parseSections(raw: string): Section[] {
   for (const [index, line] of lines.entries()) {
     const match = HEADER_RE.exec(line);
 
-    if (match) {
-      flush(index);
-      currentPath = match[1].replace('(CHANGED)', '').replace('(NEW)', '').trim();
-      currentStart = index + 1;
+    if (!match) {
+      continue;
     }
+
+    flush(index);
+    currentPath = match[1].replace('(CHANGED)', '').replace('(NEW)', '').trim();
+    currentStart = index + 1;
   }
 
   flush(lines.length);
@@ -255,13 +257,9 @@ function maybeStripMdFence(text: string): string {
   const isOpenFence = open.startsWith('```');
   const isCloseFence = close === '```';
 
-  if (isOpenFence && isCloseFence) {
-    return [array.slice(0, start).join('\n'), array.slice(start + 1, end).join('\n'), array.slice(end + 1).join('\n')]
-      .filter(Boolean)
-      .join('\n');
-  }
-
-  return text;
+  return isOpenFence && isCloseFence
+    ? [array.slice(0, start).join('\n'), array.slice(start + 1, end).join('\n'), array.slice(end + 1).join('\n')].filter(Boolean).join('\n')
+    : text;
 }
 
 /**

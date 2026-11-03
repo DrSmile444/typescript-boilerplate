@@ -19,11 +19,7 @@ function colorContext(context, method) {
   // eslint-disable-next-line security/detect-object-injection
   const methodColor = METHOD_COLORS[method] || '';
 
-  if (methodColor) {
-    return `${methodColor}[ESLint:${context}]\u{1B}[0m`;
-  }
-
-  return `[ESLint:${context}]`;
+  return methodColor ? `${methodColor}[ESLint:${context}]\u{1B}[0m` : `[ESLint:${context}]`;
 }
 
 const noop = () => {};
@@ -45,9 +41,7 @@ export function eslintLogger(context) {
     info: (...arguments_) => console.info(colorContext(context, 'info'), ...arguments_),
     warn: (...arguments_) => console.warn(colorContext(context, 'warn'), ...arguments_),
     error: (...arguments_) => console.error(colorContext(context, 'error'), ...arguments_),
-    // eslint-disable-next-line unicorn/no-invalid-argument-count -- variadic passthrough logger, console.dir/table only use the first extra arg in practice
     dir: (...arguments_) => console.dir(colorContext(context, 'dir'), ...arguments_),
-    // eslint-disable-next-line unicorn/no-invalid-argument-count -- variadic passthrough logger, console.dir/table only use the first extra arg in practice
     table: (...arguments_) => console.table(colorContext(context, 'table'), ...arguments_),
     /* eslint-enable no-console, lintlord/prefer-logger */
   };

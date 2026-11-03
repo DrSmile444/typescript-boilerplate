@@ -1,4 +1,4 @@
-/* eslint-disable no-await-in-loop,import-x/no-extraneous-dependencies,no-use-before-define,no-continue,security/detect-non-literal-fs-filename */
+/* eslint-disable no-await-in-loop,import-x/no-extraneous-dependencies,no-use-before-define,security/detect-non-literal-fs-filename */
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -197,11 +197,7 @@ function toPosixPath(originalPath: string) {
  * @returns The path string with a "./" prefix if it was missing.
  */
 function ensureDotPrefix(relativePath: string) {
-  if (relativePath.startsWith('.') || relativePath.startsWith('/')) {
-    return relativePath;
-  }
-
-  return `./${relativePath}`;
+  return relativePath.startsWith('.') || relativePath.startsWith('/') ? relativePath : `./${relativePath}`;
 }
 
 /**
