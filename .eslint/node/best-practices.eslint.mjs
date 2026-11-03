@@ -216,7 +216,8 @@ export default defineConfig([
           properties: true,
         },
       ],
-      'no-continue': 'error',
+      // Off: unicorn/prefer-continue enforces early `continue` instead
+      'no-continue': 'off',
       'no-inner-declarations': ['error', 'functions', { blockScopedFunctions: 'allow' }],
       'no-lonely-if': 'error',
       'no-plusplus': ['error', { allowForLoopAfterthoughts: false }],
